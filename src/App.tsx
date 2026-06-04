@@ -10,6 +10,7 @@ import ProjectDetailModal from "./components/ProjectDetailModal";
 import ArticleModal from "./components/ArticleModal";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
+import FluidBackground from "./components/FluidBackground";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState("hero");
@@ -85,9 +86,8 @@ export default function App() {
         style={{ maskImage: "radial-gradient(ellipse at 50% 15%, black, transparent)" }}
       />
       
-      {/* Ambient glowing code vectors in the background */}
-      <div className="absolute top-[5%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-indigo-500/[0.008] blur-[150px] pointer-events-none" />
-      <div className="absolute top-[45%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-amber-500/[0.008] blur-[150px] pointer-events-none" />
+      {/* Dynamic, Sticky HTML5 Canvas Fluid Flow System (Yellow/White light stream waves) */}
+      <FluidBackground />
 
       {/* 1. TOP STICKY TAB WRITING HEADER BAR */}
       <Header activeSection={activeSection} onNavClick={handleScrollToSection} />

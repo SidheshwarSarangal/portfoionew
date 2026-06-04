@@ -14,7 +14,7 @@ html {
 }
 
 body {
-  background-color: #0c0d0e; /* Cosmic Matte Charcoal Dark theme on start, looks extremely premium */
+  background-color: #040405; /* Cosmic Matte Charcoal Dark theme on start, looks extremely premium */
   color: #e2e8f0;
   font-family: var(--font-sans);
 }
@@ -33,6 +33,109 @@ body {
 .animate-marquee {
   display: inline-flex;
   animation: marquee 30s linear infinite;
+}
+
+/* Custom background morph animations for smooth yellow-white neon flows */
+@keyframes bgMorphOne {
+  0% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(12%, -15%) scale(1.2) rotate(120deg);
+  }
+  66% {
+    transform: translate(-10%, 10%) scale(0.85) rotate(240deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1) rotate(360deg);
+  }
+}
+
+@keyframes bgMorphTwo {
+  0% {
+    transform: translate(0px, 0px) scale(1.1) rotate(360deg);
+  }
+  50% {
+    transform: translate(-15%, 15%) scale(0.9) rotate(180deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1.1) rotate(0deg);
+  }
+}
+
+@keyframes bgMorphThree {
+  0% {
+    transform: translate(0px, 0px) scale(0.9) rotate(0deg);
+  }
+  50% {
+    transform: translate(15%, -10%) scale(1.15) rotate(180deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(0.9) rotate(360deg);
+  }
+}
+
+@keyframes waterFlow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1200;
+  }
+}
+
+@keyframes waterOscillate {
+  0%, 100% {
+    transform: translateY(0px) scale(1) rotate(0deg);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.08) rotate(2deg);
+    opacity: 0.65;
+  }
+}
+
+@keyframes waterOscillateOpposite {
+  0%, 100% {
+    transform: translateY(10px) scale(1.05) rotate(0deg);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateY(30px) scale(0.95) rotate(-3deg);
+    opacity: 0.25;
+  }
+}
+
+.animate-bg-morph-1 {
+  animation: bgMorphOne 22s ease-in-out infinite;
+}
+
+.animate-bg-morph-2 {
+  animation: bgMorphTwo 28s ease-in-out infinite;
+}
+
+.animate-bg-morph-3 {
+  animation: bgMorphThree 34s ease-in-out infinite;
+}
+
+.animate-water-flow-1 {
+  stroke-dasharray: 600;
+  animation: waterFlow 35s linear infinite, waterOscillate 18s ease-in-out infinite;
+}
+
+.animate-water-flow-2 {
+  stroke-dasharray: 700;
+  animation: waterFlow 45s linear infinite, waterOscillateOpposite 22s ease-in-out infinite;
+}
+
+.animate-water-flow-3 {
+  stroke-dasharray: 550;
+  animation: waterFlow 28s linear infinite, waterOscillate 14s ease-in-out infinite;
+}
+
+.animate-water-flow-4 {
+  stroke-dasharray: 650;
+  animation: waterFlow 40s linear infinite, waterOscillateOpposite 26s ease-in-out infinite;
 }
 
 /* Custom editorial markdown styling for our blog posts */

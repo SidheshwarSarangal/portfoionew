@@ -24,7 +24,7 @@ export default function LeftSidebar({ onContactClick }: LeftSidebarProps) {
   return (
     <aside 
       id="left-profile-sidebar"
-      className="hidden lg:flex lg:w-[320px] xl:w-[350px] lg:h-screen lg:fixed lg:left-0 lg:top-0 lg:overflow-y-auto lg:border-r border-white/5 pt-16 pb-6 px-6 bg-black/[0.15] flex flex-col justify-between scrollbar-thin scrollbar-thumb-white/5 z-20"
+      className="hidden lg:flex lg:w-[320px] xl:w-[350px] lg:h-screen lg:fixed lg:left-0 lg:top-0 lg:overflow-y-auto lg:border-r border-white/5 pt-16 pb-6 px-6 bg-[#050608] flex flex-col justify-between scrollbar-thin scrollbar-thumb-white/5 z-20"
     >
       <div className="space-y-5">
         {/* Profile Card & Avatar */}
