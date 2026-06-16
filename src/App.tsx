@@ -10,7 +10,6 @@ import ProjectDetailModal from "./components/ProjectDetailModal";
 import ArticleModal from "./components/ArticleModal";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
-import FluidBackground from "./components/FluidBackground";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState("hero");
@@ -78,16 +77,13 @@ export default function App() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#070809] font-sans antialiased text-[#e2e8f0] selection:bg-white selection:text-black overflow-x-clip">
+    <div className="relative min-h-screen bg-[#000000] font-sans antialiased text-[#e2e8f0] selection:bg-white selection:text-black overflow-x-clip">
       
       {/* Editorial Decorative Background Grid */}
       <div 
         className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#ffffff008_1px,transparent_1px),linear-gradient(to_bottom,#ffffff008_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" 
         style={{ maskImage: "radial-gradient(ellipse at 50% 15%, black, transparent)" }}
       />
-      
-      {/* Dynamic, Sticky HTML5 Canvas Fluid Flow System (Yellow/White light stream waves) */}
-      <FluidBackground />
 
       {/* 1. TOP STICKY TAB WRITING HEADER BAR */}
       <Header activeSection={activeSection} onNavClick={handleScrollToSection} />
@@ -103,7 +99,7 @@ export default function App() {
         <main className="relative flex-grow w-full pl-0 lg:pl-12">
           
           {/* EDITOR-STYLE DESTRUCTIVE COLUMN FOR LINE NUMBERS (Saves spacing on small viewports) */}
-          <div className="absolute left-0 top-0 bottom-0 w-12 border-r border-white/[0.03] bg-[#070809]/50 select-none hidden lg:flex flex-col items-end pt-12 pr-3 text-[9px] font-mono text-neutral-700/40 leading-[22px] z-0">
+          <div className="absolute left-0 top-0 bottom-0 w-12 border-r border-white/[0.03] bg-[#000000]/50 select-none hidden lg:flex flex-col items-end pt-12 pr-3 text-[9px] font-mono text-neutral-700/40 leading-[22px] z-0 overflow-hidden">
             {Array.from({ length: 700 }).map((_, i) => (
               <div key={i} className="h-[22px] tabular-nums font-light">
                 {String(i + 1).padStart(3, '0')}

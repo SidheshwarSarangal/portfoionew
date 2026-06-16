@@ -14,7 +14,7 @@ html {
 }
 
 body {
-  background-color: #040405; /* Cosmic Matte Charcoal Dark theme on start, looks extremely premium */
+  background-color: #000000; /* Cosmic Matte Charcoal Dark theme on start, looks extremely premium */
   color: #e2e8f0;
   font-family: var(--font-sans);
 }

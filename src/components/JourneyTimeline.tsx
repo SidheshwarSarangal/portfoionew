@@ -96,12 +96,12 @@ export default function JourneyTimeline() {
         </div>
 
         {/* Massive Backdrop text: SINCE 2013 (Continuous Arrow Marquee) */}
-        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[50px] sm:h-[70px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
+        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[60px] sm:h-[90px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
           <div className="relative w-full flex overflow-hidden whitespace-nowrap">
-            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-3xl sm:text-5xl md:text-[55px] font-black uppercase text-neutral-500/10 tracking-widest leading-none pr-10">
+            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10">
               <span>SINCE 2013 → SINCE 2013 → SINCE 2013 → SINCE 2013 → </span>
             </div>
-            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-3xl sm:text-5xl md:text-[55px] font-black uppercase text-neutral-500/10 tracking-widest leading-none pr-10" aria-hidden="true">
+            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10" aria-hidden="true">
               <span>SINCE 2013 → SINCE 2013 → SINCE 2013 → SINCE 2013 → </span>
             </div>
           </div>
@@ -285,12 +285,12 @@ export default function JourneyTimeline() {
         </div>
 
         {/* Massive Backdrop text: EXPERIENCE (Continuous Arrow Marquee) */}
-        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[50px] sm:h-[70px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
+        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[60px] sm:h-[90px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
           <div className="relative w-full flex overflow-hidden whitespace-nowrap">
-            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-3xl sm:text-5xl md:text-[55px] font-black uppercase text-neutral-500/10 tracking-widest leading-none pr-10">
+            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10">
               <span>EXPERIENCE → EXPERIENCE → EXPERIENCE → EXPERIENCE → </span>
             </div>
-            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-3xl sm:text-5xl md:text-[55px] font-black uppercase text-neutral-500/10 tracking-widest leading-none pr-10" aria-hidden="true">
+            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10" aria-hidden="true">
               <span>EXPERIENCE → EXPERIENCE → EXPERIENCE → EXPERIENCE → </span>
             </div>
           </div>
@@ -339,12 +339,12 @@ export default function JourneyTimeline() {
         </div>
 
         {/* Huge backdrop of words (Continuous Arrow Marquee) */}
-        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[50px] sm:h-[70px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
+        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[60px] sm:h-[90px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
           <div className="relative w-full flex overflow-hidden whitespace-nowrap">
-            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-3xl sm:text-5xl md:text-[55px] font-black uppercase text-neutral-500/10 tracking-widest leading-none pr-10">
+            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10">
               <span>WORDS MATTER → WORDS MATTER → WORDS MATTER → WORDS MATTER → </span>
             </div>
-            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-3xl sm:text-5xl md:text-[55px] font-black uppercase text-neutral-500/10 tracking-widest leading-none pr-10" aria-hidden="true">
+            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10" aria-hidden="true">
               <span>WORDS MATTER → WORDS MATTER → WORDS MATTER → WORDS MATTER → </span>
             </div>
           </div>

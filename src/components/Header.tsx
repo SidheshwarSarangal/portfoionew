@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Menu, X, Clock, FileCode, CheckCheck, FileText, 
   BookOpen, Braces, Terminal, ArrowUpRight, ChevronRight,
-  User, MapPin, Github, Twitter, Dribbble
+  User, MapPin, Github, Twitter, Dribbble,
+  Mail, Phone, Sparkles, Download, Globe, Copy, Check
 } from "lucide-react";
-import { PROJECTS, ARTICLES, PERSONAL_BIO } from "../data";
+import { PROJECTS, ARTICLES, PERSONAL_BIO, SOCIAL_LINKS } from "../data";
 
 interface HeaderProps {
   activeSection: string;
@@ -15,6 +16,13 @@ interface HeaderProps {
 export default function Header({ activeSection, onNavClick }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(PERSONAL_BIO.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -53,7 +61,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
       {/* 1. LEFT UTILITY COLUMN (Matches Left Sidebar Width on Desktop) */}
       <div 
         onClick={() => handleTabClick("hero")}
-        className="w-full lg:w-[320px] xl:w-[350px] h-full lg:border-r border-white/5 flex items-center px-6 justify-between shrink-0 cursor-pointer group"
+        className="w-auto flex-grow lg:flex-none lg:w-[320px] xl:w-[350px] h-full lg:border-r border-white/5 flex items-center px-6 justify-between shrink-0 cursor-pointer group"
       >
         <div className="flex items-center gap-2">
           {/* Custom Terminal Prompt Dot Logo */}
@@ -70,8 +78,8 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
       </div>
 
       {/* 2. CENTER TABS AREA (Active buffers / files) */}
-      <div className="flex-grow h-full flex items-end overflow-x-auto scrollbar-none border-r border-white/5 lg:px-2 bg-[#090a0a]/30">
-        <nav className="hidden md:flex items-end h-full">
+      <div className="hidden lg:flex flex-grow h-full items-end overflow-x-auto scrollbar-none border-r border-white/5 lg:px-2 bg-[#090a0a]/30">
+        <nav className="hidden lg:flex items-end h-full">
           {tabs.map((tab) => {
             const isSelected = activeSection === tab.id || 
               (tab.id === "about" && (activeSection === "chapter-what-i-do" || activeSection === "chapter-tech-stack" || activeSection === "chapter-history" || activeSection === "chapter-awards" || activeSection === "chapter-testimonials"));
@@ -130,7 +138,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
         {/* Mobile menu interface toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-1.5 bg-white/5 border border-white/10 rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer"
+          className="lg:hidden p-1.5 bg-white/5 border border-white/10 rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer"
         >
           {mobileMenuOpen ? <X size={14} /> : <Menu size={14} />}
         </button>
@@ -144,7 +152,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-14 left-0 right-0 md:hidden bg-[#0a0a0b] border-b border-white/10 p-5 flex flex-col gap-4 shadow-2xl z-50 rounded-b-xl"
+            className="absolute top-14 left-0 right-0 lg:hidden bg-[#000000]/95 backdrop-blur-md border-b border-white/5 p-5 flex flex-col gap-4 shadow-2xl z-50 rounded-b-xl max-h-[calc(100vh-3.5rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-white/5"
           >
             <div className="font-mono text-[9px] text-neutral-500 uppercase tracking-widest border-b border-white/5 pb-2 flex items-center gap-1.5">
               <Terminal size={10} className="text-amber-400" />
@@ -182,63 +190,127 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
             </ul>
 
             {/* DEVELOPER PROFILE DETAILS FOR MOBILE VIEWPORTS */}
-            <div className="border-t border-white/5 pt-4 mt-1 space-y-3">
+            <div className="border-t border-white/5 pt-5 mt-2 space-y-4">
               <div className="font-mono text-[9px] text-[#8e9196] uppercase tracking-widest flex items-center gap-1.5">
-                <User size={10} className="text-emerald-400 animate-pulse" />
-                <span>DEVELOPER ENVIRONMENT</span>
+                <User size={10} className="text-amber-400 animate-pulse" />
+                <span>// DEVELOPER ENVIRONMENT</span>
               </div>
               
-              <div className="flex items-center gap-3 bg-white/[0.01] p-3 rounded-lg border border-white/5">
-                <img 
-                  src={PERSONAL_BIO.avatarUrl} 
-                  alt={PERSONAL_BIO.name} 
-                  className="w-9 h-9 rounded-lg object-cover border border-white/10"
-                  referrerPolicy="no-referrer"
-                />
-                <div>
-                  <div className="font-mono text-xs font-semibold text-white">{PERSONAL_BIO.name}</div>
-                  <div className="font-mono text-[10px] text-neutral-400">{PERSONAL_BIO.title}</div>
-                  <div className="flex items-center gap-1 font-mono text-[9px] text-[#4ade80] mt-0.5">
-                    <MapPin size={9} />
-                    <span>{PERSONAL_BIO.location}</span>
-                  </div>
+              {/* Profile Card & Avatar */}
+              <div className="flex flex-col items-center text-center space-y-3 bg-white/[0.01] border border-white/5 p-5 rounded-xl">
+                <div className="relative group">
+                  {/* pulsing glow */}
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-neutral-200/10 to-neutral-500/10 rounded-full blur opacity-50 group-hover:opacity-100 transition duration-700 animate-pulse" />
+                  <img 
+                    src={PERSONAL_BIO.avatarUrl} 
+                    alt={PERSONAL_BIO.name} 
+                    className="relative w-16 h-16 rounded-full border border-white/10 object-cover grayscale brightness-95 group-hover:grayscale-0 transition-all duration-500"
+                    referrerPolicy="no-referrer"
+                  />
+                  {/* Status beacon */}
+                  <span className="absolute bottom-0 right-0 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#000000] border border-white/10">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                    </span>
+                  </span>
+                </div>
+
+                <div className="space-y-0.5">
+                  <h3 className="font-mono text-sm text-white font-medium tracking-tight">
+                    {PERSONAL_BIO.fullName}
+                    <span className="text-amber-400/80 font-mono text-[10px] font-light"> .info</span>
+                  </h3>
+                  <p className="font-mono text-[9px] text-[#8e9196] tracking-wider uppercase">
+                    {PERSONAL_BIO.title}
+                  </p>
                 </div>
               </div>
 
-              <p className="font-sans text-[11px] text-neutral-400 leading-relaxed font-light">
-                {PERSONAL_BIO.about}
-              </p>
+              {/* Short bio block */}
+              <div className="p-4 rounded-xl border border-white/5 bg-[#070809]/40">
+                <p className="font-mono text-xs text-neutral-400 leading-relaxed font-light">
+                  I am an engineering undergraduate at <strong className="text-amber-400 font-medium">IIT Roorkee</strong> intersecting raw creative aesthetics with functional code structures.
+                </p>
+              </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-1 font-mono">
-                <a 
+              {/* Profile details */}
+              <div className="space-y-2">
+                <span className="font-mono text-[9px] uppercase text-neutral-500 tracking-wider font-semibold pl-1">
+                  // PROFILE DETAILS
+                </span>
+                
+                <ul className="space-y-2 font-mono text-xs text-neutral-400 font-light pl-1 bg-white/[0.01] p-3 rounded-xl border border-white/5">
+                  <li className="flex items-center gap-2.5">
+                    <User size={13} className="text-amber-400" />
+                    <span>B.Tech Undergraduate</span>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <MapPin size={13} className="text-neutral-500" />
+                    <span>{PERSONAL_BIO.location}</span>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Globe size={13} className="text-neutral-500" />
+                    <span>English, Hindi</span>
+                  </li>
+                  <li 
+                    onClick={handleCopyEmail}
+                    className="flex items-center gap-2.5 cursor-pointer hover:text-amber-400 transition-colors duration-250 group pr-1"
+                  >
+                    <Mail size={13} className="text-neutral-500 group-hover:text-amber-400 transition-colors" />
+                    <span className="truncate">{PERSONAL_BIO.email}</span>
+                    <button className="text-neutral-500 hover:text-amber-400 ml-auto cursor-pointer" title="Copy email">
+                      {copied ? <Check size={11} className="text-amber-400 font-semibold" /> : <Copy size={11} />}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-2 pt-1">
+                <a
                   href="https://peerlist.io/sidheshwar_s_"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-white/5 border border-[#ffffff08] rounded text-center text-[10px] text-neutral-300 hover:text-white transition-colors"
+                  className="w-full py-2 bg-white text-black font-mono font-medium text-xs rounded-lg flex items-center justify-center gap-2 hover:bg-amber-450 hover:text-black active:scale-[0.98] transition-all cursor-pointer text-center group"
                 >
-                  Peerlist Profile
+                  <Sparkles size={11} className="text-amber-600 group-hover:text-black transition-colors" />
+                  <span>Connect on Peerlist</span>
                 </a>
-                <a 
-                  href={`mailto:${PERSONAL_BIO.email}`}
-                  className="p-2 bg-emerald-500/5 border border-emerald-500/10 rounded text-center text-[10px] text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                >
-                  Direct SMTP
-                </a>
-              </div>
 
-              <div className="pt-2">
+                <a 
+                  href={`mailto:${PERSONAL_BIO.email}?subject=Collaboration Proposal`}
+                  className="w-full py-2 bg-white/5 border border-white/10 text-white font-mono font-medium text-xs rounded-lg flex items-center justify-center gap-2 hover:bg-neutral-900 hover:border-amber-500/25 hover:text-amber-400 active:scale-[0.98] transition-all text-center"
+                >
+                  <Phone size={11} className="text-neutral-500" />
+                  <span>Schedule a Call</span>
+                </a>
+
                 <button 
                   onClick={() => handleTabClick("contact")}
-                  className="w-full py-2 bg-[#0d0e10] border border-white/5 text-neutral-300 font-sans font-medium text-xs rounded-lg flex items-center justify-center gap-2 hover:bg-white/[0.02] active:scale-[0.98] transition-all cursor-pointer"
+                  className="w-full py-2 border border-white/10 hover:border-amber-500/20 text-neutral-300 font-mono font-medium text-xs rounded-lg flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-amber-400 active:scale-[0.98] transition-all cursor-pointer"
                 >
+                  <Download size={11} className="text-neutral-500" />
                   <span>Download Résumé</span>
                 </button>
               </div>
 
-              <div className="flex items-center justify-center gap-5 pt-3 border-t border-white/5 select-none">
-                <a href="https://github.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-white transition-colors" title="GitHub"><Github size={14} /></a>
-                <a href="https://x.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-white transition-colors" title="X"><Twitter size={14} /></a>
-                <a href="https://dribbble.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-white transition-colors" title="Dribbble"><Dribbble size={14} /></a>
+              {/* Sidebar Footer Link list */}
+              <div className="flex items-center justify-center gap-4 pt-3 border-t border-white/5 select-none text-neutral-500">
+                {SOCIAL_LINKS.filter(s => s.platform !== "Email" && s.platform !== "Peerlist").map((social) => (
+                  <a 
+                    key={social.platform}
+                    href={social.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors duration-200"
+                    title={social.platform}
+                  >
+                    {social.platform === "GitHub" && <Github size={14} />}
+                    {social.platform === "X / Twitter" && <Twitter size={14} />}
+                    {social.platform === "Dribbble" && <Dribbble size={14} />}
+                  </a>
+                ))}
               </div>
             </div>
 
