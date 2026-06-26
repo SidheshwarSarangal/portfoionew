@@ -1,65 +1,65 @@
 import { motion } from "motion/react";
 import { TIMELINE } from "../data";
 import { 
-  Briefcase, GraduationCap, Github, Twitter, Dribbble, ArrowDown, UserCheck 
+  Briefcase, GraduationCap, Github, Twitter, Linkedin, ArrowDown, UserCheck 
 } from "lucide-react";
 import DecryptText from "./DecryptText";
 
 export default function JourneyTimeline() {
   const experiences = [
-    { period: "2023 - present", role: "Senior UI/UX Designer", org: "Creative Studio" },
-    { period: "2018 - 2023", role: "UI/UX Designer", org: "PixelWebForge" },
-    { period: "2015 - 2018", role: "Front-End Developer", org: "WebNexx" },
-    { period: "2013 - 2015", role: "Junior Web Designer", org: "Startix Media" },
+    { period: "Jan 2026 - Feb 2026", role: "Software Engineer Intern", org: "Investing Accelerator Summit" },
+    { period: "Mar 2025 - May 2025", role: "Software Developer", org: "Suhane Safar" },
+    { period: "2024 - present", role: "Web Developer", org: "Institute Innovation Council, IIT Roorkee" },
+    { period: "2022 - 2026", role: "B.Tech Undergraduate", org: "Indian Institute of Technology, Roorkee" },
   ];
 
   const whatIDo = [
     {
       num: "1.",
-      title: "UI/UX Design",
+      title: "Software Engineering",
       items: [
-        "Wireframes & mockups", "Interactive prototypes", "Design system & style guides",
-        "User flow diagrams", "Mobile-first & responsive design", "UX research and audits"
+        "Data Structures & Algorithms", "Object-oriented programming", "REST API design",
+        "Transaction workflows", "Debugging and testing", "System stability"
       ]
     },
     {
       num: "2.",
-      title: "Front-End Development",
+      title: "Full-Stack Development",
       items: [
-        "HTML5 / CSS3 / JavaScript", "Tailwind CSS or Bootstrap", "Web animations & transitions",
-        "Responsive layout using Flexbox & Grid", "React.js / Vue.js Integration", "Cross-browser compatibility"
+        "React", "Angular", "Next.js",
+        "Node.js", "FastAPI", "Spring Boot"
       ]
     },
     {
       num: "3.",
-      title: "Design to Code",
+      title: "DevOps and Data",
       items: [
-        "Framer development", "Clean, scalable, maintainable code", "SEO-ready structure",
-        "Mobile & tablet optimization", "Asset optimization for performance"
+        "MongoDB", "MySQL", "Docker",
+        "Kubernetes basics", "Kind cluster", "Linux"
       ]
     }
   ];
 
   const techSkills = [
-    { name: "Figma", level: 86, color: "text-[#f24e1e]" },
-    { name: "Adobe XD", level: 94, color: "text-[#ff61f6]" },
-    { name: "PS/AI", level: 62, color: "text-[#31a8ff]" },
-    { name: "Framer", level: 92, color: "text-[#00c6ff]" },
+    { name: "Java", level: 88, color: "text-[#f24e1e]" },
+    { name: "Python", level: 86, color: "text-[#ff61f6]" },
+    { name: "C++", level: 84, color: "text-[#31a8ff]" },
+    { name: "Spring Boot", level: 82, color: "text-[#00c6ff]" },
     { name: "React", level: 88, color: "text-[#53c1de]" },
-    { name: "Vite", level: 84, color: "text-[#ffc93c]" },
+    { name: "Docker", level: 74, color: "text-[#ffc93c]" },
   ];
 
   const industryAwards = [
-    { award: "Awwwards Nominee", year: "2023" },
-    { award: "CSS Design Awards", year: "2022" },
-    { award: "Behance Feature", year: "2019" },
-    { award: "Clutch Top UI/UX Designer", year: "2018" },
+    { award: "Software Engineering Job Simulation, JPMorgan Chase & Co", year: "2026" },
+    { award: "Certificate of Excellence in DSA in C++ by Coding Ninjas", year: "2026" },
+    { award: "Web Developer, Institute Innovation Council IIT Roorkee", year: "2024" },
+    { award: "Google Developer Student Club Project Contributor", year: "2026" },
   ];
 
   const teamAwards = [
-    { award: "Top Designer of the Year", year: "2021" },
-    { award: "Employee Excellence Award", year: "2017" },
-    { award: "Design Sprint Champion", year: "2023" },
+    { award: "Investing Accelerator Summit Internship", year: "2026" },
+    { award: "Suhane Safar Software Developer Certificate", year: "2025" },
+    { award: "Models and Robotics Section Whiteboard Project", year: "2025" },
   ];
 
   const feedback = [
@@ -88,6 +88,23 @@ export default function JourneyTimeline() {
       
       {/* SECTION 3.1: ABOUT ME & PREVIOUS LIFE COMBINED */}
       <div className="relative group" id="chapter-about">
+        {/* Massive Backdrop text: SINCE 2022 left reveal */}
+        <motion.div
+          className="group/since relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
+          initial={{ opacity: 0, x: "-18%" }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.45 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
+            <span
+              className="font-display text-[clamp(44px,16cqw,132px)] font-black uppercase text-neutral-700 leading-none transition-colors duration-300 group-hover/since:text-neutral-300"
+            >
+              SINCE 2022
+            </span>
+          </div>
+        </motion.div>
+
         {/* Commentary Marker */}
         <div className="font-mono text-[11px] text-neutral-600 mb-4 flex items-center gap-1 select-none">
           <span>&lt;!--</span>
@@ -95,17 +112,7 @@ export default function JourneyTimeline() {
           <span>--&gt;</span>
         </div>
 
-        {/* Massive Backdrop text: SINCE 2013 (Continuous Arrow Marquee) */}
-        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[60px] sm:h-[90px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
-          <div className="relative w-full flex overflow-hidden whitespace-nowrap">
-            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10">
-              <span>SINCE 2013 → SINCE 2013 → SINCE 2013 → SINCE 2013 → </span>
-            </div>
-            <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10" aria-hidden="true">
-              <span>SINCE 2013 → SINCE 2013 → SINCE 2013 → SINCE 2013 → </span>
-            </div>
-          </div>
-        </div>
+        
 
         <div className="relative grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 items-start">
           {/* Left Column Description + Previous Life */}
@@ -119,16 +126,16 @@ export default function JourneyTimeline() {
 
               <div className="text-neutral-400 font-mono text-xs sm:text-[13px] leading-relaxed space-y-3 font-light font-light">
                 <p>
-                  I'm a <span className="px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 font-mono text-xs text-amber-400 font-semibold shadow-sm select-text">UI/UX Designer and Front-End Developer</span> with a passion for crafting visually appealing and highly functional digital experiences. With a strong foundation in design principles and an eye for detail, I create intuitive interfaces that are both user-friendly and conversion-focused.
+                  I'm a <span className="px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 font-mono text-xs text-amber-400 font-semibold shadow-sm select-text">Software Engineer and Full-Stack Developer</span> with strong foundations in DSA, REST APIs, and product-focused engineering. I work across Spring Boot, Python, MERN, Docker, and Kubernetes to build reliable, usable systems.
                 </p>
                 <p>
-                  I enjoy collaborating with teams, solving real-world problems, and <span className="px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 font-mono text-xs text-amber-400 font-medium select-text">turning complex ideas into clean, engaging designs</span>.
+                  I enjoy collaborating with teams, solving real-world problems, and <span className="px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 font-mono text-xs text-amber-400 font-medium select-text">turning complex workflows into clean application code</span>.
                 </p>
               </div>
 
               <div className="pt-2">
                 <button 
-                  onClick={() => window.open("mailto:sidheshwar_s@bt.iitr.ac.in")}
+                  onClick={() => window.open("mailto:sidheshwar.sarangal22@gmail.com")}
                   className="px-5 py-2.5 bg-[#0e0f11] border border-white/5 hover:border-amber-500/25 hover:bg-neutral-900 text-neutral-300 font-mono font-medium text-xs rounded-full flex items-center gap-2 transition-all cursor-pointer shadow-md select-none hover:text-amber-400"
                 >
                   <span>Download CV</span>
@@ -187,7 +194,7 @@ export default function JourneyTimeline() {
               <span>follow me:</span>
               <a href="https://github.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors" title="GitHub"><Github size={12} /></a>
               <a href="https://x.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors" title="X"><Twitter size={12} /></a>
-              <a href="https://dribbble.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors" title="Dribbble"><Dribbble size={12} /></a>
+              <a href="https://www.linkedin.com/in/sidheshwar-sarangal-0b31482b8/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors" title="LinkedIn"><Linkedin size={12} /></a>
             </div>
           </div>
         </div>
@@ -277,15 +284,25 @@ export default function JourneyTimeline() {
 
       {/* SECTION 3.5: METICULOUS EDUCATION ARCHIVES (Practice Chronology List) */}
       <div className="space-y-5" id="chapter-history">
-        {/* Commentary Marker */}
-        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
-          <span>&lt;!--</span>
-          <span className="text-neutral-500 font-medium">Practice Chronologies</span>
-          <span>--&gt;</span>
-        </div>
+        {/* Massive Backdrop text: EXPERIENCE left reveal */}
+        <motion.div
+          className="group/experience relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
+          initial={{ opacity: 0, x: "-18%" }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.45 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
+            <span
+              className="font-display text-[clamp(44px,16cqw,132px)] font-black uppercase text-neutral-700 leading-none transition-colors duration-300 group-hover/experience:text-neutral-300"
+            >
+              EXPERIENCE
+            </span>
+          </div>
+        </motion.div>
 
         {/* Massive Backdrop text: EXPERIENCE (Continuous Arrow Marquee) */}
-        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[60px] sm:h-[90px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
+        <div className="hidden">
           <div className="relative w-full flex overflow-hidden whitespace-nowrap">
             <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10">
               <span>EXPERIENCE → EXPERIENCE → EXPERIENCE → EXPERIENCE → </span>
@@ -295,6 +312,14 @@ export default function JourneyTimeline() {
             </div>
           </div>
         </div>
+        {/* Commentary Marker */}
+        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
+          <span>&lt;!--</span>
+          <span className="text-neutral-500 font-medium">Practice Chronologies</span>
+          <span>--&gt;</span>
+        </div>
+
+        
 
         <div className="relative border-l border-white/5 ml-3 pl-6 space-y-6" id="histories-timeline-track">
           {TIMELINE.map((event) => (
@@ -331,15 +356,23 @@ export default function JourneyTimeline() {
 
       {/* SECTION 3.6: CLIENT WORDS */}
       <div className="space-y-6 relative py-4" id="chapter-testimonials">
-        {/* Commentary Marker */}
-        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
-          <span>&lt;!--</span>
-          <span className="text-neutral-500 font-medium">What clients say</span>
-          <span>--&gt;</span>
-        </div>
+        {/* Huge backdrop of words left reveal */}
+        <motion.div
+          className="group/words relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
+          initial={{ opacity: 0, x: "-18%" }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.45 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
+            <span className="font-display text-[clamp(44px,16cqw,132px)] font-black uppercase text-neutral-700 leading-none transition-colors duration-300 group-hover/words:text-neutral-300">
+              WORDS MATTER
+            </span>
+          </div>
+        </motion.div>
 
         {/* Huge backdrop of words (Continuous Arrow Marquee) */}
-        <div className="w-full overflow-hidden pointer-events-none select-none my-4 h-[60px] sm:h-[90px] flex items-center border-y border-white/5 bg-[#090a0c]/40 py-1">
+        <div className="hidden">
           <div className="relative w-full flex overflow-hidden whitespace-nowrap">
             <div className="animate-marquee flex-none min-w-full flex justify-around gap-12 text-4xl sm:text-6xl md:text-[75px] font-black uppercase text-white tracking-widest leading-none pr-10">
               <span>WORDS MATTER → WORDS MATTER → WORDS MATTER → WORDS MATTER → </span>
@@ -349,6 +382,14 @@ export default function JourneyTimeline() {
             </div>
           </div>
         </div>
+        {/* Commentary Marker */}
+        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
+          <span>&lt;!--</span>
+          <span className="text-neutral-500 font-medium">What clients say</span>
+          <span>--&gt;</span>
+        </div>
+
+        
 
         <div className="relative space-y-10">
           <div className="text-center">

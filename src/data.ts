@@ -2,24 +2,24 @@ import { Project, Article, TimelineEvent, SocialLink } from "./types";
 
 export const PERSONAL_BIO = {
   name: "Sidheshwar",
-  fullName: "Sidheshwar S.",
-  title: "Creative Digital Designer",
-  subtitle: "Focused on Detail, Craft, and Code",
+  fullName: "Sidheshwar Sarangal",
+  title: "Software Engineer",
+  subtitle: "Focused on Full-Stack Systems, APIs, and Product Code",
   location: "IIT Roorkee, India",
-  email: "sidheshwar_s@bt.iitr.ac.in",
+  email: "sidheshwar.sarangal22@gmail.com",
   avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=250&h=250&fit=crop",
-  about: "I am a designer-developer studying at IIT Roorkee, intersecting raw creativity with robust code. I specialize in crafting distinctive digital experiences, building interactive systems, and analyzing how software structures influence human behavior. I value ownership, persistence, and visual precision, constantly looking for ways to bridge physical detail into digital canvases.",
+  about: "I am an entry-level software engineer from IIT Roorkee with strong foundations in DSA and hands-on experience across Spring Boot, Python, MERN, REST APIs, Docker, and Kubernetes. I build full-stack products, backend workflows, and practical systems that connect clean interfaces with reliable application logic.",
 };
 
 export const PROJECTS: Project[] = [
   {
-    id: "skincare-ecommerce",
-    title: "Skincare eCommerce",
-    category: "eCommerce Design",
-    description: "Fluid e-commerce experience showcasing high-fidelity organic layout layers and custom product carousels to elevate digital purchases.",
-    roles: ["Interaction Design", "Frontend Development"],
+    id: "blog-article-search",
+    title: "Search Engine for Blogs and Articles",
+    category: "Search / AI Filtering",
+    description: "A Python-powered search pipeline that crawls web content, filters relevant links with Gemma 3:1b, stores data in MongoDB, and indexes it for fast retrieval.",
+    roles: ["Backend Engineering", "Frontend Development"],
     year: "2026",
-    technologies: ["React", "Framer Motion", "Tailwind CSS"],
+    technologies: ["Python", "Scrapy", "FastAPI", "React", "MongoDB", "OpenSearch"],
     accentColor: "emerald",
     imageUrl: "https://images.unsplash.com/photo-1608248597481-496100c80836?q=80&w=700&h=500&fit=crop",
     links: {
@@ -27,132 +27,132 @@ export const PROJECTS: Project[] = [
       dribbble: "https://dribbble.com/mrsidverse",
     },
     details: {
-      problem: "E-commerce apps are often loud, gridlocked, and full of flash notifications that exhaust user attention. Buyers need space to evaluate ingredients and understand formula concentrations.",
-      solution: "Engineered an ultra-low-density, highly responsive showcase with smooth horizontal slider loops and progressive image reveals.",
+      problem: "Students and readers need quick access to relevant technical blogs and articles without manually filtering large volumes of noisy web results.",
+      solution: "Built a crawler and indexing flow using Scrapy, AI filtering, MongoDB, BonsaiSearch, and a React/FastAPI interface for real-time search queries.",
       outcomes: [
-        "Constructed custom organic spring sliders responsive to scroll velocity",
-        "Designed eye-safe, high-contrast monochrome palettes with soft green accents",
-        "Increased layout engagement by 40% with fluid transitions"
+        "Executed web crawling with Scrapy and filtered links using Gemma 3:1b",
+        "Indexed MongoDB data to BonsaiSearch with the OpenSearch Python client",
+        "Developed a React frontend with FastAPI backend for live search results"
       ]
     },
     featured: true,
   },
   {
-    id: "minimal-form",
-    title: "Minimal Form",
-    category: "Interactive Interface",
-    description: "An ultra-clean, elegant micro-interactive questionnaire and input system. Responsive, keyboard-accessible design focusing on raw typography.",
-    roles: ["Interaction Physics", "Typography Foundations"],
+    id: "department-library-app",
+    title: "Department Library App",
+    category: "MERN Web App",
+    description: "A responsive library management app for the Biosciences and Bioengineering Department at IIT Roorkee, supporting student and librarian workflows.",
+    roles: ["Full-Stack Development", "Product Engineering"],
     year: "2025",
-    technologies: ["TypeScript", "CSS Grid", "Vite"],
+    technologies: ["MongoDB", "Express", "React", "Node.js"],
     accentColor: "blue",
     imageUrl: "https://images.unsplash.com/photo-1540221652346-e5dd6b50f3e7?q=80&w=700&h=500&fit=crop",
     links: {
       github: "https://github.com/mrsidverse/mrsid.in",
     },
     details: {
-      problem: "Online forms are cluttered and error-prone, offering poor touch targets and frustrating validator alerts.",
-      solution: "Created an immersive single-input focus engine where fields slide in with responsive elastic motion, accompanied by interactive typing telemetry.",
+      problem: "Department library workflows need an easier way for students and librarians to manage book issue and return activity.",
+      solution: "Developed a responsive MERN stack application focused on clear book management flows and user-friendly interactions.",
       outcomes: [
-        "Reduced validation errors with live, inline mechanical diagnostics",
-        "Implemented 100% fluid keyboard navigation pathways",
-        "Designed high-contrast, modern layout parameters using Swiss design ethics"
+        "Built student-facing and librarian-facing flows for book issue and return",
+        "Created a responsive interface suitable for daily departmental use",
+        "Used MERN stack patterns to connect interface, API, and data persistence"
       ]
     },
     featured: true,
   },
   {
-    id: "real-estate-website",
-    title: "Real Estate Website",
-    category: "Architectural Platform",
-    description: "A Brutalist-inspired landing environment for bespoke concrete architectural designs. Interactive maps and coordinate zoom controls.",
-    roles: ["Creative Direction", "3D Canvas Rendering"],
+    id: "whiteboard",
+    title: "Whiteboard",
+    category: "Collaborative MERN Tool",
+    description: "A collaborative whiteboard where users can draw, edit, export boards, and join controlled rooms with keys and optional passwords.",
+    roles: ["Full-Stack Development", "Deployment Architecture"],
     year: "2025",
-    technologies: ["D3.js", "Framer Motion", "React"],
+    technologies: ["MERN", "Kubernetes", "Kind Cluster"],
     accentColor: "amber",
     imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=700&h=500&fit=crop",
     links: {
       github: "https://github.com/mrsidverse/mrsid.in",
     },
     details: {
-      problem: "Typical real estate searches force users to browse small, cramped maps and cluttered filters.",
-      solution: "Built a responsive concrete-themed grid featuring direct geographic viewport overlays, customized architectural sketches, and clean typographic details.",
+      problem: "Collaborative drawing tools need simple room access, export flows, and a deployment architecture that can be explored beyond a monolith.",
+      solution: "Built a MERN whiteboard with room-based collaboration and implemented both monolithic deployment and a local Kubernetes microservices setup.",
       outcomes: [
-        "Synthesized text coordinates into a balanced dark editorial layout",
-        "Designed custom map pins with elegant real-time pointer-gravity triggers",
-        "Established a distraction-free modular system representing physical structures"
+        "Enabled drawing, editing, exporting, and room access control",
+        "Added optional room passwords and key-based collaboration access",
+        "Experimented with Kind cluster deployment for scalability understanding"
       ]
     },
     featured: true,
   },
   {
-    id: "podcast-landing-page",
-    title: "Podcast Landing Page",
-    category: "Media Design",
-    description: "Immersive dark layout displaying high-performance audio player nodes and episode timelines for audio explorers.",
-    roles: ["Frontend Engineering", "Interaction Physics"],
+    id: "social-media-website",
+    title: "Social Media Website",
+    category: "Full-Stack Social Platform",
+    description: "A MERN social media app with authentication, posts, follows, likes, comments, media storage, and real-time chat behavior.",
+    roles: ["Full-Stack Development", "Authentication"],
     year: "2024",
-    technologies: ["Audio Context API", "Vite", "Tailwind"],
+    technologies: ["MERN", "JWT", "Cloudinary", "Polling"],
     accentColor: "red",
     imageUrl: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=700&h=500&fit=crop",
     links: {
       github: "https://github.com/mrsidverse/mrsid.in",
     },
     details: {
-      problem: "Typical audio players are hidden, heavy, or fail to visualize the episode timeline context.",
-      solution: "Engineered an active SVG waveform visualizer utilizing the Web Audio API, pairing the sound frequencies with elastic node threads.",
+      problem: "Social applications require reliable identity, media handling, relationship actions, and responsive update flows.",
+      solution: "Developed a full-stack app with authentication, post interactions, follow systems, Cloudinary media storage, and periodic polling.",
       outcomes: [
-        "Developed custom canvas-based waveform indicators responsive to current playback status",
-        "Achieved rapid loading times inside lightweight standard containers",
-        "Created an intuitive play-pause interaction system with responsive pointer coordinates"
+        "Implemented JWT authentication and core social actions",
+        "Integrated Cloudinary for media storage",
+        "Supported real-time chat behavior through periodic polling"
       ]
     },
     featured: true,
   },
   {
-    id: "ai-meets-education",
-    title: "AI Meets Education",
-    category: "AI Technology",
-    description: "Smart interactive learning board integrating LLM agents to map personalized spatial study vectors and student trajectories.",
-    roles: ["Engineering", "LLM Integration", "Design Foundations"],
+    id: "payment-ai-testing-app",
+    title: "Payment and AI Testing App",
+    category: "Internal Product Prototype",
+    description: "An internal testing web app exploring Cashfree payments, Groq AI APIs, Angular frontend workflows, and structured feedback tracking.",
+    roles: ["Software Development", "API Integration", "Frontend Engineering"],
     year: "2026",
-    technologies: ["Gemini API", "Motion", "SaaS Structs"],
+    technologies: ["Angular", "React", "Cloudinary", "JWT", "Groq AI", "Cashfree APIs"],
     accentColor: "purple",
     imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=700&h=500&fit=crop",
     links: {
       github: "https://github.com/mrsidverse/mrsid.in",
     },
     details: {
-      problem: "Educational software maps learning metrics as dry flat percentages, completely failing to inspire dynamic conceptual curiosity.",
-      solution: "Engineered a live knowledge-graph explorer that dynamically reveals interconnected topics as the student progresses, styled in deep cosmic charcoal.",
+      problem: "Suhane Safar needed a way to explore future product capabilities around feedback, payments, subscriptions, and AI-powered media analysis.",
+      solution: "Proposed a Google Sheets workflow and built an internal test application to evaluate payment, AI, and frontend integration paths.",
       outcomes: [
-        "Integrated the latest Google Gemini SDK patterns safely behind server checkpoints",
-        "Designed fluid visual paths showing topic mastery through glowing node connections",
-        "Created active study dashboards emphasizing clear readability"
+        "Managed feedback and query tracking through a Google Sheets workflow",
+        "Explored Cashfree subscriptions and payments inside a test app",
+        "Worked with Groq APIs for text, audio, and image analysis"
       ]
     },
     featured: true,
   },
   {
-    id: "mobile-banking-app",
-    title: "Mobile Banking App",
-    category: "Fintech Interface",
-    description: "Sleek transaction tracking panel rendering secure financial flows and modular account overview components.",
-    roles: ["Interaction Physics", "Security Prototyping"],
+    id: "transaction-microservice",
+    title: "Transaction Microservice Simulation",
+    category: "Spring Boot / Kafka",
+    description: "A JPMorgan Chase & Co software engineering job simulation integrating Kafka, Spring Boot workflows, transaction validation, and REST APIs.",
+    roles: ["Backend Engineering", "Microservice Simulation"],
     year: "2023",
-    technologies: ["React", "Spring Physics", "D3.js"],
+    technologies: ["Spring Boot", "Kafka", "Spring Data JPA", "H2", "REST APIs", "Maven"],
     accentColor: "blue",
     imageUrl: "https://images.unsplash.com/photo-1563013544-824ae1d704d3?q=80&w=700&h=500&fit=crop",
     links: {
       github: "https://github.com/mrsidverse/mrsid.in",
     },
     details: {
-      problem: "Banking spreadsheets are notoriously complex, visually boring, and fail to convey clean trend markers.",
-      solution: "Created an interactive transaction visualizer displaying clean spending paths, modular accounts overview, and dynamic micro-charts.",
+      problem: "High-volume transaction systems need reliable message consumption, validation, persistence, and external incentive API integration.",
+      solution: "Integrated Kafka into a Spring Boot microservice, modeled transaction entities, persisted updates, and exposed REST endpoints for balance queries.",
       outcomes: [
-        "Constructed elegant cash-flow diagrams utilizing responsive D3 coordinates",
-        "Developed standard high-contrast accessibility levels for currency values",
-        "Shipped modular dashboard views optimizing space density"
+        "Consumed and deserialized transaction messages with embedded Kafka tests",
+        "Implemented transaction validation, persistence, and user balance updates",
+        "Verified end-to-end behavior with Maven tests and debugger inspection"
       ]
     },
     featured: true,
@@ -185,42 +185,42 @@ export const ARTICLES: Article[] = [
 export const TIMELINE: TimelineEvent[] = [
   {
     id: "exp-1",
-    period: "2024 - Present",
-    role: "Freelance Creative Designer",
-    organization: "Independent Practice",
-    location: "Roorkee & Remote",
-    description: "Collaborating with early-stage startups and creative founders to concept, prototype, and build high-quality web applications, branding assets, and editorial portfolios.",
+    period: "Jan 2026 - Feb 2026",
+    role: "Software Engineer Intern",
+    organization: "Investing Accelerator Summit",
+    location: "Remote",
+    description: "Supported payment, refund, and subscription backend workflows while building frontend architecture using Next.js and improving transactional data handling.",
     bulletPoints: [
       "Crafted bespoke interactive frontends with complex custom scroll behaviors and sensory animations using Framer Motion.",
       "Developed modular design grids to support easy maintenance across diverse client branding parameters.",
       "Designed clean vector assets, layouts, and typography palettes for desktop and mobile environments."
     ],
-    skills: ["Branding", "Interaction Design", "TypeScript", "Tailwind CSS"],
-    logoText: "IP"
+    skills: ["Next.js", "Backend Workflows", "Databases", "Debugging"],
+    logoText: "IAS"
   },
   {
     id: "exp-2",
-    period: "2023 - Present",
-    role: "Campus Product Designer",
-    organization: "IIT Roorkee Digital Assets",
-    location: "Roorkee, Uttarakhand",
-    description: "Leading branding, design system coordination, and reactive interface rendering for collaborative college initiatives and technical group products.",
+    period: "Mar 2025 - May 2025",
+    role: "Software Developer",
+    organization: "Suhane Safar",
+    location: "Remote",
+    description: "Built internal testing workflows around Cashfree payments, Groq AI APIs, Cloudinary, JWT authentication, and Angular/React frontend experiments.",
     bulletPoints: [
       "Designed high-fidelity mockups and functional react interfaces for internal academic and event trackers.",
       "Established typography hierarchy and components library used across multiple student repositories.",
       "Promoted responsive web guidelines, ensuring 100% accessible contrast ratios and mobile responsiveness."
     ],
-    skills: ["UIs System", "Vector Graphics", "React", "Mobile Optimization"],
-    logoText: "IIT"
+    skills: ["Angular", "React", "Groq AI", "Cashfree APIs"],
+    logoText: "SS"
   },
   {
     id: "exp-3",
     role: "Undergraduate Scholar",
-    period: "2022 - Present",
+    period: "2022 - 2026",
     organization: "Indian Institute of Technology, Roorkee",
     location: "Roorkee, Uttarakhand",
-    description: "Pursuing Engineering with a deep focus on design-technology intersection, creative coding, and data visualization.",
-    skills: ["Data Structures", "Quantitative Methods", "Fine Arts Interest"],
+    description: "Pursuing B.Tech in Biosciences and Bioengineering with strong foundations in DSA, OOP, REST APIs, and full-stack software development.",
+    skills: ["Data Structures", "OOP", "REST APIs", "Full-Stack Development"],
     logoText: "R"
   }
 ];
@@ -239,10 +239,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
     iconName: "Twitter",
   },
   {
-    platform: "Dribbble",
-    url: "https://dribbble.com/mrsidverse",
-    username: "mrsidverse",
-    iconName: "Dribbble",
+    platform: "LinkedIn",
+    url: "https://www.linkedin.com/in/sidheshwar-sarangal-0b31482b8/",
+    username: "sidheshwar-sarangal",
+    iconName: "Linkedin",
   },
   {
     platform: "Peerlist",
@@ -252,8 +252,8 @@ export const SOCIAL_LINKS: SocialLink[] = [
   },
   {
     platform: "Email",
-    url: "mailto:sidheshwar_s@bt.iitr.ac.in",
-    username: "sidheshwar_s@bt.iitr.ac.in",
+    url: "mailto:sidheshwar.sarangal22@gmail.com",
+    username: "sidheshwar.sarangal22@gmail.com",
     iconName: "Mail",
   }
 ];

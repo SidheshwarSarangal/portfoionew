@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { 
   User, MapPin, Mail, Sparkles, Download, 
-  Phone, Globe, Github, Twitter, Dribbble, Copy, Check 
+  Phone, Globe, Github, Twitter, Linkedin, Copy, Check 
 } from "lucide-react";
 import { PERSONAL_BIO, SOCIAL_LINKS } from "../data";
 
@@ -61,7 +61,7 @@ export default function LeftSidebar({ onContactClick }: LeftSidebarProps) {
         {/* Short bio block */}
         <div className="p-4 rounded-xl border border-white/5 bg-white/[0.01]">
           <p className="font-mono text-xs text-neutral-400 leading-relaxed font-light">
-            I am an engineering undergraduate at <strong className="text-amber-400 font-medium">IIT Roorkee</strong> intersecting raw creative aesthetics with functional code structures.
+            I am a B.Tech undergraduate at <strong className="text-amber-400 font-medium">IIT Roorkee</strong> building full-stack products, REST APIs, and backend systems.
           </p>
         </div>
 
@@ -74,7 +74,7 @@ export default function LeftSidebar({ onContactClick }: LeftSidebarProps) {
           <ul className="space-y-2.5 font-mono text-xs text-neutral-450 font-light pl-1">
             <li className="flex items-center gap-2.5">
               <User size={13} className="text-amber-400" />
-              <span>B.Tech Undergraduate</span>
+              <span>B.Tech Biosciences & Bioengineering</span>
             </li>
             <li className="flex items-center gap-2.5">
               <MapPin size={13} className="text-neutral-500" />
@@ -82,7 +82,7 @@ export default function LeftSidebar({ onContactClick }: LeftSidebarProps) {
             </li>
             <li className="flex items-center gap-2.5">
               <Globe size={13} className="text-neutral-500" />
-              <span>English, Hindi</span>
+              <span>Java, Python, C++, JavaScript</span>
             </li>
             <li 
               onClick={handleCopyEmail}
@@ -122,7 +122,7 @@ export default function LeftSidebar({ onContactClick }: LeftSidebarProps) {
             className="w-full py-2.5 border border-white/10 hover:border-amber-500/20 text-neutral-300 font-mono font-medium text-xs rounded-lg flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-amber-400 active:scale-[0.98] transition-all cursor-pointer"
           >
             <Download size={12} className="text-neutral-500" />
-            <span>Download Résumé</span>
+            <span>Download Resume</span>
           </button>
         </div>
       </div>
@@ -142,13 +142,13 @@ export default function LeftSidebar({ onContactClick }: LeftSidebarProps) {
             >
               {social.platform === "GitHub" && <Github size={15} />}
               {social.platform === "X / Twitter" && <Twitter size={15} />}
-              {social.platform === "Dribbble" && <Dribbble size={15} />}
+              {social.platform === "LinkedIn" && <Linkedin size={15} />}
             </a>
           ))}
         </div>
 
         <p className="font-mono text-[9px] text-neutral-600 tracking-wider text-center">
-          © {currentYear} SIDHESHWAR • IITR
+          (c) {currentYear} SIDHESHWAR - IITR
         </p>
       </div>
     </aside>

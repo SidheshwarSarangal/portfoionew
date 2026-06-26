@@ -28,7 +28,7 @@ export default function Hero({ onExploreClick }: HeroProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Creative Digital
+            Software
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -36,14 +36,14 @@ export default function Hero({ onExploreClick }: HeroProps) {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-neutral-500 font-light italic"
           >
-            Designer
+            Engineer
           </motion.div>
         </h1>
 
         <div className="pt-4 max-w-3xl">
           <p className="font-sans text-neutral-450 text-sm sm:text-lg leading-relaxed font-light">
             <DecryptText 
-              text="As a user-centric designer, I create visually refined, highly functional digital experiences that transform ideas into meaningful interactions." 
+              text="Entry-level software engineer with strong DSA foundations and hands-on work across Spring Boot, Python, MERN, REST APIs, Docker, and Kubernetes." 
               delay={350} 
               duration={1000} 
             />

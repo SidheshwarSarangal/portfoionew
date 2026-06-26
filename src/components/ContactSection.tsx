@@ -51,7 +51,7 @@ export default function ContactSection() {
             Together
           </h2>
           <p className="font-sans text-neutral-450 text-xs sm:text-sm font-light leading-relaxed max-w-xs pt-2">
-            Got an idea, a project, or want to discuss design-engineered systems? Let's connect.
+            Got an idea, a project, or want to discuss full-stack systems? Let's connect.
           </p>
         </div>
 
@@ -129,7 +129,7 @@ export default function ContactSection() {
           {/* Form Feedbacks */}
           {submitted && (
             <div className="p-3 bg-emerald-500/5 border border-emerald-500/10 text-emerald-400 font-mono text-[10px] rounded-lg text-left select-none">
-              ✓ Payload transmitted safely. Sidheshwar will be in touch shortly!
+              Payload transmitted safely. Sidheshwar will be in touch shortly!
             </div>
           )}
 
@@ -149,13 +149,13 @@ export default function ContactSection() {
       {/* FOOTER FOOTNOTE */}
       <div className="border-t border-white/5 mt-10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-neutral-500 font-mono text-[9px] select-none uppercase tracking-wider" id="contact-footnote">
         <p className="tracking-tight text-center sm:text-left">
-          © {currentYear} {PERSONAL_BIO.name.toUpperCase()} • DESIGNED & BUILT FROM IIT ROORKEE.
+          (c) {currentYear} {PERSONAL_BIO.name.toUpperCase()} - BUILT FROM IIT ROORKEE.
         </p>
         <div className="flex gap-4">
           <a href="https://github.com/mrsidverse/mrsid.in" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
             OPEN SOURCE CODE
           </a>
-          <span>•</span>
+          <span>-</span>
           <span className="text-amber-400 flex items-center gap-1 font-bold">
             <Sparkles size={10} /> STAY PERSISTENT
           </span>

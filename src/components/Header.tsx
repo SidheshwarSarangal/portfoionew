@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Menu, X, Clock, FileCode, CheckCheck, FileText, 
   BookOpen, Braces, Terminal, ArrowUpRight, ChevronRight,
-  User, MapPin, Github, Twitter, Dribbble,
+  User, MapPin, Github, Twitter, Linkedin,
   Mail, Phone, Sparkles, Download, Globe, Copy, Check
 } from "lucide-react";
 import { PROJECTS, ARTICLES, PERSONAL_BIO, SOCIAL_LINKS } from "../data";
@@ -230,7 +230,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
               {/* Short bio block */}
               <div className="p-4 rounded-xl border border-white/5 bg-[#070809]/40">
                 <p className="font-mono text-xs text-neutral-400 leading-relaxed font-light">
-                  I am an engineering undergraduate at <strong className="text-amber-400 font-medium">IIT Roorkee</strong> intersecting raw creative aesthetics with functional code structures.
+                  I am a B.Tech undergraduate at <strong className="text-amber-400 font-medium">IIT Roorkee</strong> building full-stack products, REST APIs, and backend systems.
                 </p>
               </div>
 
@@ -243,7 +243,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
                 <ul className="space-y-2 font-mono text-xs text-neutral-400 font-light pl-1 bg-white/[0.01] p-3 rounded-xl border border-white/5">
                   <li className="flex items-center gap-2.5">
                     <User size={13} className="text-amber-400" />
-                    <span>B.Tech Undergraduate</span>
+                    <span>B.Tech Biosciences & Bioengineering</span>
                   </li>
                   <li className="flex items-center gap-2.5">
                     <MapPin size={13} className="text-neutral-500" />
@@ -251,7 +251,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
                   </li>
                   <li className="flex items-center gap-2.5">
                     <Globe size={13} className="text-neutral-500" />
-                    <span>English, Hindi</span>
+                    <span>Java, Python, C++, JavaScript</span>
                   </li>
                   <li 
                     onClick={handleCopyEmail}
@@ -291,7 +291,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
                   className="w-full py-2 border border-white/10 hover:border-amber-500/20 text-neutral-300 font-mono font-medium text-xs rounded-lg flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-amber-400 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Download size={11} className="text-neutral-500" />
-                  <span>Download Résumé</span>
+                  <span>Download Resume</span>
                 </button>
               </div>
 
@@ -308,7 +308,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
                   >
                     {social.platform === "GitHub" && <Github size={14} />}
                     {social.platform === "X / Twitter" && <Twitter size={14} />}
-                    {social.platform === "Dribbble" && <Dribbble size={14} />}
+                    {social.platform === "LinkedIn" && <Linkedin size={14} />}
                   </a>
                 ))}
               </div>
