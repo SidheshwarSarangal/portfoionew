@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { ArrowDown, Mail } from "lucide-react";
-import { PERSONAL_BIO } from "../data";
+import { usePortfolioContent } from "../content";
 import DecryptText from "./DecryptText";
 
 interface HeroProps {
@@ -8,6 +8,7 @@ interface HeroProps {
 }
 
 export default function Hero({ onExploreClick }: HeroProps) {
+  const { personalBio: PERSONAL_BIO } = usePortfolioContent();
   return (
     <section 
       id="hero" 

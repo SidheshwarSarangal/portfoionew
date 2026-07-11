@@ -4,13 +4,14 @@ import {
   User, MapPin, Mail, Sparkles, Download, 
   Phone, Globe, Github, Twitter, Linkedin, Copy, Check 
 } from "lucide-react";
-import { PERSONAL_BIO, SOCIAL_LINKS } from "../data";
+import { usePortfolioContent } from "../content";
 
 interface LeftSidebarProps {
   onContactClick: () => void;
 }
 
 export default function LeftSidebar({ onContactClick }: LeftSidebarProps) {
+  const { personalBio: PERSONAL_BIO, socialLinks: SOCIAL_LINKS } = usePortfolioContent();
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = () => {

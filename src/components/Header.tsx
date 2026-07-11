@@ -6,7 +6,7 @@ import {
   User, MapPin, Github, Twitter, Linkedin,
   Mail, Phone, Sparkles, Download, Globe, Copy, Check
 } from "lucide-react";
-import { PROJECTS, ARTICLES, PERSONAL_BIO, SOCIAL_LINKS } from "../data";
+import { usePortfolioContent } from "../content";
 
 interface HeaderProps {
   activeSection: string;
@@ -14,6 +14,12 @@ interface HeaderProps {
 }
 
 export default function Header({ activeSection, onNavClick }: HeaderProps) {
+  const {
+    projects: PROJECTS,
+    articles: ARTICLES,
+    personalBio: PERSONAL_BIO,
+    socialLinks: SOCIAL_LINKS,
+  } = usePortfolioContent();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
   const [copied, setCopied] = useState(false);
@@ -329,4 +335,3 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
     </header>
   );
 }
-

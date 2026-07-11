@@ -257,3 +257,71 @@ export const SOCIAL_LINKS: SocialLink[] = [
     iconName: "Mail",
   }
 ];
+
+export const EXPERIENCE_SUMMARY = [
+  { period: "Jan 2026 - Feb 2026", role: "Software Engineer Intern", org: "Investing Accelerator Summit" },
+  { period: "Mar 2025 - May 2025", role: "Software Developer", org: "Suhane Safar" },
+  { period: "2024 - present", role: "Web Developer", org: "Institute Innovation Council, IIT Roorkee" },
+  { period: "2022 - 2026", role: "B.Tech Undergraduate", org: "Indian Institute of Technology, Roorkee" },
+];
+
+export const CAPABILITIES = [
+  {
+    num: "1.",
+    title: "Software Engineering",
+    items: ["Data Structures & Algorithms", "Object-oriented programming", "REST API design", "Transaction workflows", "Debugging and testing", "System stability"],
+  },
+  {
+    num: "2.",
+    title: "Full-Stack Development",
+    items: ["React", "Angular", "Next.js", "Node.js", "FastAPI", "Spring Boot"],
+  },
+  {
+    num: "3.",
+    title: "DevOps and Data",
+    items: ["MongoDB", "MySQL", "Docker", "Kubernetes basics", "Kind cluster", "Linux"],
+  },
+];
+
+export const TECH_SKILLS = [
+  { name: "Java", level: 88, color: "text-[#f24e1e]" },
+  { name: "Python", level: 86, color: "text-[#ff61f6]" },
+  { name: "C++", level: 84, color: "text-[#31a8ff]" },
+  { name: "Spring Boot", level: 82, color: "text-[#00c6ff]" },
+  { name: "React", level: 88, color: "text-[#53c1de]" },
+  { name: "Docker", level: 74, color: "text-[#ffc93c]" },
+];
+
+export const INDUSTRY_AWARDS = [
+  { award: "Software Engineering Job Simulation, JPMorgan Chase & Co", year: "2026" },
+  { award: "Certificate of Excellence in DSA in C++ by Coding Ninjas", year: "2026" },
+  { award: "Web Developer, Institute Innovation Council IIT Roorkee", year: "2024" },
+  { award: "Google Developer Student Club Project Contributor", year: "2026" },
+];
+
+export const TEAM_AWARDS = [
+  { award: "Investing Accelerator Summit Internship", year: "2026" },
+  { award: "Suhane Safar Software Developer Certificate", year: "2025" },
+  { award: "Models and Robotics Section Whiteboard Project", year: "2025" },
+];
+
+export const TESTIMONIALS = [
+  {
+    quote: "The designs were modern, intuitive, and perfectly aligned with our brand. One of the best UI/UX experts we've hired!",
+    author: "James P.",
+    role: "Founder",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&h=150&fit=crop",
+  },
+  {
+    quote: "Not only is the work visually stunning, but it's also grounded in real usability. A true professional.",
+    author: "Ananya Rames",
+    role: "Tech Lead at CoreUX Labs",
+    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&h=150&fit=crop",
+  },
+  {
+    quote: "From Figma to functional code – everything was delivered on time.",
+    author: "David K.",
+    role: "CEO of LaunchFoundry",
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&h=150&fit=crop",
+  },
+];

@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Project } from "../types";
-import { PROJECTS } from "../data";
+import { usePortfolioContent } from "../content";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 
 interface ProjectsGridProps {
@@ -8,6 +8,7 @@ interface ProjectsGridProps {
 }
 
 export default function ProjectsGrid({ onProjectClick }: ProjectsGridProps) {
+  const { projects: PROJECTS } = usePortfolioContent();
   return (
     <section id="work" className="max-w-5xl mx-auto px-6 py-10 border-t border-white/5 select-text">
       {/* Commentary Marker */}

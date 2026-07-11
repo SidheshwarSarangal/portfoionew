@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { PERSONAL_BIO } from "../data";
+import { usePortfolioContent } from "../content";
 import { Sparkles, ArrowRight } from "lucide-react";
 
 export default function ContactSection() {
+  const { personalBio: PERSONAL_BIO } = usePortfolioContent();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");

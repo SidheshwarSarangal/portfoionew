@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Article } from "../types";
-import { ARTICLES } from "../data";
+import { usePortfolioContent } from "../content";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 interface WritingListProps {
@@ -8,6 +8,7 @@ interface WritingListProps {
 }
 
 export default function WritingList({ onArticleClick }: WritingListProps) {
+  const { articles: ARTICLES } = usePortfolioContent();
   return (
     <section id="writings" className="max-w-5xl mx-auto px-6 py-10 border-t border-white/5 select-text">
       
