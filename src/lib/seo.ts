@@ -109,7 +109,7 @@ export function useSeoMetadata({ personalBio, socialLinks, project, article }: S
             "@context": "https://schema.org",
             "@graph": [
               { "@type": "WebSite", "@id": `${absoluteUrl("/")}#website`, url: absoluteUrl("/"), name: personalBio.fullName },
-              { "@type": "ProfilePage", "@id": `${absoluteUrl("/")}#profile", url: absoluteUrl("/"), mainEntity: person },
+              { "@type": "ProfilePage", "@id": `${absoluteUrl("/")}#profile`, url: absoluteUrl("/"), mainEntity: person },
               person,
             ],
           };

@@ -360,7 +360,6 @@ export default function JourneyTimeline() {
                       decoding="async"
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover grayscale brightness-[0.85] hover:grayscale-0 hover:brightness-100 transition-all duration-300"
-                      referrerPolicy="no-referrer"
                     />
                   </div>
 
