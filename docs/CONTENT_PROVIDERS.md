@@ -88,13 +88,10 @@ Do not add a Sanity write token to this frontend. Editing and publishing belong 
 
 ## Custom provider
 
-Create a provider that implements `ContentProvider`:
+For a small integration, add a provider that implements `ContentProvider` inside `src/content/providers.ts`:
 
 ```ts
-import type {
-  ContentProvider,
-  PortfolioContentOverrides,
-} from "../types";
+import type { ContentProvider, PortfolioContentOverrides } from "./types";
 
 export class CustomContentProvider implements ContentProvider {
   readonly name = "custom";
@@ -106,7 +103,7 @@ export class CustomContentProvider implements ContentProvider {
 }
 ```
 
-Register it in `src/content/providers/index.ts`. Provider-specific field names must be converted inside the adapter; UI components should never be changed to accommodate a backend.
+Add it to the switch in `createContentProvider()`. Provider-specific field names must be converted inside this module; UI components should never be changed to accommodate a backend. If the provider module becomes genuinely large, it can be split later without changing the public content API.
 
 ## Security model
 

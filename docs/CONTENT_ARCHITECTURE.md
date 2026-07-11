@@ -83,10 +83,10 @@ All provider configuration uses public, read-only frontend variables. Write cred
 
 ## Adding another provider
 
-1. Create `src/content/providers/<name>.provider.ts`.
+1. Add a small provider class in `src/content/providers.ts`.
 2. Implement `ContentProvider`.
 3. Convert the remote response into `PortfolioContentOverrides` inside that provider.
-4. Register it in `src/content/providers/index.ts`.
+4. Add its selection case to `createContentProvider()`.
 5. Add only public configuration examples to `.env.example`.
 6. Do not change UI components.
 

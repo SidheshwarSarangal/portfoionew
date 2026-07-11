@@ -2,6 +2,8 @@
 
 A Vite, React, TypeScript, Tailwind CSS, and Motion portfolio.
 
+New here? Start with the [simple project structure guide](docs/PROJECT_STRUCTURE.md).
+
 ## Run locally
 
 Requirements: Node.js 20 or newer.

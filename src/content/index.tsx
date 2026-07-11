@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { defaultContent, mergeContent } from "./content/defaults";
-import { createContentProvider } from "./content/providers";
-import type { PortfolioContent, PortfolioContentOverrides } from "./content/types";
+import { defaultContent, mergeContent } from "./defaults";
+import { createContentProvider } from "./providers";
+import type { PortfolioContent, PortfolioContentOverrides } from "./types";
 
-export type { PortfolioContent, PortfolioContentOverrides } from "./content/types";
+export type { PortfolioContent, PortfolioContentOverrides } from "./types";
 
 const PortfolioContentContext = createContext<PortfolioContent>(defaultContent);
 
