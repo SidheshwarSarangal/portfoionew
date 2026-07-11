@@ -35,6 +35,8 @@ Read [the architecture reference](docs/CONTENT_ARCHITECTURE.md) before changing 
 
 Search discovery, metadata, route generation, Search Console, and optional analytics setup are documented in [the SEO and analytics guide](docs/SEO_AND_ANALYTICS.md).
 
+Runtime hardening, hosting headers, secrets, caching, and maintenance are documented in [the security and performance guide](docs/SECURITY_AND_PERFORMANCE.md).
+
 ## Local content
 
 The default provider reads:

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { Project, Article } from "./types";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -6,14 +6,15 @@ import ProjectsGrid from "./components/ProjectsGrid";
 import JourneyTimeline from "./components/JourneyTimeline";
 import WritingList from "./components/WritingList";
 import ContactSection from "./components/ContactSection";
-import ProjectDetailModal from "./components/ProjectDetailModal";
-import ArticleModal from "./components/ArticleModal";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
 import { usePortfolioContent } from "./content";
 import { articlePath, homePath, projectPath, readContentRoute } from "./lib/routes";
 import { trackEvent } from "./lib/analytics";
 import { useSeoMetadata } from "./lib/seo";
+
+const ProjectDetailModal = lazy(() => import("./components/ProjectDetailModal"));
+const ArticleModal = lazy(() => import("./components/ArticleModal"));
 
 export default function App() {
   const { projects, articles, personalBio, socialLinks } = usePortfolioContent();
@@ -85,34 +86,23 @@ export default function App() {
       "writings", 
       "contact"
     ];
-    const observers = sections.map((sectionId) => {
-      const el = document.getElementById(sectionId);
-      if (!el) return null;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveSection(sectionId);
+            setActiveSection(entry.target.id);
           }
-        },
-        { rootMargin: "-30% 0px -45% 0px" } // Medium mid-screen intersection triggering range
-      );
+        });
+      },
+      { rootMargin: "-30% 0px -45% 0px" }
+    );
 
-      observer.observe(el);
-      return { observer, el };
+    sections.forEach((sectionId) => {
+      const element = document.getElementById(sectionId);
+      if (element) observer.observe(element);
     });
 
-    return () => {
-      observers.forEach((obs) => {
-        if (obs) {
-          try {
-            obs.observer.disconnect();
-          } catch (e) {
-            // ignore cleanup details
-          }
-        }
-      });
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -175,16 +165,22 @@ export default function App() {
       </div>
 
       {/* Interactive Detail modal for case studies */}
-      <ProjectDetailModal 
-        project={selectedProject} 
-        onClose={closeDetail}
-      />
+      <Suspense fallback={null}>
+        {selectedProject && (
+          <ProjectDetailModal
+            project={selectedProject}
+            onClose={closeDetail}
+          />
+        )}
 
       {/* Interactive reader overlay for cerebral text notes */}
-      <ArticleModal 
-        article={selectedArticle} 
-        onClose={closeDetail}
-      />
+        {selectedArticle && (
+          <ArticleModal
+            article={selectedArticle}
+            onClose={closeDetail}
+          />
+        )}
+      </Suspense>
 
     </div>
   );

@@ -13,6 +13,14 @@ interface HeaderProps {
   onNavClick: (sectionId: string) => void;
 }
 
+const IST_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: "Asia/Kolkata",
+  hour: "numeric",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: true,
+});
+
 export default function Header({ activeSection, onNavClick }: HeaderProps) {
   const {
     projects: PROJECTS,
@@ -32,15 +40,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
 
   useEffect(() => {
     const updateTime = () => {
-      const now = new Date();
-      const options: Intl.DateTimeFormatOptions = {
-        timeZone: "Asia/Kolkata",
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      };
-      setCurrentTime(new Intl.DateTimeFormat("en-US", options).format(now));
+      setCurrentTime(IST_TIME_FORMATTER.format(new Date()));
     };
 
     updateTime();

@@ -355,8 +355,11 @@ export default function JourneyTimeline() {
                       : "right-[#10px] sm:right-[-24px]"
                   }`}>
                     <img 
-                      src={(f as any).avatarUrl} 
+                      src={f.avatarUrl}
                       alt={f.author}
+                      loading="lazy"
+                      decoding="async"
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover grayscale brightness-[0.85] hover:grayscale-0 hover:brightness-100 transition-all duration-300"
                       referrerPolicy="no-referrer"
                     />

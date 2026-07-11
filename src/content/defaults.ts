@@ -12,6 +12,7 @@ import {
   TIMELINE,
 } from "../data";
 import type { PortfolioContent, PortfolioContentOverrides } from "./types";
+import { isEmail, safeContactUrl, safeWebUrl } from "../lib/security";
 
 export const defaultContent: PortfolioContent = {
   personalBio: PERSONAL_BIO,
@@ -28,17 +29,42 @@ export const defaultContent: PortfolioContent = {
 };
 
 export function mergeContent(overrides: PortfolioContentOverrides): PortfolioContent {
+  const personalBio = { ...defaultContent.personalBio, ...overrides.personalBio };
+  personalBio.email = isEmail(personalBio.email) ? personalBio.email : defaultContent.personalBio.email;
+  personalBio.avatarUrl = safeWebUrl(personalBio.avatarUrl, defaultContent.personalBio.avatarUrl);
+
+  const projects = (overrides.projects ?? defaultContent.projects).map((project) => ({
+    ...project,
+    imageUrl: safeWebUrl(project.imageUrl),
+    links: {
+      live: safeWebUrl(project.links.live),
+      github: safeWebUrl(project.links.github),
+      dribbble: safeWebUrl(project.links.dribbble),
+      behance: safeWebUrl(project.links.behance),
+    },
+  }));
+
+  const socialLinks = (overrides.socialLinks ?? defaultContent.socialLinks).map((link) => ({
+    ...link,
+    url: safeContactUrl(link.url, "#"),
+  }));
+
+  const testimonials = (overrides.testimonials ?? defaultContent.testimonials).map((testimonial) => ({
+    ...testimonial,
+    avatarUrl: safeWebUrl(testimonial.avatarUrl),
+  }));
+
   return {
-    personalBio: { ...defaultContent.personalBio, ...overrides.personalBio },
-    projects: overrides.projects ?? defaultContent.projects,
+    personalBio,
+    projects,
     articles: overrides.articles ?? defaultContent.articles,
     timeline: overrides.timeline ?? defaultContent.timeline,
-    socialLinks: overrides.socialLinks ?? defaultContent.socialLinks,
+    socialLinks,
     experienceSummary: overrides.experienceSummary ?? defaultContent.experienceSummary,
     capabilities: overrides.capabilities ?? defaultContent.capabilities,
     techSkills: overrides.techSkills ?? defaultContent.techSkills,
     industryAwards: overrides.industryAwards ?? defaultContent.industryAwards,
     teamAwards: overrides.teamAwards ?? defaultContent.teamAwards,
-    testimonials: overrides.testimonials ?? defaultContent.testimonials,
+    testimonials,
   };
 }

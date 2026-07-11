@@ -1,4 +1,5 @@
 import type { ContentProvider, PortfolioContentOverrides } from "./types";
+import { requirePublicHttpUrl } from "../lib/security";
 
 class LocalProvider implements ContentProvider {
   readonly name = "local";
@@ -15,7 +16,7 @@ class RestProvider implements ContentProvider {
   readonly name = "rest";
 
   constructor(private readonly endpoint: string) {
-    if (!endpoint) throw new Error("VITE_CONTENT_API_URL is required for the REST provider.");
+    this.endpoint = requirePublicHttpUrl(endpoint, "VITE_CONTENT_API_URL");
   }
 
   async load(signal?: AbortSignal): Promise<PortfolioContentOverrides> {
@@ -38,6 +39,12 @@ class SanityProvider implements ContentProvider {
   ) {
     if (!projectId || !dataset) {
       throw new Error("VITE_SANITY_PROJECT_ID and VITE_SANITY_DATASET are required for Sanity.");
+    }
+    if (!/^[a-z0-9-]+$/.test(projectId) || !/^[a-zA-Z0-9_-]+$/.test(dataset)) {
+      throw new Error("Sanity project and dataset identifiers contain unsupported characters.");
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(apiVersion)) {
+      throw new Error("VITE_SANITY_API_VERSION must use YYYY-MM-DD format.");
     }
   }
 

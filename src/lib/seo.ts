@@ -72,7 +72,7 @@ export function useSeoMetadata({ personalBio, socialLinks, project, article }: S
     upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: image });
     upsertLink("canonical", canonical);
 
-    const sameAs = socialLinks.filter((link) => !link.url.startsWith("mailto:")).map((link) => link.url);
+    const sameAs = socialLinks.filter((link) => /^https?:\/\//.test(link.url)).map((link) => link.url);
     const person = {
       "@type": "Person",
       "@id": `${absoluteUrl("/")}#person`,
