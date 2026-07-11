@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Project } from "../types";
+import type { Project } from "../types";
 import { usePortfolioContent } from "../content";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { projectPath } from "../lib/routes";

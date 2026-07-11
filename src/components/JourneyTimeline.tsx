@@ -1,9 +1,8 @@
 import { motion } from "motion/react";
 import { usePortfolioContent } from "../content";
 import { 
-  Briefcase, GraduationCap, Github, Twitter, Linkedin, ArrowDown, UserCheck 
+  Github, Twitter, Linkedin, ArrowDown
 } from "lucide-react";
-import DecryptText from "./DecryptText";
 
 export default function JourneyTimeline() {
   const {

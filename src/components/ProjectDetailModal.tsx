@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "motion/react";
-import { X, ArrowUpRight, Github, ExternalLink, Dribbble } from "lucide-react";
-import { Project } from "../types";
+import { X, Github, ExternalLink, Dribbble } from "lucide-react";
+import type { Project } from "../types";
 import { useEffect } from "react";
 import { trackEvent } from "../lib/analytics";
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   Menu, X, Clock, FileCode, CheckCheck, FileText, 
-  BookOpen, Braces, Terminal, ArrowUpRight, ChevronRight,
+  BookOpen, Braces, Terminal, ChevronRight,
   User, MapPin, Github, Twitter, Linkedin,
   Mail, Phone, Sparkles, Download, Globe, Copy, Check
 } from "lucide-react";

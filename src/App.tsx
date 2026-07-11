@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from "react";
-import { Project, Article } from "./types";
+import type { Project, Article } from "./types";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import ProjectsGrid from "./components/ProjectsGrid";

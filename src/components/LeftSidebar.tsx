@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "motion/react";
 import { 
   User, MapPin, Mail, Sparkles, Download, 
   Phone, Globe, Github, Twitter, Linkedin, Copy, Check 

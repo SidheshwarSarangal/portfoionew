@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "motion/react";
-import { X, Calendar, Clock, BookOpen, Share2 } from "lucide-react";
-import { Article } from "../types";
+import { X, Calendar, Clock, Share2 } from "lucide-react";
+import type { Article } from "../types";
 import { useEffect, useState } from "react";
 
 interface ArticleModalProps {

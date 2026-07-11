@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { motion } from "motion/react";
 import { usePortfolioContent } from "../content";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { trackEvent } from "../lib/analytics";
