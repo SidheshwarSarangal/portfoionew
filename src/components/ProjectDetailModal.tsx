@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "motion/react";
 import { X, ArrowUpRight, Github, ExternalLink, Dribbble } from "lucide-react";
 import { Project } from "../types";
+import { useEffect } from "react";
+import { trackEvent } from "../lib/analytics";
 
 interface ProjectDetailModalProps {
   project: Project | null;
@@ -8,6 +10,15 @@ interface ProjectDetailModalProps {
 }
 
 export default function ProjectDetailModal({ project, onClose }: ProjectDetailModalProps) {
+  useEffect(() => {
+    if (!project) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [project, onClose]);
+
   if (!project) return null;
 
   return (
@@ -15,6 +26,9 @@ export default function ProjectDetailModal({ project, onClose }: ProjectDetailMo
       <div 
         className="fixed inset-0 z-50 overflow-y-auto" 
         id="project-detail-modal-wrapper"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="project-modal-title"
       >
         {/* Backdrop overlay */}
         <motion.div
@@ -39,6 +53,7 @@ export default function ProjectDetailModal({ project, onClose }: ProjectDetailMo
             {/* Close button */}
             <button
               onClick={onClose}
+              aria-label="Close project details"
               className="absolute top-5 right-5 p-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer transition-colors"
               id="project-modal-close-btn"
             >
@@ -50,7 +65,7 @@ export default function ProjectDetailModal({ project, onClose }: ProjectDetailMo
               <span className="font-mono text-xs text-neutral-500 font-medium bg-white/5 px-2.5 py-1 rounded-md">
                 Project • {project.year}
               </span>
-              <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-white font-medium tracking-tight mt-4">
+              <h1 id="project-modal-title" className="font-display text-2xl sm:text-3xl md:text-4xl text-white font-medium tracking-tight mt-4">
                 {project.title}
               </h1>
               <p className="font-sans text-neutral-400 text-sm mt-3 leading-relaxed font-light">
@@ -84,6 +99,7 @@ export default function ProjectDetailModal({ project, onClose }: ProjectDetailMo
                       href={project.links.github}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackEvent("project_repository_click", { project_id: project.id })}
                       className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-neutral-300 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1.5"
                     >
                       <Github size={12} />
@@ -106,6 +122,7 @@ export default function ProjectDetailModal({ project, onClose }: ProjectDetailMo
                       href={project.links.live}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackEvent("live_demo_click", { project_id: project.id })}
                       className="px-3 py-1.5 rounded-full bg-white text-black text-xs hover:bg-neutral-200 font-medium transition-colors flex items-center gap-1.5"
                     >
                       <ExternalLink size={12} />

@@ -31,6 +31,8 @@ If a provider fails or omits a property, built-in demonstration content from `sr
 
 Read [the architecture reference](docs/CONTENT_ARCHITECTURE.md) before changing the content system. Configuration and integration instructions are in [the provider guide](docs/CONTENT_PROVIDERS.md).
 
+Search discovery, metadata, route generation, Search Console, and optional analytics setup are documented in [the SEO and analytics guide](docs/SEO_AND_ANALYTICS.md).
+
 ## Local content
 
 The default provider reads:

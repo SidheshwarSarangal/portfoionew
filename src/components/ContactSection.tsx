@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "motion/react";
 import { usePortfolioContent } from "../content";
 import { Sparkles, ArrowRight } from "lucide-react";
+import { trackEvent } from "../lib/analytics";
 
 export default function ContactSection() {
   const { personalBio: PERSONAL_BIO } = usePortfolioContent();
@@ -19,6 +20,10 @@ export default function ContactSection() {
     if (!firstName || !email || !message) return;
 
     setLoading(true);
+    const mailSubject = subject || `Portfolio enquiry from ${firstName} ${lastName}`.trim();
+    const mailBody = `${message}\n\nFrom: ${firstName} ${lastName}\nEmail: ${email}`;
+    window.location.href = `mailto:${PERSONAL_BIO.email}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+    trackEvent("contact_submit", { method: "mailto" });
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
@@ -29,7 +34,7 @@ export default function ContactSection() {
       setSubject("");
       setMessage("");
       setTimeout(() => setSubmitted(false), 5000);
-    }, 1200);
+    }, 300);
   };
 
   const currentYear = new Date().getFullYear();
@@ -130,7 +135,7 @@ export default function ContactSection() {
           {/* Form Feedbacks */}
           {submitted && (
             <div className="p-3 bg-emerald-500/5 border border-emerald-500/10 text-emerald-400 font-mono text-[10px] rounded-lg text-left select-none">
-              Payload transmitted safely. Sidheshwar will be in touch shortly!
+              Email draft opened. Send it from your mail app to complete your message.
             </div>
           )}
 

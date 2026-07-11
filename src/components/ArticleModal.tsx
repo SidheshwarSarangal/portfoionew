@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { X, Calendar, Clock, BookOpen, Share2 } from "lucide-react";
 import { Article } from "../types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ArticleModalProps {
   article: Article | null;
@@ -10,6 +10,16 @@ interface ArticleModalProps {
 
 export default function ArticleModal({ article, onClose }: ArticleModalProps) {
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!article) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [article, onClose]);
+
   if (!article) return null;
 
   const handleShare = () => {
@@ -82,6 +92,9 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
       <div 
         className="fixed inset-0 z-50 overflow-y-auto" 
         id="article-detail-modal-wrapper"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="article-modal-title"
       >
         {/* Backdrop overlay */}
         <motion.div
@@ -106,6 +119,7 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
             {/* Close button */}
             <button
               onClick={onClose}
+              aria-label="Close article"
               className="absolute top-5 right-5 p-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer transition-colors"
               id="article-modal-close-btn"
             >

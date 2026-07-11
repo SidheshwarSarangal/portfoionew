@@ -10,11 +10,50 @@ import ProjectDetailModal from "./components/ProjectDetailModal";
 import ArticleModal from "./components/ArticleModal";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
+import { usePortfolioContent } from "./content";
+import { articlePath, homePath, projectPath, readContentRoute } from "./lib/routes";
+import { trackEvent } from "./lib/analytics";
+import { useSeoMetadata } from "./lib/seo";
 
 export default function App() {
+  const { projects, articles, personalBio, socialLinks } = usePortfolioContent();
   const [activeSection, setActiveSection] = useState("hero");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+
+  const syncRoute = () => {
+    const route = readContentRoute();
+    setSelectedProject(route.type === "project" ? projects.find((project) => project.id === route.value) ?? null : null);
+    setSelectedArticle(route.type === "article" ? articles.find((article) => article.slug === route.value) ?? null : null);
+  };
+
+  const openProject = (project: Project) => {
+    window.history.pushState({}, "", projectPath(project.id));
+    setSelectedArticle(null);
+    setSelectedProject(project);
+    trackEvent("project_open", { project_id: project.id, project_title: project.title });
+  };
+
+  const openArticle = (article: Article) => {
+    window.history.pushState({}, "", articlePath(article.slug));
+    setSelectedProject(null);
+    setSelectedArticle(article);
+    trackEvent("article_open", { article_id: article.id, article_title: article.title });
+  };
+
+  const closeDetail = () => {
+    window.history.pushState({}, "", homePath());
+    setSelectedProject(null);
+    setSelectedArticle(null);
+  };
+
+  useSeoMetadata({ personalBio, socialLinks, project: selectedProject, article: selectedArticle });
+
+  useEffect(() => {
+    syncRoute();
+    window.addEventListener("popstate", syncRoute);
+    return () => window.removeEventListener("popstate", syncRoute);
+  }, [projects, articles]);
 
   // Smooth scroll handler targeting offsets
   const handleScrollToSection = (sectionId: string) => {
@@ -114,7 +153,7 @@ export default function App() {
 
           {/* SECTION 2: PROJECT CATALOG */}
           <div className="relative z-10">
-            <ProjectsGrid onProjectClick={(p) => setSelectedProject(p)} />
+            <ProjectsGrid onProjectClick={openProject} />
           </div>
 
           {/* SECTION 3: PRACTICE CHRONOLOGY / TIMELINE */}
@@ -124,7 +163,7 @@ export default function App() {
 
           {/* SECTION 4: DESTRUCTION-FREE ESSAYS / WRITINGS */}
           <div className="relative z-10">
-            <WritingList onArticleClick={(a) => setSelectedArticle(a)} />
+            <WritingList onArticleClick={openArticle} />
           </div>
 
           {/* SECTION 5: CONTACT SUMMARY FOOTERS */}
@@ -138,13 +177,13 @@ export default function App() {
       {/* Interactive Detail modal for case studies */}
       <ProjectDetailModal 
         project={selectedProject} 
-        onClose={() => setSelectedProject(null)} 
+        onClose={closeDetail}
       />
 
       {/* Interactive reader overlay for cerebral text notes */}
       <ArticleModal 
         article={selectedArticle} 
-        onClose={() => setSelectedArticle(null)} 
+        onClose={closeDetail}
       />
 
     </div>

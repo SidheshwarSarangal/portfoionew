@@ -36,6 +36,9 @@ export default function LeftSidebar({ onContactClick }: LeftSidebarProps) {
             <img 
               src={PERSONAL_BIO.avatarUrl} 
               alt={PERSONAL_BIO.name} 
+              width="96"
+              height="96"
+              fetchPriority="high"
               className="relative w-24 h-24 rounded-full border border-white/10 object-cover grayscale brightness-95 group-hover:grayscale-0 transition-all duration-500"
               referrerPolicy="no-referrer"
             />

@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Project } from "../types";
 import { usePortfolioContent } from "../content";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
+import { projectPath } from "../lib/routes";
 
 interface ProjectsGridProps {
   onProjectClick: (project: Project) => void;
@@ -21,13 +22,17 @@ export default function ProjectsGrid({ onProjectClick }: ProjectsGridProps) {
       {/* Grid of Project Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6" id="projects-grid-list">
         {PROJECTS.map((project, index) => (
-          <motion.div
+          <motion.a
             key={project.id}
+            href={projectPath(project.id)}
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, delay: index * 0.05 }}
-            onClick={() => onProjectClick(project)}
+            onClick={(event) => {
+              event.preventDefault();
+              onProjectClick(project);
+            }}
             className="group cursor-pointer flex flex-col space-y-3"
             id={`project-card-${project.id}`}
           >
@@ -47,6 +52,10 @@ export default function ProjectsGrid({ onProjectClick }: ProjectsGridProps) {
                 <img 
                   src={project.imageUrl} 
                   alt={project.title}
+                  loading="lazy"
+                  decoding="async"
+                  width="700"
+                  height="525"
                   className="w-full h-full object-cover grayscale brightness-[0.85] group-hover:grayscale-0 group-hover:scale-105 group-hover:brightness-100 transition-all duration-500"
                   referrerPolicy="no-referrer"
                 />
@@ -58,7 +67,7 @@ export default function ProjectsGrid({ onProjectClick }: ProjectsGridProps) {
               {/* Soft overlay on hover */}
               <div className="absolute inset-0 bg-black/10 opacity-100 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
             </div>
-          </motion.div>
+          </motion.a>
         ))}
       </div>
 
