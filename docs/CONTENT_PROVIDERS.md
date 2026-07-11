@@ -1,59 +1,161 @@
-# Content Provider Setup
+# Connect Content and Backends
 
-Copy `.env.example` to `.env.local`, select one provider, and restart the development server after changing environment variables.
+## Pick a provider
 
-## Local JSON
+```mermaid
+flowchart TD
+  A{Where is the content?}
+  A -->|This repository| B[Local]
+  A -->|Public JSON endpoint| C[REST]
+  A -->|Sanity dashboard| D[Sanity]
+  A -->|Private API| E[Serverless proxy → REST]
+  A -->|Another service| F[Custom provider]
+```
+
+Copy the environment template once:
+
+```bash
+cp .env.example .env.local
+```
+
+Restart `npm run dev` after changing `.env.local`.
+
+---
+
+## Option A — local content
+
+```mermaid
+flowchart LR
+  Data[src/data.ts] --> Fallback[Built-in content]
+  JSON[public/portfolio-data.json] --> Override[Optional overrides]
+  Fallback --> Merge[Merge]
+  Override --> Merge
+  Merge --> UI[Portfolio]
+```
 
 ```env
 VITE_CONTENT_PROVIDER=local
 ```
 
-The provider reads `public/portfolio-data.json`. This is the zero-configuration demonstration mode and the default when no provider is selected.
+| Task | File |
+|---|---|
+| Edit the complete example | `src/data.ts` |
+| Override selected fields at runtime | `public/portfolio-data.json` |
+| Add local images | `public/images/` |
 
-## Generic REST API
+Use image paths such as `/images/project.webp`.
+
+---
+
+## Option B — REST backend
+
+```mermaid
+sequenceDiagram
+  participant Browser
+  participant API as Your API
+  participant Fallback as src/data.ts
+  Browser->>API: GET VITE_CONTENT_API_URL
+  alt 200 JSON
+    API-->>Browser: PortfolioContentOverrides
+  else error
+    Browser->>Fallback: render built-in content
+  end
+```
+
+### 1. Configure
 
 ```env
 VITE_CONTENT_PROVIDER=rest
 VITE_CONTENT_API_URL=https://api.example.com/portfolio
 ```
 
-The endpoint must:
+### 2. Backend requirements
 
-- accept a browser `GET` request;
-- allow the portfolio origin through CORS;
-- return JSON using the canonical content shape;
-- require no private credential in the browser.
+| Requirement | Expected value |
+|---|---|
+| Method | `GET` |
+| Response | `application/json` |
+| CORS | Allow the portfolio origin |
+| Authentication | None/private proxy only |
+| Shape | `PortfolioContentOverrides` |
+| Protocol | HTTPS in production |
 
-Example response:
+### 3. Minimal response
 
 ```json
 {
   "personalBio": {
-    "name": "Ada",
     "fullName": "Ada Developer",
-    "title": "Software Engineer",
-    "subtitle": "Backend and distributed systems",
-    "location": "Remote",
-    "email": "ada@example.com",
-    "avatarUrl": "https://cdn.example.com/ada.webp",
-    "about": "A concise professional biography."
+    "title": "Software Engineer"
   },
-  "projects": [],
-  "articles": [],
-  "timeline": [],
-  "socialLinks": [],
-  "experienceSummary": [],
-  "capabilities": [],
-  "techSkills": [],
-  "industryAwards": [],
-  "teamAwards": [],
-  "testimonials": []
+  "projects": [
+    {
+      "id": "search-platform",
+      "title": "Search Platform",
+      "category": "Backend",
+      "description": "Search and indexing system.",
+      "roles": ["Backend Engineering"],
+      "year": "2026",
+      "technologies": ["Java", "OpenSearch"],
+      "accentColor": "amber",
+      "imageUrl": "https://cdn.example.com/search.webp",
+      "links": {
+        "github": "https://github.com/user/search-platform"
+      },
+      "details": {
+        "problem": "Users needed relevant results.",
+        "solution": "Built a ranked indexing pipeline.",
+        "outcomes": ["Implemented searchable document indexing"]
+      },
+      "featured": true
+    }
+  ]
 }
 ```
 
-Properties may be omitted to use built-in fallback content. An included empty array intentionally displays no entries for that section.
+Missing properties use fallback data. An included empty array intentionally removes that section's entries.
 
-## Sanity
+### 4. CORS example
+
+```http
+Access-Control-Allow-Origin: https://your-domain.com
+Content-Type: application/json
+```
+
+### Private APIs
+
+```mermaid
+flowchart LR
+  Browser --> Proxy[Serverless function]
+  Proxy -->|private token| API[Private API/database]
+  API --> Proxy -->|public portfolio JSON| Browser
+```
+
+Point `VITE_CONTENT_API_URL` to the proxy. Never expose the private token through `VITE_*`.
+
+---
+
+## Option C — Sanity
+
+No separate custom backend is required.
+
+```mermaid
+flowchart LR
+  Studio[Sanity Studio] --> Lake[Sanity Content Lake]
+  Lake -->|public read CDN| Adapter[SanityProvider]
+  Adapter --> UI[Portfolio]
+```
+
+### Setup checklist
+
+```text
+[ ] Create a Sanity project
+[ ] Create a public dataset (usually production)
+[ ] Add the portfolio domain to Sanity CORS origins
+[ ] Define and publish one document with _type = portfolio
+[ ] Add the environment values below
+[ ] Restart or redeploy the portfolio
+```
 
 ```env
 VITE_CONTENT_PROVIDER=sanity
@@ -62,49 +164,101 @@ VITE_SANITY_DATASET=production
 VITE_SANITY_API_VERSION=2025-02-19
 ```
 
-The current adapter uses Sanity's public API CDN and does not need a read token. Configure the dataset for public reading and add the deployed portfolio origin to the Sanity project's CORS origins.
+### Sanity document map
 
-Create and publish one Sanity document with `_type: "portfolio"`. Its fields must use the canonical property names:
-
-```text
-personalBio
-projects
-articles
-timeline
-socialLinks
-experienceSummary
-capabilities
-techSkills
-industryAwards
-teamAwards
-testimonials
+```mermaid
+classDiagram
+  class portfolio {
+    personalBio object
+    projects array
+    articles array
+    timeline array
+    socialLinks array
+    experienceSummary array
+    capabilities array
+    techSkills array
+    industryAwards array
+    teamAwards array
+    testimonials array
+  }
 ```
 
-The adapter queries the first published `portfolio` document. Draft content is not returned through this public production query. Profile, project, and testimonial images may be stored either as URL strings (`avatarUrl`/`imageUrl`) or as normal Sanity image fields (`avatar`/`image`); the adapter resolves image assets into the URL shape required by the UI.
+The field shapes must match [`src/content/types.ts`](../src/content/types.ts) and [`src/types.ts`](../src/types.ts).
 
-Keep article `content` as a Markdown/plain-text string because the existing article modal renders that format. If a custom Sanity model uses Portable Text, map it to a string in a custom provider rather than changing the visual component.
+| UI value | Sanity field options |
+|---|---|
+| Profile image | `personalBio.avatarUrl` or `personalBio.avatar` image |
+| Project image | `project.imageUrl` or `project.image` image |
+| Testimonial image | `testimonial.avatarUrl` or `testimonial.avatar` image |
+| Article body | Markdown/plain string in `content` |
 
-Do not add a Sanity write token to this frontend. Editing and publishing belong in the authenticated Sanity Studio dashboard.
+The adapter reads the first published `portfolio` document. Drafts are not returned by the public CDN query.
 
-## Custom provider
+```text
+Safe in frontend: project ID, dataset name, API version
+Never in frontend: write token, management token, private read token
+```
 
-For a small integration, add a provider that implements `ContentProvider` inside `src/content/providers.ts`:
+---
+
+## Option D — custom provider
+
+```mermaid
+flowchart LR
+  Service[Firebase / Supabase / GraphQL / CMS] --> Map[Map service fields]
+  Map --> Contract[PortfolioContentOverrides]
+  Contract --> UI[Existing UI]
+```
+
+Add the provider inside `src/content/providers.ts`:
 
 ```ts
-import type { ContentProvider, PortfolioContentOverrides } from "./types";
-
-export class CustomContentProvider implements ContentProvider {
+class CustomProvider implements ContentProvider {
   readonly name = "custom";
 
   async load(signal?: AbortSignal): Promise<PortfolioContentOverrides> {
-    const remoteData = await loadFromYourService(signal);
-    return mapRemoteDataToPortfolioContent(remoteData);
+    const response = await fetch("https://example.com/content", { signal });
+    const remote = await response.json();
+
+    return {
+      personalBio: {
+        fullName: remote.profile.name,
+        title: remote.profile.role,
+      },
+      projects: remote.work,
+    };
   }
 }
 ```
 
-Add it to the switch in `createContentProvider()`. Provider-specific field names must be converted inside this module; UI components should never be changed to accommodate a backend. If the provider module becomes genuinely large, it can be split later without changing the public content API.
+Register it in the factory:
 
-## Security model
+```ts
+case "custom":
+  return new CustomProvider();
+```
 
-This frontend is appropriate for published, publicly readable portfolio content. Browser applications cannot safely hold secrets. If a provider requires a private token to read content, place that token in a serverless function or other backend proxy—never in a `VITE_*` environment variable.
+Then extend `VITE_CONTENT_PROVIDER` in `src/vite-env.d.ts`.
+
+## Connection checklist
+
+```mermaid
+flowchart TD
+  A[Select provider] --> B[Set .env.local]
+  B --> C[Return canonical JSON]
+  C --> D[Allow CORS]
+  D --> E[Test fallback]
+  E --> F[Build + deploy]
+  F --> G[Test direct project/article URLs]
+```
+
+## Troubleshooting
+
+| Symptom | Check |
+|---|---|
+| Built-in content appears | Browser console and provider variables |
+| REST request blocked | API CORS header |
+| Sanity returns no data | Published `_type: portfolio` document |
+| Images disappear | HTTP/HTTPS URL or valid Sanity image field |
+| Array section is empty | Remote response may contain `[]` |
+| Configuration change ignored | Restart Vite/redeploy |

@@ -1,55 +1,77 @@
 # Security and Performance
 
-This is a public, read-only portfolio frontend. Its security model should remain small and understandable.
+## Trust boundary
 
-## What is protected
+```mermaid
+flowchart LR
+  Public[Public CMS/API data] --> Validate[Validate + sanitize]
+  Validate --> Merge[Merge with fallback]
+  Merge --> React[React text rendering]
+  React --> Browser[Browser]
+  Secret[Private credentials] -. never .-> Browser
+```
 
-- Remote REST endpoints must use HTTP or HTTPS.
-- Sanity project, dataset, and API-version values are format-checked.
-- CMS-provided image, project, and social URLs are sanitized before rendering.
-- Invalid email values fall back to the built-in address.
-- React renders article and project content as text; raw HTML is not accepted.
-- No write token, database password, or CMS management credential belongs in the browser.
-- Vercel and Netlify configurations set CSP, framing, referrer, MIME-sniffing, opener, and browser-feature policies.
+## Built-in controls
 
-## Security headers
+| Layer | Control |
+|---|---|
+| Provider config | REST URL + Sanity identifier validation |
+| Remote content | URL and email sanitization |
+| Rendering | No raw HTML injection |
+| Browser | CSP, referrer, permissions, framing policies |
+| External links | `noopener noreferrer` |
+| Assets | Immutable caching for hashed files |
+| Motion | Reduced-motion support |
+| Bundle | Modals loaded on demand |
 
-The host configurations provide:
+## Public vs private values
 
-- `Content-Security-Policy`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Permissions-Policy` with unused sensitive features disabled
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `Cross-Origin-Opener-Policy: same-origin`
+```mermaid
+flowchart TD
+  Value{Can every visitor see it?}
+  Value -->|Yes| Public[VITE_* may be used]
+  Value -->|No| Private[Keep in backend/serverless environment]
+```
 
-The CSP permits HTTPS images and connections because users may choose different image CDNs, REST APIs, or hosted CMS providers. Tighten `img-src` and `connect-src` to known domains for a single production deployment when possible.
+| Public frontend values | Private backend values |
+|---|---|
+| Site URL | Database password |
+| GA4 measurement ID | CMS write token |
+| Public REST endpoint | Personal access token |
+| Sanity project/dataset | Private API key |
 
-GitHub Pages does not apply `vercel.json` or `netlify.toml`. Configure equivalent headers through a CDN or hosting platform if strict response headers are required.
+## Hosting headers
 
-## Secrets
+```text
+Vercel  → vercel.json
+Netlify → netlify.toml
+GitHub Pages → configure headers through a CDN/proxy
+```
 
-Every `VITE_*` value is bundled into public browser code. Only public identifiers belong there:
+Configured headers:
 
-- site URL;
-- GA4 measurement ID;
-- public REST endpoint;
-- Sanity project ID, dataset, and API version.
+```text
+Content-Security-Policy
+Referrer-Policy
+Permissions-Policy
+X-Content-Type-Options
+X-Frame-Options
+Cross-Origin-Opener-Policy
+```
 
-Never add API write tokens, database credentials, private CMS tokens, or personal access tokens.
+The default CSP permits HTTPS images and connections for pluggable providers. A single-site deployment can restrict `img-src` and `connect-src` to its known services.
 
-## Performance measures
+## Performance flow
 
-- Project and article modals are loaded only when opened.
-- Project and testimonial images below the fold use lazy loading and asynchronous decoding.
-- The primary profile image has explicit dimensions and high fetch priority.
-- Hashed build assets receive one-year immutable cache headers on Vercel and Netlify.
-- Reduced-motion preferences disable nonessential animation work.
-- The Vite configuration contains only the required React and Tailwind plugins.
+```mermaid
+flowchart LR
+  Initial[Initial bundle] --> UI[Core portfolio UI]
+  Click[Open project/article] --> Lazy[Load modal chunk]
+  Images[Below-fold images] --> Deferred[Lazy load]
+  Assets[Hashed assets] --> Cache[1-year immutable cache]
+```
 
-## Maintenance checklist
-
-Run regularly in an environment with Node.js:
+## Maintenance
 
 ```bash
 npm run lint
@@ -57,16 +79,12 @@ npm run build
 npm audit
 ```
 
-Before merging dependency updates:
+```text
+[ ] Review dependency changelogs
+[ ] Test direct content URLs
+[ ] Check browser CSP errors
+[ ] Run PageSpeed Insights
+[ ] Avoid npm audit fix --force without review
+```
 
-1. Review the changelog.
-2. Run the TypeScript check and production build.
-3. Test homepage and direct project/article URLs.
-4. Check the browser console for CSP violations.
-5. Run PageSpeed Insights after deployment.
-
-Do not automatically apply breaking dependency upgrades or `npm audit fix --force` without reviewing the resulting changes.
-
-## Deliberately excluded
-
-The project does not add authentication, sessions, CSRF tokens, server-side rate limiting, or a security framework because it has no private application state or write API. Those controls belong to a user-supplied backend if one is later introduced.
+Authentication, sessions, CSRF, write-rate limits, and database authorization belong to a user-supplied backend; this repository is a read-only frontend.

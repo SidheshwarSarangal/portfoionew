@@ -1,76 +1,90 @@
-# SEO, Search Console, and Analytics
+# SEO and Analytics
 
-The implementation follows this sequence:
+## Discovery pipeline
 
-```text
-Discovery -> Indexing -> Search appearance -> Measurement
+```mermaid
+flowchart LR
+  Deploy[Deploy] --> Crawl[robots.txt + sitemap.xml]
+  Crawl --> Index[Google indexing]
+  Index --> Appearance[Metadata + JSON-LD]
+  Appearance --> Visit[Visitor]
+  Visit --> Measure[GA4 events]
 ```
 
-## Production configuration
-
-Set the final public origin before building:
+## Configure production
 
 ```env
 VITE_SITE_URL=https://your-domain.com
-```
-
-This value controls canonical URLs, structured-data URLs, sitemap entries, and social-sharing URLs. For a subdirectory deployment, include the complete base path.
-
-## What is automated
-
-- Unique runtime titles and descriptions for the homepage, projects, and articles
-- Canonical URLs
-- Open Graph and Twitter card metadata
-- `Person`, `ProfilePage`, `WebSite`, `CreativeWork`, and `Article` JSON-LD
-- Crawlable project and article links
-- URL-backed modals with browser Back/Forward support
-- `robots.txt` and `sitemap.xml` generation
-- Static route entry files for built-in projects and articles
-- Optional Google Analytics initialization and portfolio events
-- SPA rewrites for Vercel and Netlify
-
-The sitemap is generated from the built-in entries in `src/data.ts`. If a remote provider adds or removes projects/articles, regenerate routes during deployment from that provider or move to an SSR/static-generation integration.
-
-## Google Search Console
-
-These steps require the site owner and cannot be automated safely in the repository:
-
-1. Deploy the production site on its final HTTPS domain.
-2. Add and verify the domain property in Google Search Console.
-3. Submit `https://your-domain.com/sitemap.xml`.
-4. Inspect the homepage and representative project/article URLs.
-5. Request indexing after confirming the live tests pass.
-6. Monitor Page Indexing, Search Performance, Core Web Vitals, and Enhancements.
-
-If Google supplies an HTML verification tag, add it to `index.html`, or use DNS verification without changing the code.
-
-## Google Analytics 4
-
-Analytics is disabled unless a measurement ID is provided:
-
-```env
 VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
-Implemented events include:
+GA4 is disabled when the measurement ID is empty.
 
-- `project_open`
-- `project_repository_click`
-- `live_demo_click`
-- `article_open`
-- `contact_submit`
+## Automated by the repository
 
-Connect the GA4 property to Search Console from the Google dashboards after both properties are verified. Review applicable privacy and consent requirements before enabling analytics for production visitors.
+| Capability | Implementation |
+|---|---|
+| Titles and descriptions | `src/lib/seo.ts` |
+| Canonical URLs | `src/lib/seo.ts` |
+| Open Graph/Twitter cards | `src/lib/seo.ts` |
+| JSON-LD | `ProfilePage`, `Person`, `WebSite`, `Article`, `CreativeWork` |
+| Crawlable content URLs | `/projects/:id`, `/articles/:slug` |
+| Sitemap and robots | `scripts/generate-seo.mjs` |
+| Static route output | Build lifecycle |
+| GA4 | `src/lib/analytics.ts` |
 
-## Content work still owned by the site author
+```mermaid
+flowchart TD
+  Data[src/data.ts] --> Script[generate-seo.mjs]
+  Script --> Robots[robots.txt]
+  Script --> Sitemap[sitemap.xml]
+  Script --> Routes[project/article HTML entries]
+```
 
-Technical SEO cannot establish credibility on its own. Replace placeholder photos, testimonials, repository URLs, screenshots, achievements, and articles only with genuine material. Do not invent content to satisfy SEO fields.
+Remote-provider entries are not available to the build-time script. For fully pre-rendered remote content, fetch it during deployment or use an SSR/static-generation integration.
 
-## Validation after deployment
+## Search Console checklist
 
-- Google Search Console URL Inspection
-- Google Rich Results Test
-- PageSpeed Insights on mobile and desktop
-- Browser tests for direct project/article URLs
-- Open Graph preview validator
-- GA4 DebugView for configured events
+```text
+[ ] Deploy to the final HTTPS domain
+[ ] Verify a Domain property
+[ ] Submit /sitemap.xml
+[ ] Inspect the homepage
+[ ] Inspect one project URL
+[ ] Inspect one article URL
+[ ] Request indexing
+[ ] Monitor indexing + Core Web Vitals
+```
+
+## Analytics events
+
+```mermaid
+flowchart LR
+  Visitor --> Project[project_open]
+  Visitor --> Article[article_open]
+  Visitor --> Repo[project_repository_click]
+  Visitor --> Demo[live_demo_click]
+  Visitor --> Contact[contact_submit]
+```
+
+Additional automatic link events include `email_click`, `github_click`, `linkedin_click`, and `resume_download`.
+
+## Validation
+
+| Tool | Validate |
+|---|---|
+| Search Console URL Inspection | Crawling and indexing |
+| Rich Results Test | Structured data |
+| PageSpeed Insights | Mobile/desktop performance |
+| GA4 DebugView | Events |
+| Social preview validator | Open Graph image/text |
+
+## Content credibility
+
+```text
+Use real screenshots
+Use correct repository/demo links
+Use verifiable achievements
+Use genuine testimonials
+Publish original case studies
+```

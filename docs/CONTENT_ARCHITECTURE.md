@@ -1,41 +1,83 @@
-# Pluggable Content Architecture
+# Content Architecture
 
-## Project objective
+## System map
 
-This repository is a reusable portfolio frontend. It owns the visual design, responsive layout, animations, and UI components. Portfolio content may come from a local file, a hosted CMS, a generic REST API, or a user-written provider.
-
-The frontend must not require a repository-specific backend.
-
-## Non-negotiable design lock
-
-Content-system work must not:
-
-- remove, add, reorder, or redesign visible sections;
-- change component markup for visual reasons;
-- change Tailwind classes, CSS, spacing, typography, colors, or animations;
-- alter responsive behavior;
-- make a provider responsible for presentation.
-
-Providers return data only. Existing React components remain responsible for rendering it.
-
-## Architecture
-
-```text
-React components
-      |
-      v
-PortfolioContentProvider
-      |
-      v
-ContentProvider interface
-      |
-      +-- local JSON provider
-      +-- generic REST provider
-      +-- Sanity provider
-      +-- future custom provider
+```mermaid
+flowchart LR
+  ENV[.env.local] --> Factory[createContentProvider]
+  Factory --> Local[LocalProvider]
+  Factory --> REST[RestProvider]
+  Factory --> Sanity[SanityProvider]
+  Local --> Merge[mergeContent]
+  REST --> Merge
+  Sanity --> Merge
+  Fallback[src/data.ts] --> Merge
+  Merge --> Context[PortfolioContentProvider]
+  Context --> UI[React components]
 ```
 
-Every provider implements the same contract:
+## Runtime sequence
+
+```mermaid
+sequenceDiagram
+  participant UI as React UI
+  participant Context as Content context
+  participant Provider as Selected provider
+  participant Fallback as Built-in data
+  Context->>Provider: load(signal)
+  alt request succeeds
+    Provider-->>Context: partial content
+    Context->>Fallback: fill missing sections
+  else request fails
+    Context->>Fallback: use all built-in content
+  end
+  Context-->>UI: canonical PortfolioContent
+```
+
+## Canonical contract
+
+Defined in [`src/content/types.ts`](../src/content/types.ts).
+
+| Section | Shape | Merge rule |
+|---|---|---|
+| `personalBio` | Object | Field-by-field override |
+| `projects` | Array | Complete replacement |
+| `articles` | Array | Complete replacement |
+| `timeline` | Array | Complete replacement |
+| `socialLinks` | Array | Complete replacement |
+| `experienceSummary` | Array | Complete replacement |
+| `capabilities` | Array | Complete replacement |
+| `techSkills` | Array | Complete replacement |
+| `industryAwards` | Array | Complete replacement |
+| `teamAwards` | Array | Complete replacement |
+| `testimonials` | Array | Complete replacement |
+
+```mermaid
+classDiagram
+  PortfolioContent --> PersonalBio
+  PortfolioContent --> Project
+  PortfolioContent --> Article
+  PortfolioContent --> TimelineEvent
+  class Project {
+    id
+    title
+    technologies[]
+    links
+    details
+  }
+  class Article {
+    id
+    slug
+    title
+    content
+  }
+  class PersonalBio {
+    fullName
+    title
+    email
+    avatarUrl
+  }
+```
 
 ```ts
 interface ContentProvider {
@@ -44,54 +86,34 @@ interface ContentProvider {
 }
 ```
 
-Provider responses use the canonical `PortfolioContent` shape. Components never import provider-specific SDKs or inspect provider-specific response formats.
+## File responsibilities
 
-## Provider selection
+```mermaid
+flowchart TD
+  P[providers.ts] -->|fetch + map| T[types.ts]
+  D[defaults.ts] -->|sanitize + merge| T
+  I[index.tsx] -->|load + expose context| P
+  I --> D
+  C[components] -->|usePortfolioContent| I
+```
 
-The provider is selected at build time with `VITE_CONTENT_PROVIDER`:
+## Invariants
 
-- `local`: reads `public/portfolio-data.json`;
-- `rest`: reads a user-owned JSON API;
-- `sanity`: queries a public Sanity dataset;
-- omitted or unknown: uses `local`.
+```text
+Provider-specific mapping stays in providers.ts
+Secrets never enter VITE_* variables
+Components never inspect provider names
+Failures always fall back to src/data.ts
+Backend changes never alter the design layer
+```
 
-All provider configuration uses public, read-only frontend variables. Write credentials must never be added to `VITE_*` variables because Vite exposes those values to browsers.
+## Extension point
 
-## Canonical content sections
+```mermaid
+flowchart LR
+  Remote[New service response] --> Map[Custom provider mapping]
+  Map --> Contract[PortfolioContentOverrides]
+  Contract --> ExistingUI[Existing UI unchanged]
+```
 
-- `personalBio`
-- `projects`
-- `articles`
-- `timeline`
-- `socialLinks`
-- `experienceSummary`
-- `capabilities`
-- `techSkills`
-- `industryAwards`
-- `teamAwards`
-- `testimonials`
-
-`personalBio` supports partial overrides. Array properties replace their complete fallback arrays.
-
-## Reliability rules
-
-1. `src/data.ts` is the built-in demonstration and emergency fallback.
-2. A failed external request must not blank the site.
-3. Missing content properties fall back to built-in content.
-4. Provider failures may be logged, but must not modify the visual experience.
-5. Requests use `AbortSignal` so unmounted React trees do not update state.
-
-## Adding another provider
-
-1. Add a small provider class in `src/content/providers.ts`.
-2. Implement `ContentProvider`.
-3. Convert the remote response into `PortfolioContentOverrides` inside that provider.
-4. Add its selection case to `createContentProvider()`.
-5. Add only public configuration examples to `.env.example`.
-6. Do not change UI components.
-
-Examples of future providers include Supabase, Firebase, Contentful, Strapi, Directus, GitHub, and a GraphQL API.
-
-## Current implementation boundary
-
-The system reads published portfolio content. Content creation and updates happen in the selected CMS/backend dashboard. The frontend must never contain database write credentials.
+Add the provider in [`src/content/providers.ts`](../src/content/providers.ts), then register one new case in `createContentProvider()`.

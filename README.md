@@ -1,101 +1,68 @@
-# Sidheshwar's Portfolio
+# Sidheshwar Portfolio
 
-A Vite, React, TypeScript, Tailwind CSS, and Motion portfolio.
+A reusable developer portfolio with a locked visual layer and pluggable content sources.
 
-New here? Start with the [simple project structure guide](docs/PROJECT_STRUCTURE.md).
+```mermaid
+flowchart LR
+  A[Portfolio UI] --> B[Content adapter]
+  B --> C[Local JSON]
+  B --> D[REST API]
+  B --> E[Sanity]
+```
 
-## Run locally
-
-Requirements: Node.js 20 or newer.
+## Quick start
 
 ```bash
+git clone https://github.com/SidheshwarSarangal/portfoionew.git
+cd portfoionew
 npm install
 npm run dev
 ```
 
-Use `npm run lint` for the TypeScript check and `npm run build` for a production build.
+Requires Node.js 20 or newer.
 
-## Content providers
+## Choose your content source
 
-This frontend is provider-independent. Choose a content source without changing any design component:
+| Mode | Configuration | Best for |
+|---|---|---|
+| Built-in | No environment variables | Fastest setup |
+| Local JSON | `VITE_CONTENT_PROVIDER=local` | Static deployment |
+| REST | `VITE_CONTENT_PROVIDER=rest` | Existing backend |
+| Sanity | `VITE_CONTENT_PROVIDER=sanity` | No custom backend |
 
-```env
-VITE_CONTENT_PROVIDER=local
+```mermaid
+flowchart TD
+  Start{How will content be edited?}
+  Start -->|In this repository| Local[Use src/data.ts or local JSON]
+  Start -->|Existing API| REST[Use REST provider]
+  Start -->|CMS dashboard| Sanity[Use Sanity provider]
 ```
 
-Available providers:
+Copy `.env.example` to `.env.local`, then configure only the selected provider.
 
-- `local`: `public/portfolio-data.json`
-- `rest`: any public REST endpoint returning the canonical content shape
-- `sanity`: a public Sanity dataset containing a published `portfolio` document
+## Commands
 
-If a provider fails or omits a property, built-in demonstration content from `src/data.ts` keeps the website usable.
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Local development |
+| `npm run lint` | TypeScript validation |
+| `npm run build` | Production build + SEO files |
+| `npm run preview` | Preview production output |
 
-Read [the architecture reference](docs/CONTENT_ARCHITECTURE.md) before changing the content system. Configuration and integration instructions are in [the provider guide](docs/CONTENT_PROVIDERS.md).
+## Documentation
 
-Search discovery, metadata, route generation, Search Console, and optional analytics setup are documented in [the SEO and analytics guide](docs/SEO_AND_ANALYTICS.md).
+| Guide | Use it for |
+|---|---|
+| [Documentation map](docs/README.md) | Pick the right guide |
+| [Project structure](docs/PROJECT_STRUCTURE.md) | Find files quickly |
+| [Content architecture](docs/CONTENT_ARCHITECTURE.md) | Understand the adapter flow |
+| [Connect content/backends](docs/CONTENT_PROVIDERS.md) | Local, REST, Sanity, custom APIs |
+| [SEO and analytics](docs/SEO_AND_ANALYTICS.md) | Search Console, GA4, metadata |
+| [Security and performance](docs/SECURITY_AND_PERFORMANCE.md) | Headers, secrets, validation, checks |
+| [Deployment](docs/DEPLOYMENT.md) | Vercel, Netlify, GitHub Pages |
 
-Runtime hardening, hosting headers, secrets, caching, and maintenance are documented in [the security and performance guide](docs/SECURITY_AND_PERFORMANCE.md).
+## Core rule
 
-## Local content
+> Content providers return data. Components control presentation.
 
-The default provider reads:
-
-```text
-public/portfolio-data.json
-```
-
-Edit that file and redeploy the static site. The browser loads it when the page opens.
-
-The JSON supports these top-level properties:
-
-- `personalBio`: profile fields; individual fields can be overridden.
-- `projects`: the complete project list.
-- `articles`: the complete article list.
-- `timeline`: the complete detailed experience/education list.
-- `socialLinks`: the complete social-link list.
-- `experienceSummary`: the compact “Previous Life” rows.
-- `capabilities`: the grouped “What I do” lists.
-- `techSkills`: skill names and percentage values.
-- `testimonials`: testimonial text, attribution, and avatar.
-- `industryAwards`: the left achievements column.
-- `teamAwards`: the right achievements column.
-
-Arrays replace their corresponding built-in arrays. Include every item you want displayed.
-
-### Example: add projects from JSON
-
-```json
-{
-  "personalBio": {
-    "title": "Software Engineer"
-  },
-  "projects": [
-    {
-      "id": "example-project",
-      "title": "Example Project",
-      "category": "Full-Stack Application",
-      "description": "A short, factual project description.",
-      "roles": ["Full-Stack Development"],
-      "year": "2026",
-      "technologies": ["React", "Spring Boot"],
-      "accentColor": "amber",
-      "imageUrl": "/images/example-project.webp",
-      "links": {
-        "live": "https://example.com",
-        "github": "https://github.com/username/example-project"
-      },
-      "details": {
-        "problem": "The problem this project addresses.",
-        "solution": "How the system addresses it.",
-        "outcomes": ["A concrete result or implemented capability"]
-      },
-      "featured": true
-    }
-  ]
-}
-```
-
-Store local images under `public/images/` and reference them as `/images/file-name.webp`. JSON must remain valid: use double quotes and do not leave trailing commas.
-
-The visual structure and styling remain in the React components. Editing the JSON changes content only.
+Changing a backend must not require changing the visual components.
