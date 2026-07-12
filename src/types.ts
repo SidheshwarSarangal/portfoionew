@@ -51,3 +51,13 @@ export interface SocialLink {
   username: string;
   iconName: string;
 }
+
+export interface SocialPost {
+  id: string;
+  platform: string;
+  title: string;
+  summary: string;
+  publishedAt: string;
+  url?: string;
+  imageUrl?: string;
+}

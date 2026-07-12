@@ -1,4 +1,4 @@
-import { Project, Article, TimelineEvent, SocialLink } from "./types";
+import { Project, Article, TimelineEvent, SocialLink, SocialPost } from "./types";
 
 export const PERSONAL_BIO = {
   name: "Sidheshwar",
@@ -7,6 +7,8 @@ export const PERSONAL_BIO = {
   subtitle: "Focused on Full-Stack Systems, APIs, and Product Code",
   location: "IIT Roorkee, India",
   email: "sidheshwar.sarangal22@gmail.com",
+  phone: "",
+  resumeUrl: "",
   avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=250&h=250&fit=crop",
   about: "I am an entry-level software engineer from IIT Roorkee with strong foundations in DSA and hands-on experience across Spring Boot, Python, MERN, REST APIs, Docker, and Kubernetes. I build full-stack products, backend workflows, and practical systems that connect clean interfaces with reliable application logic.",
 };
@@ -256,6 +258,30 @@ export const SOCIAL_LINKS: SocialLink[] = [
     username: "sidheshwar.sarangal22@gmail.com",
     iconName: "Mail",
   }
+];
+
+export const SOCIAL_POSTS: SocialPost[] = [
+  {
+    id: "post-placeholder-1",
+    platform: "LinkedIn",
+    title: "Your first social post",
+    summary: "Replace this placeholder with a post, update, article, or project announcement.",
+    publishedAt: "Coming soon",
+  },
+  {
+    id: "post-placeholder-2",
+    platform: "Dev.to",
+    title: "A technical article goes here",
+    summary: "Social tiles are controlled by the socialPosts array in your content source.",
+    publishedAt: "Coming soon",
+  },
+  {
+    id: "post-placeholder-3",
+    platform: "X / Twitter",
+    title: "Share a short update",
+    summary: "Add an optional URL and imageUrl when the final post content is ready.",
+    publishedAt: "Coming soon",
+  },
 ];
 
 export const EXPERIENCE_SUMMARY = [

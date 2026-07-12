@@ -1,18 +1,16 @@
-import { motion } from "motion/react";
 import { ArrowDown, Mail } from "lucide-react";
-import { usePortfolioContent } from "../content";
 import DecryptText from "./DecryptText";
 
 interface HeroProps {
   onExploreClick: () => void;
+  onContactClick: () => void;
 }
 
-export default function Hero({ onExploreClick }: HeroProps) {
-  const { personalBio: PERSONAL_BIO } = usePortfolioContent();
+export default function Hero({ onExploreClick, onContactClick }: HeroProps) {
   return (
     <section 
       id="hero" 
-      className="relative min-h-[65vh] flex flex-col justify-center max-w-5xl mx-auto px-6 pt-16 pb-10 select-text"
+      className="relative min-h-[68vh] flex flex-col justify-center max-w-5xl mx-auto px-6 pt-14 pb-12 select-text"
     >
       {/* Code Comment Marker */}
       <div className="font-mono text-[11px] text-neutral-600 mb-4 flex items-center gap-1 select-none">
@@ -24,21 +22,12 @@ export default function Hero({ onExploreClick }: HeroProps) {
       {/* Main Headline */}
       <div className="space-y-4" id="hero-headline-div">
         <h1 className="font-display text-6xl sm:text-8xl md:text-[110px] text-white font-extrabold tracking-tight leading-[1.0] max-w-5xl select-none">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
+          <div>
             Software
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-neutral-500 font-light italic"
-          >
+          </div>
+          <div className="text-neutral-500 font-light italic">
             Engineer
-          </motion.div>
+          </div>
         </h1>
 
         <div className="pt-4 max-w-3xl">
@@ -53,10 +42,7 @@ export default function Hero({ onExploreClick }: HeroProps) {
       </div>
 
       {/* Action / Connect Buttons */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
+      <div
         className="flex flex-wrap items-center gap-3 mt-8"
         id="hero-cta-block"
       >
@@ -65,19 +51,20 @@ export default function Hero({ onExploreClick }: HeroProps) {
           className="px-6 py-3 bg-white text-black font-sans font-medium text-xs rounded-full flex items-center gap-2 hover:bg-neutral-200 cursor-pointer transition-all active:scale-[0.98] shadow-lg shadow-white/5"
           id="hero-explore-work-btn"
         >
-          <span>Selected Work</span>
+          <span>Professional work</span>
           <ArrowDown size={12} className="animate-bounce" />
         </button>
 
-        <a
-          href={`mailto:${PERSONAL_BIO.email}`}
+        <button
+          type="button"
+          onClick={onContactClick}
           className="px-6 py-3 bg-[#0d0e10] border border-white/5 text-neutral-300 font-sans font-medium text-xs rounded-full flex items-center gap-2 hover:bg-white/[0.02] hover:border-white/10 transition-all"
           id="hero-email-contact-link"
         >
           <Mail size={12} className="text-neutral-500" />
           <span>Get in touch</span>
-        </a>
-      </motion.div>
+        </button>
+      </div>
     </section>
   );
 }

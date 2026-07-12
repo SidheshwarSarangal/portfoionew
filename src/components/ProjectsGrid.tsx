@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import type { Project } from "../types";
 import { usePortfolioContent } from "../content";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
@@ -11,7 +10,7 @@ interface ProjectsGridProps {
 export default function ProjectsGrid({ onProjectClick }: ProjectsGridProps) {
   const { projects: PROJECTS } = usePortfolioContent();
   return (
-    <section id="work" className="max-w-5xl mx-auto px-6 py-10 border-t border-white/5 select-text">
+    <section id="work" className="w-full max-w-5xl mx-auto px-6 py-12 border-t border-white/5 select-text">
       {/* Commentary Marker */}
       <div className="font-mono text-[11px] text-neutral-600 mb-5 flex items-center gap-1 select-none">
         <span>&lt;!--</span>
@@ -21,14 +20,10 @@ export default function ProjectsGrid({ onProjectClick }: ProjectsGridProps) {
 
       {/* Grid of Project Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6" id="projects-grid-list">
-        {PROJECTS.map((project, index) => (
-          <motion.a
+        {PROJECTS.map((project) => (
+          <a
             key={project.id}
             href={projectPath(project.id)}
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: index * 0.05 }}
             onClick={(event) => {
               event.preventDefault();
               onProjectClick(project);
@@ -67,16 +62,12 @@ export default function ProjectsGrid({ onProjectClick }: ProjectsGridProps) {
               {/* Soft overlay on hover */}
               <div className="absolute inset-0 bg-black/10 opacity-100 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none" />
             </div>
-          </motion.a>
+          </a>
         ))}
       </div>
 
       {/* Footer Explore Card Banner */}
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
+      <div
         className="mt-10 p-5 bg-[#0c0d10]/40 border border-white/5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4"
         id="explore-full-work-card"
       >
@@ -97,7 +88,7 @@ export default function ProjectsGrid({ onProjectClick }: ProjectsGridProps) {
           <span>View all works</span>
           <ArrowRight size={11} className="text-neutral-500 group-hover:translate-x-1 group-hover:text-amber-400 transition-all duration-300" />
         </button>
-      </motion.div>
+      </div>
     </section>
   );
 }

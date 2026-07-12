@@ -1,4 +1,4 @@
-import type { Article, Project, SocialLink, TimelineEvent } from "../types";
+import type { Article, Project, SocialLink, SocialPost, TimelineEvent } from "../types";
 
 export interface PersonalBio {
   name: string;
@@ -7,6 +7,8 @@ export interface PersonalBio {
   subtitle: string;
   location: string;
   email: string;
+  phone?: string;
+  resumeUrl?: string;
   avatarUrl: string;
   about: string;
 }
@@ -47,6 +49,7 @@ export interface PortfolioContent {
   articles: Article[];
   timeline: TimelineEvent[];
   socialLinks: SocialLink[];
+  socialPosts: SocialPost[];
   experienceSummary: ExperienceSummaryItem[];
   capabilities: Capability[];
   techSkills: TechSkill[];

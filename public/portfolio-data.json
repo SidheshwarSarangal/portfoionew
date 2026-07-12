@@ -6,7 +6,51 @@
     "subtitle": "Focused on Full-Stack Systems, APIs, and Product Code",
     "location": "IIT Roorkee, India",
     "email": "sidheshwar.sarangal22@gmail.com",
+    "phone": "+919876543210",
+    "resumeUrl": "",
     "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=250&h=250&fit=crop",
     "about": "I am an entry-level software engineer from IIT Roorkee with strong foundations in DSA and hands-on experience across Spring Boot, Python, MERN, REST APIs, Docker, and Kubernetes. I build full-stack products, backend workflows, and practical systems that connect clean interfaces with reliable application logic."
-  }
+  },
+  "socialLinks": [
+    { "platform": "GitHub", "url": "https://github.com/mrsidverse", "username": "mrsidverse", "iconName": "Github" },
+    { "platform": "X / Twitter", "url": "https://x.com/mrsidverse", "username": "@mrsidverse", "iconName": "Twitter" },
+    { "platform": "LinkedIn", "url": "https://www.linkedin.com/in/sidheshwar-sarangal-0b31482b8/", "username": "sidheshwar-sarangal", "iconName": "Linkedin" },
+    { "platform": "Peerlist", "url": "https://peerlist.io/sidheshwar_s_", "username": "sidheshwar_s_", "iconName": "User" },
+    { "platform": "Discord", "url": "https://discord.com/users/123456789012345678", "username": "dummy_user", "iconName": "MessageCircle" },
+    { "platform": "Stack Overflow", "url": "https://stackoverflow.com/users/12345678/dummy-user", "username": "dummy-user", "iconName": "Layers3" },
+    { "platform": "Dev.to", "url": "https://dev.to/dummy_user", "username": "dummy_user", "iconName": "Newspaper" },
+    { "platform": "Upwork", "url": "https://www.upwork.com/freelancers/~dummy-profile", "username": "dummy-profile", "iconName": "BriefcaseBusiness" },
+    { "platform": "LeetCode", "url": "https://leetcode.com/u/dummy_user/", "username": "dummy_user", "iconName": "Code2" },
+    { "platform": "Codeforces", "url": "https://codeforces.com/profile/dummy_user", "username": "dummy_user", "iconName": "Code2" },
+    { "platform": "CodeChef", "url": "https://www.codechef.com/users/dummy_user", "username": "dummy_user", "iconName": "Utensils" }
+  ],
+  "socialPosts": [
+    {
+      "id": "post-placeholder-1",
+      "platform": "LinkedIn",
+      "title": "Your first social post",
+      "summary": "Replace this placeholder with a post, update, article, or project announcement.",
+      "publishedAt": "Coming soon",
+      "url": "",
+      "imageUrl": ""
+    },
+    {
+      "id": "post-placeholder-2",
+      "platform": "Dev.to",
+      "title": "A technical article goes here",
+      "summary": "Add the final post title, description, link, date, and optional image here.",
+      "publishedAt": "Coming soon",
+      "url": "",
+      "imageUrl": ""
+    },
+    {
+      "id": "post-placeholder-3",
+      "platform": "X / Twitter",
+      "title": "Share a short update",
+      "summary": "This tile is ready for the social content you decide to publish.",
+      "publishedAt": "Coming soon",
+      "url": "",
+      "imageUrl": ""
+    }
+  ]
 }

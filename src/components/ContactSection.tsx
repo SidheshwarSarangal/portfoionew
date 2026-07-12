@@ -39,7 +39,7 @@ export default function ContactSection() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="max-w-5xl mx-auto px-6 py-10 border-t border-white/5 relative z-10 select-text">
+    <footer id="contact" className="w-full max-w-5xl mx-auto px-6 py-12 border-t border-white/5 relative z-10 select-text">
       
       {/* Commentary Marker */}
       <div className="font-mono text-[11px] text-neutral-600 mb-6 flex items-center gap-1 select-none">

@@ -20,6 +20,24 @@ export function safeContactUrl(value: string, fallback = "") {
   return safeWebUrl(value, fallback);
 }
 
+export function safePhoneNumber(value: string | undefined) {
+  if (!value) return "";
+  const normalized = value.trim().replace(/[\s().-]/g, "");
+  return /^\+?[0-9]{7,15}$/.test(normalized) ? normalized : "";
+}
+
+export function safePdfUrl(value: string | undefined) {
+  const safeValue = safeWebUrl(value);
+  if (!safeValue) return "";
+
+  try {
+    const pathname = safeValue.startsWith("/") ? safeValue.split(/[?#]/)[0] : new URL(safeValue).pathname;
+    return pathname.toLowerCase().endsWith(".pdf") ? safeValue : "";
+  } catch {
+    return "";
+  }
+}
+
 export function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }

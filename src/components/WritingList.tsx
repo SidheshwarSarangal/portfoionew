@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import type { Article } from "../types";
 import { usePortfolioContent } from "../content";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -11,7 +10,7 @@ interface WritingListProps {
 export default function WritingList({ onArticleClick }: WritingListProps) {
   const { articles: ARTICLES } = usePortfolioContent();
   return (
-    <section id="writings" className="max-w-5xl mx-auto px-6 py-10 border-t border-white/5 select-text">
+    <section id="writings" className="w-full max-w-5xl mx-auto px-6 py-12 border-t border-white/5 select-text">
       
       {/* Commentary Marker */}
       <div className="font-mono text-[11px] text-neutral-600 mb-5 flex items-center justify-between select-none">
@@ -34,14 +33,10 @@ export default function WritingList({ onArticleClick }: WritingListProps) {
 
       {/* Grid of Blog Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6" id="writings-list-grid">
-        {ARTICLES.map((article, index) => (
-          <motion.a
+        {ARTICLES.map((article) => (
+          <a
             key={article.id}
             href={articlePath(article.slug)}
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
             onClick={(event) => {
               event.preventDefault();
               onArticleClick(article);
@@ -66,15 +61,11 @@ export default function WritingList({ onArticleClick }: WritingListProps) {
                 <ArrowRight size={13} className="text-amber-500/70 group-hover:translate-x-1 group-hover:text-amber-400 transition-all duration-300" />
               </span>
             </div>
-          </motion.a>
+          </a>
         ))}
 
         {/* Card 3: View All Blogs / CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+        <div
           className="bg-[#0c0d10]/15 border border-dashed border-white/5 hover:border-white/10 rounded-2xl flex flex-col justify-center items-center min-h-[240px] p-6 transition-all duration-300"
           id="article-view-all-card"
         >
@@ -88,7 +79,7 @@ export default function WritingList({ onArticleClick }: WritingListProps) {
             <span>View all blog</span>
             <ArrowUpRight size={13} className="text-neutral-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform group-hover:text-amber-500" />
           </button>
-        </motion.div>
+        </div>
       </div>
 
     </section>

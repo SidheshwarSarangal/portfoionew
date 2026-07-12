@@ -52,7 +52,7 @@ class SanityProvider implements ContentProvider {
     const query = encodeURIComponent(`*[_type == "portfolio"][0]{
       personalBio{..., "avatarUrl": coalesce(avatarUrl, avatar.asset->url)},
       projects[]{..., "imageUrl": coalesce(imageUrl, image.asset->url)},
-      articles, timeline, socialLinks, experienceSummary, capabilities,
+      articles, timeline, socialLinks, socialPosts, experienceSummary, capabilities,
       techSkills, industryAwards, teamAwards,
       testimonials[]{..., "avatarUrl": coalesce(avatarUrl, avatar.asset->url)}
     }`);

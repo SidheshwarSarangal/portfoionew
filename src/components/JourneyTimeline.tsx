@@ -16,17 +16,13 @@ export default function JourneyTimeline() {
   } = usePortfolioContent();
 
   return (
-    <section id="about" className="max-w-5xl mx-auto px-6 py-10 border-t border-white/5 space-y-12 relative select-text">
+    <section id="about" className="w-full max-w-5xl mx-auto px-6 py-12 border-t border-white/5 space-y-14 relative select-text">
       
       {/* SECTION 3.1: ABOUT ME & PREVIOUS LIFE COMBINED */}
       <div className="relative group" id="chapter-about">
         {/* Massive Backdrop text: SINCE 2022 left reveal */}
-        <motion.div
+        <div
           className="group/since relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
-          initial={{ opacity: 0, x: "-18%" }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false, amount: 0.45 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
             <span
@@ -35,7 +31,7 @@ export default function JourneyTimeline() {
               SINCE 2022
             </span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Commentary Marker */}
         <div className="font-mono text-[11px] text-neutral-600 mb-4 flex items-center gap-1 select-none">
@@ -133,7 +129,7 @@ export default function JourneyTimeline() {
       </div>
 
       {/* SECTION 3.3: WHAT I DO */}
-      <div className="space-y-5" id="chapter-what-i-do">
+      <div className="space-y-5 scroll-mt-24" id="chapter-what-i-do">
         {/* Commentary Marker */}
         <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
           <span>&lt;!--</span>
@@ -162,7 +158,7 @@ export default function JourneyTimeline() {
       </div>
 
       {/* SECTION 3.4: MY TECH STACK */}
-      <div className="space-y-5" id="chapter-tech-stack">
+      <div className="space-y-5 scroll-mt-24" id="chapter-tech-stack">
         {/* Commentary Marker */}
         <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
           <span>&lt;!--</span>
@@ -215,14 +211,10 @@ export default function JourneyTimeline() {
       </div>
 
       {/* SECTION 3.5: METICULOUS EDUCATION ARCHIVES (Practice Chronology List) */}
-      <div className="space-y-5" id="chapter-history">
+      <div className="space-y-5 scroll-mt-24" id="chapter-history">
         {/* Massive Backdrop text: EXPERIENCE left reveal */}
-        <motion.div
+        <div
           className="group/experience relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
-          initial={{ opacity: 0, x: "-18%" }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false, amount: 0.45 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
             <span
@@ -231,7 +223,7 @@ export default function JourneyTimeline() {
               EXPERIENCE
             </span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Massive Backdrop text: EXPERIENCE (Continuous Arrow Marquee) */}
         <div className="hidden">
@@ -287,21 +279,17 @@ export default function JourneyTimeline() {
       </div>
 
       {/* SECTION 3.6: CLIENT WORDS */}
-      <div className="space-y-6 relative py-4" id="chapter-testimonials">
+      <div className="space-y-6 relative py-4 scroll-mt-24" id="chapter-testimonials">
         {/* Huge backdrop of words left reveal */}
-        <motion.div
+        <div
           className="group/words relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
-          initial={{ opacity: 0, x: "-18%" }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false, amount: 0.45 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
             <span className="font-display text-[clamp(44px,16cqw,132px)] font-black uppercase text-neutral-700 leading-none transition-colors duration-300 group-hover/words:text-neutral-300">
               WORDS MATTER
             </span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Huge backdrop of words (Continuous Arrow Marquee) */}
         <div className="hidden">
@@ -334,12 +322,8 @@ export default function JourneyTimeline() {
             {feedback.map((f, idx) => {
               const isEven = idx % 2 === 0;
               return (
-                <motion.div 
+                <div
                   key={idx} 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.6, delay: idx * 0.1 }}
                   className={`relative p-6 sm:p-8 bg-[#090a0c]/85 border border-white/5 rounded-2xl hover:border-amber-500/20 transition-all duration-300 flex flex-col justify-between ${
                     isEven 
                       ? "pl-14 sm:pl-20 text-left" 
@@ -375,7 +359,7 @@ export default function JourneyTimeline() {
                     <span className="text-white font-bold">{f.author}</span>
                     <span className="text-neutral-500">, {f.role}</span>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -390,7 +374,7 @@ export default function JourneyTimeline() {
       </div>
 
       {/* SECTION 3.7: ACHIEVEMENTS & AWARDS */}
-      <div className="space-y-5 border-t border-white/5 pt-10" id="chapter-awards">
+      <div className="space-y-5 border-t border-white/5 pt-12 scroll-mt-24" id="chapter-awards">
         {/* Commentary Marker */}
         <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
           <span>&lt;!--</span>

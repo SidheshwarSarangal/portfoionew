@@ -35,6 +35,202 @@ body {
   animation: marquee 30s linear infinite;
 }
 
+@keyframes google-sidebar-wave {
+  0% {
+    background-position: 0% 0%, 100% 8%, 45% 0%, 15% 25%;
+    transform: scale(1.08) translate3d(-2%, -1%, 0) rotate(-1deg);
+  }
+  35% {
+    background-position: 55% 10%, 25% 0%, 100% 16%, 70% 4%;
+    transform: scale(1.13) translate3d(2%, 1%, 0) rotate(1.5deg);
+  }
+  70% {
+    background-position: 100% 2%, 55% 18%, 10% 4%, 35% 20%;
+    transform: scale(1.1) translate3d(-1%, 2%, 0) rotate(-0.5deg);
+  }
+  100% {
+    background-position: 30% 16%, 0% 3%, 65% 18%, 100% 8%;
+    transform: scale(1.14) translate3d(2%, -1%, 0) rotate(1deg);
+  }
+}
+
+.google-sidebar-gradient {
+  inset: -6% -12% 0;
+  background-image:
+    radial-gradient(ellipse 70% 34% at 20% 8%, rgb(66 133 244 / 30%) 0%, transparent 72%),
+    radial-gradient(ellipse 62% 30% at 80% 12%, rgb(234 67 53 / 23%) 0%, transparent 72%),
+    radial-gradient(ellipse 58% 27% at 54% 4%, rgb(251 188 4 / 20%) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 32% at 35% 23%, rgb(52 168 83 / 22%) 0%, transparent 74%);
+  background-repeat: no-repeat;
+  background-size: 115% 72%, 108% 68%, 100% 62%, 120% 74%;
+  filter: blur(18px) saturate(110%);
+  mask-image: linear-gradient(to bottom, black 0%, rgb(0 0 0 / 85%) 30%, transparent 76%);
+  animation: google-sidebar-wave 8s ease-in-out infinite alternate;
+  will-change: transform, background-position;
+}
+
+@keyframes section-rail-wave {
+  0% {
+    background-position: 50% 0%, 50% -12%, 50% 0%;
+    filter: saturate(115%) brightness(0.9);
+  }
+  45% {
+    background-position: 50% 7%, 50% 20%, 50% 9%;
+    filter: saturate(145%) brightness(1.12);
+  }
+  100% {
+    background-position: 50% 14%, 50% 42%, 50% 18%;
+    filter: saturate(130%) brightness(0.98);
+  }
+}
+
+.section-height-gradient-rail {
+  background-image:
+    linear-gradient(
+      to bottom,
+      #4285f4 0%,
+      #6fa0f7 10%,
+      #fbbc04 23%,
+      #f6c94d 32%,
+      #34a853 45%,
+      #6fbd86 58%,
+      #ea4335 72%,
+      #f2776d 84%,
+      #ffffff 100%
+    ),
+    radial-gradient(
+      ellipse 140% 28% at 50% 14%,
+      rgb(255 255 255 / 55%) 0%,
+      rgb(255 255 255 / 12%) 42%,
+      transparent 74%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(0 0 0 / 50%) 0%,
+      rgb(255 255 255 / 30%) 11%,
+      rgb(0 0 0 / 36%) 22%,
+      rgb(255 255 255 / 18%) 36%,
+      rgb(0 0 0 / 42%) 52%,
+      rgb(255 255 255 / 26%) 66%,
+      rgb(0 0 0 / 44%) 82%,
+      rgb(255 255 255 / 18%) 100%
+    );
+  background-size: 100% 100%, 100% 38%, 100% 48%;
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgb(251 188 4 / 32%), 0 0 34px rgb(66 133 244 / 18%);
+  animation: section-rail-wave 8.5s ease-in-out infinite alternate;
+  contain: paint;
+  will-change: background-position, filter;
+}
+
+.section-height-gradient-wash {
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgb(66 133 244 / 11%) 0%,
+      rgb(251 188 4 / 8%) 24%,
+      rgb(52 168 83 / 9%) 48%,
+      rgb(234 67 53 / 9%) 74%,
+      rgb(255 255 255 / 6%) 100%
+    ),
+    linear-gradient(
+      165deg,
+      transparent 0%,
+      rgb(255 255 255 / 9%) 17%,
+      rgb(0 0 0 / 18%) 34%,
+      transparent 48%,
+      rgb(255 255 255 / 7%) 67%,
+      rgb(0 0 0 / 20%) 86%,
+      transparent 100%
+    );
+  background-size: 100% 100%, 100% 28%;
+  opacity: 0.9;
+  animation: section-rail-wave 11s ease-in-out infinite alternate-reverse;
+  contain: paint;
+  will-change: background-position, filter;
+}
+
+@keyframes center-pane-gradient-wave {
+  0% {
+    background-position: 0% 0%, 0% -10%, 0% 0%, 0% 0%;
+    opacity: 0.52;
+  }
+  45% {
+    background-position: 10% 7%, 18% 18%, 28% 10%, 0% 9%;
+    opacity: 0.7;
+  }
+  100% {
+    background-position: 22% 14%, 36% 38%, 58% 20%, 0% 18%;
+    opacity: 0.6;
+  }
+}
+
+.center-pane-gradient {
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgb(66 133 244 / 19%) 0%,
+      rgb(111 160 247 / 14%) 10%,
+      rgb(251 188 4 / 16%) 23%,
+      rgb(246 201 77 / 12%) 32%,
+      rgb(52 168 83 / 15%) 45%,
+      rgb(111 189 134 / 12%) 58%,
+      rgb(234 67 53 / 15%) 72%,
+      rgb(242 119 109 / 11%) 84%,
+      rgb(255 255 255 / 8%) 100%
+    ),
+    radial-gradient(
+      ellipse 55% 18% at 18% 12%,
+      rgb(255 255 255 / 11%) 0%,
+      rgb(255 255 255 / 4%) 42%,
+      transparent 76%
+    ),
+    radial-gradient(
+      ellipse 70% 22% at 26% 48%,
+      rgb(255 255 255 / 8%) 0%,
+      rgb(255 255 255 / 3%) 40%,
+      transparent 74%
+    ),
+    linear-gradient(
+      115deg,
+      rgb(0 0 0 / 52%) 0%,
+      rgb(255 255 255 / 6%) 15%,
+      rgb(0 0 0 / 34%) 30%,
+      rgb(255 255 255 / 5%) 48%,
+      rgb(0 0 0 / 40%) 67%,
+      transparent 100%
+    );
+  background-size: 115% 100%, 90% 36%, 105% 42%, 95% 100%;
+  mask-image:
+    linear-gradient(to right, black 0%, rgb(0 0 0 / 84%) 38%, rgb(0 0 0 / 42%) 70%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 5%, black 96%, transparent 100%);
+  mask-composite: intersect;
+  animation: center-pane-gradient-wave 10s ease-in-out infinite alternate;
+  contain: paint;
+  will-change: background-position, opacity;
+}
+
+@keyframes topbar-wave {
+  0% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.22;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+
+.topbar-wave-gradient {
+  background:
+    radial-gradient(ellipse 70% 180% at 16% 50%, rgb(66 133 244 / 75%) 0%, rgb(66 133 244 / 24%) 42%, transparent 76%),
+    linear-gradient(90deg, transparent 0%, rgb(66 133 244 / 18%) 50%, transparent 100%);
+  mix-blend-mode: screen;
+  animation: topbar-wave 5.5s ease-in-out infinite alternate;
+  will-change: opacity;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -45,5 +241,17 @@ body {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .google-sidebar-gradient {
+    animation: none;
+    transform: scale(1.08);
+  }
+
+  .section-height-gradient-rail,
+  .section-height-gradient-wash,
+  .center-pane-gradient,
+  .topbar-wave-gradient {
+    animation: none;
   }
 }
