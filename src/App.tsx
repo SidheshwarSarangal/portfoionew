@@ -1,7 +1,9 @@
 import { lazy, Suspense, useState, useEffect } from "react";
 import type { Project, Article } from "./types";
 import Header from "./components/Header";
+import type { PortfolioView } from "./components/Header";
 import Hero from "./components/Hero";
+import BioPage from "./components/BioPage";
 import ProjectsGrid from "./components/ProjectsGrid";
 import JourneyTimeline from "./components/JourneyTimeline";
 import WritingList from "./components/WritingList";
@@ -21,7 +23,7 @@ const ArticleModal = lazy(() => import("./components/ArticleModal"));
 export default function App() {
   const { projects, articles, personalBio, socialLinks } = usePortfolioContent();
   const [activeSection, setActiveSection] = useState("hero");
-  const [activeView, setActiveView] = useState<"info" | "projects" | "social">("info");
+  const [activeView, setActiveView] = useState<PortfolioView>("info");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
@@ -78,10 +80,24 @@ export default function App() {
     });
   };
 
-  const handleViewChange = (view: "info" | "projects" | "social") => {
+  const handleViewChange = (view: PortfolioView) => {
     setActiveView(view);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Bio is a compact-layout tab. Once that tab is hidden, keep Info in the center pane.
+  useEffect(() => {
+    const desktopLayout = window.matchMedia("(min-width: 1200px)");
+    const defaultToInfo = () => {
+      if (desktopLayout.matches) {
+        setActiveView((currentView) => currentView === "bio" ? "info" : currentView);
+      }
+    };
+
+    defaultToInfo();
+    desktopLayout.addEventListener("change", defaultToInfo);
+    return () => desktopLayout.removeEventListener("change", defaultToInfo);
+  }, []);
 
   // Keep the right-side index aligned to the section nearest the viewport reading line.
   useEffect(() => {
@@ -167,12 +183,12 @@ export default function App() {
       <LeftSidebar />
       {activeView === "info" ? (
         <RightSidebar activeSection={activeSection} onSymbolClick={handleScrollToSection} />
-      ) : (
+      ) : activeView === "projects" || activeView === "social" ? (
         <ViewDescriptionSidebar view={activeView} />
-      )}
+      ) : null}
 
       {/* 3. MIDDLE CHROME / PANES ENVELOPE */}
-      <div className="min-[1200px]:pl-[380px] xl:pl-[420px] 2xl:pr-[300px] min-h-screen flex flex-col justify-between pt-16 relative z-10">
+      <div className="app-shell-1200 xl:pl-[420px] 2xl:pr-[300px] min-h-screen flex flex-col justify-between pt-16 relative z-10">
         
         {/* Main Scrolling Section Panes */}
         <main className="relative flex-grow w-full px-0 lg:pl-16 lg:pr-12">
@@ -217,7 +233,11 @@ export default function App() {
           <div className="relative z-10">
             <ContactSection />
           </div>
-          </> : activeView === "projects" ? (
+          </> : activeView === "bio" ? (
+            <div className="relative z-10 py-8 sm:py-10">
+              <BioPage />
+            </div>
+          ) : activeView === "projects" ? (
             <div className="relative z-10 py-8 sm:py-10">
               <ProjectsGrid onProjectClick={openProject} />
             </div>

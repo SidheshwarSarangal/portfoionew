@@ -28,7 +28,7 @@ export default function LeftSidebar() {
   return (
     <aside 
       id="left-profile-sidebar"
-      className="hidden min-[1200px]:flex min-[1200px]:w-[380px] xl:w-[420px] min-[1200px]:h-screen min-[1200px]:fixed min-[1200px]:left-0 min-[1200px]:top-0 min-[1200px]:overflow-hidden min-[1200px]:border-r border-white/5 py-8 xl:py-10 px-8 bg-[#000000] flex flex-col justify-center gap-4 text-center z-20"
+      className="left-sidebar-1200 xl:w-[420px] border-white/5 py-8 xl:py-10 px-8 bg-[#000000] flex-col justify-center gap-4 text-center z-20"
     >
       <div className="google-sidebar-gradient pointer-events-none absolute inset-0" aria-hidden="true" />
       <div className="relative z-10 w-full space-y-4 xl:space-y-5">

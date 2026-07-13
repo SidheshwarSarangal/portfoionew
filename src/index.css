@@ -231,6 +231,61 @@ body {
   will-change: opacity;
 }
 
+.desktop-nav-1200 {
+  display: none;
+}
+
+.compact-nav-1200 {
+  display: grid;
+}
+
+.left-sidebar-1200 {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .portfolio-topbar {
+    left: 380px;
+  }
+
+  .desktop-nav-1200 {
+    display: flex;
+  }
+
+  .compact-nav-1200 {
+    display: none;
+  }
+
+  .app-shell-1200 {
+    padding-left: 380px;
+  }
+
+  .left-sidebar-1200 {
+    display: flex;
+    width: 380px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    border-right-width: 1px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .portfolio-topbar {
+    left: 420px;
+  }
+
+  .app-shell-1200 {
+    padding-left: 420px;
+  }
+
+  .left-sidebar-1200 {
+    width: 420px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

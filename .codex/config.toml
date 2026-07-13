@@ -1,0 +1,10 @@
+# Lightweight defaults for small, focused portfolio design edits.
+model_reasoning_effort = "low"
+model_reasoning_summary = "none"
+model_verbosity = "low"
+project_doc_max_bytes = 4096
+
+# Keep one agent/thread active so small UI changes do not multiply usage.
+[agents]
+max_threads = 1
+max_depth = 0
