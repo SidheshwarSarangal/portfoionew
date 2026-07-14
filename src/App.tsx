@@ -1,4 +1,6 @@
-import { lazy, Suspense, useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import type { Project, Article } from "./types";
 import Header from "./components/Header";
 import type { PortfolioView } from "./components/Header";
@@ -20,12 +22,33 @@ import { useSeoMetadata } from "./lib/seo";
 const ProjectDetailModal = lazy(() => import("./components/ProjectDetailModal"));
 const ArticleModal = lazy(() => import("./components/ArticleModal"));
 
+const sectionRailAccents: Record<string, { primary: string; secondary: string }> = {
+  hero: { primary: "#4285f4", secondary: "#7aa7ff" },
+  work: { primary: "#fbbc04", secondary: "#f59e0b" },
+  about: { primary: "#f59e0b", secondary: "#ea4335" },
+  "chapter-what-i-do": { primary: "#34a853", secondary: "#22c55e" },
+  "chapter-tech-stack": { primary: "#4285f4", secondary: "#22d3ee" },
+  "chapter-history": { primary: "#ea4335", secondary: "#f59e0b" },
+  "chapter-testimonials": { primary: "#a855f7", secondary: "#4285f4" },
+  "chapter-awards": { primary: "#fbbc04", secondary: "#fb7185" },
+  writings: { primary: "#34a853", secondary: "#22d3ee" },
+  contact: { primary: "#4285f4", secondary: "#a855f7" },
+};
+
 export default function App() {
   const { projects, articles, personalBio, socialLinks } = usePortfolioContent();
   const [activeSection, setActiveSection] = useState("hero");
   const [activeView, setActiveView] = useState<PortfolioView>("info");
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const programmaticSectionRef = useRef<string | null>(null);
+  const scrollSettleTimerRef = useRef<number | undefined>(undefined);
+  const railAccent = sectionRailAccents[activeSection] ?? sectionRailAccents.hero;
+  const railAccentStyle = {
+    "--rail-primary": railAccent.primary,
+    "--rail-secondary": railAccent.secondary,
+  } as CSSProperties;
 
   const syncRoute = () => {
     const route = readContentRoute();
@@ -67,6 +90,12 @@ export default function App() {
     requestAnimationFrame(() => {
       const el = document.getElementById(sectionId);
       if (el) {
+        programmaticSectionRef.current = sectionId;
+        window.clearTimeout(scrollSettleTimerRef.current);
+        scrollSettleTimerRef.current = window.setTimeout(() => {
+          programmaticSectionRef.current = null;
+        }, 1200);
+
         const headerOffset = 64;
         const elementPosition = el.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.scrollY - headerOffset;
@@ -81,8 +110,14 @@ export default function App() {
   };
 
   const handleViewChange = (view: PortfolioView) => {
+    setRightDrawerOpen(false);
     setActiveView(view);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleDrawerSectionClick = (sectionId: string) => {
+    setRightDrawerOpen(false);
+    handleScrollToSection(sectionId);
   };
 
   // Bio is a compact-layout tab. Once that tab is hidden, keep Info in the center pane.
@@ -98,6 +133,29 @@ export default function App() {
     desktopLayout.addEventListener("change", defaultToInfo);
     return () => desktopLayout.removeEventListener("change", defaultToInfo);
   }, []);
+
+  useEffect(() => {
+    if (!rightDrawerOpen) return;
+
+    const desktopSidebar = window.matchMedia("(min-width: 1536px)");
+    const previousOverflow = document.body.style.overflow;
+    const closeOnDesktop = () => {
+      if (desktopSidebar.matches) setRightDrawerOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setRightDrawerOpen(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    desktopSidebar.addEventListener("change", closeOnDesktop);
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      desktopSidebar.removeEventListener("change", closeOnDesktop);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [rightDrawerOpen]);
 
   // Keep the right-side index aligned to the section nearest the viewport reading line.
   useEffect(() => {
@@ -152,6 +210,14 @@ export default function App() {
     };
 
     const requestUpdate = () => {
+      if (programmaticSectionRef.current) {
+        window.clearTimeout(scrollSettleTimerRef.current);
+        scrollSettleTimerRef.current = window.setTimeout(() => {
+          programmaticSectionRef.current = null;
+        }, 220);
+        return;
+      }
+
       window.cancelAnimationFrame(frameId);
       frameId = window.requestAnimationFrame(updateActiveSection);
     };
@@ -162,6 +228,8 @@ export default function App() {
 
     return () => {
       window.cancelAnimationFrame(frameId);
+      window.clearTimeout(scrollSettleTimerRef.current);
+      programmaticSectionRef.current = null;
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
     };
@@ -177,15 +245,58 @@ export default function App() {
       />
 
       {/* 1. TOP STICKY TAB WRITING HEADER BAR */}
-      <Header activeView={activeView} onViewChange={handleViewChange} />
+      <Header
+        activeView={activeView}
+        onViewChange={handleViewChange}
+        isSidebarOpen={rightDrawerOpen}
+        onSidebarToggle={() => setRightDrawerOpen((open) => !open)}
+      />
 
       {/* 2. THE MAIN SYNCED SIDEBARS */}
-      <LeftSidebar />
+      <LeftSidebar primaryAccent={railAccent.primary} secondaryAccent={railAccent.secondary} />
       {activeView === "info" ? (
         <RightSidebar activeSection={activeSection} onSymbolClick={handleScrollToSection} />
       ) : activeView === "projects" || activeView === "social" ? (
         <ViewDescriptionSidebar view={activeView} />
       ) : null}
+
+      <AnimatePresence>
+        {rightDrawerOpen && activeView !== "bio" && (
+          <motion.div
+            className="fixed inset-0 z-50 2xl:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <button
+              type="button"
+              aria-label="Close right sidebar"
+              className="absolute inset-0 h-full w-full cursor-default bg-black/55 backdrop-blur-[2px]"
+              onClick={() => setRightDrawerOpen(false)}
+            />
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label={activeView === "info" ? "Page index" : `${activeView} information`}
+              className="absolute bottom-0 right-0 top-0 w-[min(88vw,340px)]"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 360, damping: 34 }}
+            >
+              {activeView === "info" ? (
+                <RightSidebar
+                  activeSection={activeSection}
+                  onSymbolClick={handleDrawerSectionClick}
+                  variant="drawer"
+                />
+              ) : (
+                <ViewDescriptionSidebar view={activeView} variant="drawer" />
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 3. MIDDLE CHROME / PANES ENVELOPE */}
       <div className="app-shell-1200 xl:pl-[420px] 2xl:pr-[300px] min-h-screen flex flex-col justify-between pt-16 relative z-10">
@@ -195,7 +306,10 @@ export default function App() {
           <div className="center-pane-gradient pointer-events-none absolute inset-0 z-0" aria-hidden="true" />
           
           {/* Editor-style line numbers */}
-          <div className="absolute left-0 top-0 bottom-0 w-14 border-r border-white/[0.04] bg-[#000000]/55 select-none hidden lg:flex flex-col items-end pt-12 pr-4 text-[10px] font-mono text-neutral-300/55 leading-[23px] z-0 overflow-hidden">
+          <div
+            className="section-accent-number-strip absolute left-0 top-0 bottom-0 w-14 border-r border-white/[0.04] bg-[#000000]/55 select-none hidden lg:flex flex-col items-end pt-12 pr-4 text-[10px] font-mono text-neutral-300/55 leading-[23px] z-0 overflow-hidden"
+            style={railAccentStyle}
+          >
             <div className="section-height-gradient-rail absolute inset-y-0 left-0 w-[4px]" aria-hidden="true" />
             <div className="section-height-gradient-wash absolute inset-y-0 left-0 right-0" aria-hidden="true" />
             {Array.from({ length: 700 }).map((_, i) => (
@@ -208,10 +322,7 @@ export default function App() {
           {activeView === "info" ? <>
           {/* SECTION 1: HERO VIEW */}
           <div className="relative z-10">
-            <Hero
-              onExploreClick={() => handleScrollToSection("chapter-history")}
-              onContactClick={() => handleScrollToSection("contact")}
-            />
+            <Hero />
           </div>
 
           {/* SECTION 2: PROJECT CATALOG */}

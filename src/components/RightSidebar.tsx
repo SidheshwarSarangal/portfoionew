@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from "motion/react";
 interface RightSidebarProps {
   activeSection: string;
   onSymbolClick: (sectionId: string) => void;
+  variant?: "desktop" | "drawer";
 }
 
-export default function RightSidebar({ activeSection, onSymbolClick }: RightSidebarProps) {
+export default function RightSidebar({ activeSection, onSymbolClick, variant = "desktop" }: RightSidebarProps) {
   const symbols = [
     { label: "Intro", id: "hero" },
     { label: "Selected work", id: "work", gapBefore: 14 },
@@ -24,7 +25,7 @@ export default function RightSidebar({ activeSection, onSymbolClick }: RightSide
   };
 
   const activeIndex = getActiveIndex();
-  const getItemHeight = (item: typeof symbols[number]) => item.level ? 30 : 36;
+  const getItemHeight = (item: typeof symbols[number]) => item.level ? 36 : 42;
   const activeTop = activeIndex === -1
     ? 0
     : symbols.slice(0, activeIndex).reduce((top, item) => top + getItemHeight(item) + (item.gapBefore ?? 0), 0)
@@ -33,13 +34,17 @@ export default function RightSidebar({ activeSection, onSymbolClick }: RightSide
 
   return (
     <aside
-      id="right-indexes-sidebar"
-      className="w-[300px] h-screen fixed right-0 top-0 border-l border-white/10 pt-28 pb-10 px-8 bg-neutral-900/80 hidden 2xl:flex flex-col z-20 select-none"
+      id={variant === "desktop" ? "right-indexes-sidebar" : "right-indexes-drawer"}
+      className={`border-l border-white/10 pt-28 pb-10 px-7 bg-[#08090c]/70 backdrop-blur-2xl backdrop-saturate-150 shadow-[-24px_0_70px_rgba(0,0,0,0.22)] flex-col select-none ${
+        variant === "desktop"
+          ? "w-[300px] h-screen fixed right-0 top-0 hidden 2xl:flex z-20"
+          : "relative flex h-full w-full overflow-y-auto"
+      }`}
     >
       <div className="space-y-7 text-left">
         {/* Outline Title */}
         <div className="pl-2 select-none space-y-2">
-          <span className="font-mono text-xs uppercase text-[#fbbc04] tracking-widest font-semibold block">
+          <span className="font-display text-lg uppercase text-[#fbbc04] tracking-[0.16em] font-semibold block">
             Index
           </span>
           <span className="block h-px w-16 bg-gradient-to-r from-[#fbbc04]/70 to-transparent" />
@@ -80,13 +85,13 @@ export default function RightSidebar({ activeSection, onSymbolClick }: RightSide
                   <button
                     onClick={() => onSymbolClick(item.id)}
                     className={`w-full text-left font-mono rounded-lg cursor-pointer transition-all duration-150 overflow-hidden text-ellipsis whitespace-nowrap block ${
-                      isNested ? "py-1.5 pl-9 pr-2 text-[12px]" : "py-2 pl-5 pr-2 text-[13px]"
+                      isNested ? "py-2 pl-9 pr-2 text-[14px]" : "py-2.5 pl-5 pr-2 text-[15px]"
                     } ${
                       isSelected ? "bg-[#fbbc04]/10" : "hover:bg-white/5"
                     }`}
                   >
                     <span
-                      className={`mr-2 text-[10px] tabular-nums ${
+                      className={`mr-2 text-[11px] tabular-nums ${
                         isSelected ? "text-[#fbbc04]/80" : "text-neutral-600 group-hover:text-neutral-400"
                       }`}
                     >

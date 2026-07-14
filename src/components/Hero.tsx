@@ -1,28 +1,48 @@
-import { ArrowDown, Mail } from "lucide-react";
-import DecryptText from "./DecryptText";
+import { useEffect, useState } from "react";
 
-interface HeroProps {
-  onExploreClick: () => void;
-  onContactClick: () => void;
-}
+const leftHighlights = ["Full-stack Developer", "Problem Solver", "Python Developer", "IIT Roorkee Graduate"];
+const rightHighlights = ["Backend Systems", "Quick Learner", "MERN Developer"];
 
-export default function Hero({ onExploreClick, onContactClick }: HeroProps) {
+export default function Hero() {
   const portraitUrl = `${import.meta.env.BASE_URL}portfolio-hero.png`;
+  const [highlightIndex, setHighlightIndex] = useState(0);
+  const [highlightsVisible, setHighlightsVisible] = useState(true);
+
+  useEffect(() => {
+    let displayTimer: number | undefined;
+    let swapTimer: number | undefined;
+
+    const scheduleNextHighlight = () => {
+      displayTimer = window.setTimeout(() => {
+        setHighlightsVisible(false);
+        swapTimer = window.setTimeout(() => {
+          setHighlightIndex((current) => current + 1);
+          setHighlightsVisible(true);
+          scheduleNextHighlight();
+        }, 1500);
+      }, 8000);
+    };
+
+    scheduleNextHighlight();
+
+    return () => {
+      if (displayTimer !== undefined) window.clearTimeout(displayTimer);
+      if (swapTimer !== undefined) window.clearTimeout(swapTimer);
+    };
+  }, []);
 
   return (
     <section
       id="hero"
-      className="relative min-h-[78vh] max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-14 select-text overflow-hidden"
+      className="relative min-h-[calc(100svh-4rem)] w-full max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 flex flex-col justify-center select-text overflow-hidden"
     >
-      <div className="font-mono text-[10px] text-neutral-600 flex items-center justify-center gap-2 tracking-[0.18em] uppercase select-none">
-        <span className="h-px w-8 bg-white/10" />
-        <span>Portfolio / 2026</span>
-        <span className="h-px w-8 bg-white/10" />
-      </div>
+      <div className="relative mt-3 h-[520px] sm:h-[680px] md:h-[790px] flex items-center justify-center [container-type:inline-size]">
+        <h1 className="sr-only">Software Engineer</h1>
 
-      <div className="relative mt-3 h-[430px] sm:h-[520px] md:h-[560px] flex items-center justify-center">
-        <div className="absolute inset-x-0 top-[17%] z-0 text-center overflow-visible select-none" aria-hidden="true">
-          <span className="block font-display text-[clamp(3.6rem,13vw,11rem)] font-black leading-[0.86] tracking-[-0.085em] text-white whitespace-nowrap">
+        <div className="absolute inset-x-0 top-[15%] z-0 text-center overflow-visible select-none" aria-hidden="true">
+          <span
+            className="hero-software-title block font-black leading-[0.86] tracking-[0.02em] text-white whitespace-nowrap"
+          >
             SOFTWARE
           </span>
         </div>
@@ -30,8 +50,8 @@ export default function Hero({ onExploreClick, onContactClick }: HeroProps) {
         <div className="absolute left-1/2 top-[48%] z-0 h-[34%] w-[76%] -translate-x-1/2 rounded-full bg-[#4285f4]/8 blur-[70px]" aria-hidden="true" />
 
         <div
-          className="relative z-10 mt-2 h-[350px] w-[235px] sm:h-[440px] sm:w-[294px] md:h-[485px] md:w-[324px] overflow-hidden"
-          style={{ borderRadius: "0 0 48% 48% / 0 0 12% 12%" }}
+          className="relative z-10 -translate-y-8 sm:-translate-y-12 w-[min(88vw,340px)] sm:w-[430px] md:w-[480px] aspect-[2/3] overflow-hidden"
+          style={{ borderRadius: "0 0 50% 50% / 0 0 30% 30%" }}
         >
           <img
             src={portraitUrl}
@@ -41,51 +61,58 @@ export default function Hero({ onExploreClick, onContactClick }: HeroProps) {
           />
         </div>
 
-        <div className="absolute inset-x-0 top-[66%] z-20 flex items-center justify-center select-none" aria-hidden="true">
-          <span className="font-serif text-[clamp(3.7rem,8vw,7.5rem)] italic leading-none tracking-[-0.07em] text-[#d7dadd] drop-shadow-[0_8px_18px_rgba(0,0,0,0.8)]">
-            Engineer
+        <div className="absolute inset-x-0 top-[65%] z-20 flex items-center justify-center select-none" aria-hidden="true">
+          <svg
+            viewBox="0 0 600 220"
+            className="w-[min(108%,820px)] overflow-visible drop-shadow-[0_8px_18px_rgba(0,0,0,0.8)]"
+          >
+            <defs>
+              <path id="hero-engineer-curve" d="M 10 30 Q 300 215 590 30" />
+            </defs>
+            <text
+              fill="#d7dadd"
+              fontFamily="Georgia, 'Times New Roman', serif"
+              fontSize="116"
+              fontStyle="italic"
+              letterSpacing="5"
+            >
+              <textPath href="#hero-engineer-curve" startOffset="50%" textAnchor="middle">
+                Engineer
+              </textPath>
+            </text>
+          </svg>
+        </div>
+
+        <div className="absolute left-[7%] top-[58%] z-20 hidden lg:block w-[205px] -translate-y-1/2" aria-live="polite">
+          <span
+            className={`block font-serif text-[clamp(1.7rem,2.5vw,2.5rem)] italic leading-[1.05] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "-translate-x-4 opacity-0 blur-sm"}`}
+          >
+            {leftHighlights[highlightIndex % leftHighlights.length]}
           </span>
         </div>
 
-        <div className="absolute left-[4%] top-[48%] hidden lg:flex items-center gap-2 font-mono text-[8px] tracking-[0.18em] text-neutral-600 uppercase" aria-hidden="true">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#4285f4]" />
-          Full-stack systems
-        </div>
-        <div className="absolute right-[4%] top-[48%] hidden lg:flex items-center gap-2 font-mono text-[8px] tracking-[0.18em] text-neutral-600 uppercase" aria-hidden="true">
-          IIT Roorkee
-          <span className="h-1.5 w-1.5 rounded-full bg-[#fbbc04]" />
+        <div className="absolute right-[7%] top-[60%] z-20 hidden lg:block w-[200px] -translate-y-1/2 text-right" aria-live="polite">
+          <span
+            className={`block font-serif text-[clamp(1.7rem,2.5vw,2.5rem)] italic leading-[1.05] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "translate-x-4 opacity-0 blur-sm"}`}
+          >
+            {rightHighlights[highlightIndex % rightHighlights.length]}
+          </span>
         </div>
       </div>
 
-      <div className="relative z-30 mx-auto -mt-5 max-w-2xl text-center">
-        <p className="font-sans text-base sm:text-lg leading-relaxed text-neutral-400 font-light">
-          <DecryptText
-            text="Entry-level software engineer building dependable full-stack products, REST APIs, and backend systems."
-            delay={350}
-            duration={1000}
-          />
-        </p>
-
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={onExploreClick}
-            className="px-7 py-3.5 bg-white text-black font-sans font-medium text-sm rounded-full flex items-center gap-2 hover:bg-neutral-200 cursor-pointer transition-all active:scale-[0.98] shadow-lg shadow-white/5"
-          >
-            <span>Professional work</span>
-            <ArrowDown size={13} className="animate-bounce" />
-          </button>
-
-          <button
-            type="button"
-            onClick={onContactClick}
-            className="px-7 py-3.5 bg-[#0d0e10] border border-white/10 text-neutral-300 font-sans font-medium text-sm rounded-full flex items-center gap-2 hover:bg-white/[0.04] hover:border-white/20 transition-all"
-          >
-            <Mail size={13} className="text-neutral-500" />
-            <span>Get in touch</span>
-          </button>
-        </div>
+      <div className="relative z-20 -mt-4 sm:-mt-8 md:-mt-12 grid min-h-[132px] sm:min-h-[88px] grid-cols-1 sm:grid-cols-2 content-start gap-3 sm:gap-6 px-4 py-4 text-center sm:text-left lg:hidden" aria-live="polite">
+        <span
+          className={`font-serif text-[1.7rem] sm:text-[2rem] italic leading-tight tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-y-0 opacity-100 blur-0" : "translate-y-3 opacity-0 blur-sm"}`}
+        >
+          {leftHighlights[highlightIndex % leftHighlights.length]}
+        </span>
+        <span
+          className={`font-serif text-[1.7rem] sm:text-[2rem] italic leading-tight tracking-[-0.035em] text-center sm:text-right text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-y-0 opacity-100 blur-0" : "translate-y-3 opacity-0 blur-sm"}`}
+        >
+          {rightHighlights[highlightIndex % rightHighlights.length]}
+        </span>
       </div>
+
     </section>
   );
 }

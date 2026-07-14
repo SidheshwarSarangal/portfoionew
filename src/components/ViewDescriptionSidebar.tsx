@@ -3,33 +3,38 @@ import { usePortfolioContent } from "../content";
 
 interface ViewDescriptionSidebarProps {
   view: "projects" | "social";
+  variant?: "desktop" | "drawer";
 }
 
-export default function ViewDescriptionSidebar({ view }: ViewDescriptionSidebarProps) {
+export default function ViewDescriptionSidebar({ view, variant = "desktop" }: ViewDescriptionSidebarProps) {
   const { projects, socialPosts } = usePortfolioContent();
   const isProjects = view === "projects";
   const Icon = isProjects ? FolderKanban : MessageSquareText;
 
   return (
-    <aside className="fixed right-0 top-0 hidden h-screen w-[300px] 2xl:flex flex-col border-l border-white/10 bg-neutral-900/80 px-9 pb-10 pt-28 z-20">
-      <div className="space-y-7">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#fbbc04]/25 bg-[#fbbc04]/10 text-[#fbbc04]">
-          <Icon size={26} />
+    <aside className={`flex-col border-l border-white/10 bg-[#08090c]/70 backdrop-blur-2xl backdrop-saturate-150 shadow-[-24px_0_70px_rgba(0,0,0,0.22)] px-8 pb-10 pt-28 select-none ${
+      variant === "desktop"
+        ? "fixed right-0 top-0 hidden h-screen w-[300px] 2xl:flex z-20"
+        : "relative flex h-full w-full overflow-y-auto"
+    }`}>
+      <div className="space-y-8">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#fbbc04]/25 bg-[#fbbc04]/10 text-[#fbbc04] shadow-[0_0_30px_rgba(251,188,4,0.08)]">
+          <Icon size={30} />
         </div>
-        <div className="space-y-3">
-          <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#fbbc04]">
+        <div className="space-y-4">
+          <p className="font-display text-base font-semibold uppercase tracking-[0.16em] text-[#fbbc04]">
             // {isProjects ? "Projects" : "Social"}
           </p>
-          <h2 className="font-display text-2xl font-semibold text-white">
+          <h2 className="font-display text-3xl font-semibold leading-tight text-white">
             {isProjects ? "Selected work" : "Posts & updates"}
           </h2>
-          <p className="font-mono text-sm leading-7 text-neutral-400">
+          <p className="font-mono text-[15px] leading-7 text-neutral-300/85">
             {isProjects
               ? "A focused collection of products, backend systems, experiments, and full-stack applications I have built."
               : "A growing collection of technical notes, project announcements, articles, and updates from my social profiles."}
           </p>
         </div>
-        <div className="border-t border-white/10 pt-6 font-mono text-[13px] text-neutral-500">
+        <div className="border-t border-white/10 pt-6 font-mono text-sm text-neutral-400">
           <span className="text-[#fbbc04] font-semibold">{isProjects ? projects.length : socialPosts.length}</span>
           <span className="ml-2">{isProjects ? "projects available" : "posts available"}</span>
         </div>

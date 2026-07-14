@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { 
   User, MapPin, Mail, Download,
   Phone, Globe, Copy, Check, Linkedin
@@ -6,7 +7,12 @@ import {
 import { usePortfolioContent } from "../content";
 import SocialLinks, { findSocialLink } from "./SocialLinks";
 
-export default function LeftSidebar() {
+interface LeftSidebarProps {
+  primaryAccent: string;
+  secondaryAccent: string;
+}
+
+export default function LeftSidebar({ primaryAccent, secondaryAccent }: LeftSidebarProps) {
   const { personalBio: PERSONAL_BIO, socialLinks: SOCIAL_LINKS } = usePortfolioContent();
   const [copied, setCopied] = useState(false);
 
@@ -28,7 +34,11 @@ export default function LeftSidebar() {
   return (
     <aside 
       id="left-profile-sidebar"
-      className="left-sidebar-1200 xl:w-[420px] border-white/5 py-8 xl:py-10 px-8 bg-[#000000] flex-col justify-center gap-4 text-center z-20"
+      className="section-accent-sidebar left-sidebar-1200 xl:w-[420px] border-white/5 py-8 xl:py-10 px-8 bg-[#000000] flex-col justify-center gap-4 text-center z-20"
+      style={{
+        "--rail-primary": primaryAccent,
+        "--rail-secondary": secondaryAccent,
+      } as CSSProperties}
     >
       <div className="google-sidebar-gradient pointer-events-none absolute inset-0" aria-hidden="true" />
       <div className="relative z-10 w-full space-y-4 xl:space-y-5">
