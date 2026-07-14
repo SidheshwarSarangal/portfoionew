@@ -7,21 +7,33 @@ interface RightSidebarProps {
 }
 
 export default function RightSidebar({ activeSection, onSymbolClick, variant = "desktop" }: RightSidebarProps) {
-  const symbols = [
+  const symbols: Array<{
+    label: string;
+    id: string;
+    gapBefore?: number;
+    level?: number;
+    disabled?: boolean;
+  }> = [
     { label: "Intro", id: "hero" },
     { label: "Selected work", id: "work", gapBefore: 14 },
     { label: "About", id: "about", gapBefore: 18 },
-    { label: "Capabilities", id: "chapter-what-i-do", level: 1 },
-    { label: "Tech stack", id: "chapter-tech-stack", level: 1 },
-    { label: "Experience", id: "chapter-history", gapBefore: 18 },
-    { label: "Testimonials", id: "chapter-testimonials", level: 1 },
-    { label: "Recognition", id: "chapter-awards", level: 1 },
+    { label: "Capabilities", id: "chapter-what-i-do", level: 1, disabled: true },
+    { label: "Tech stack", id: "chapter-tech-stack", level: 1, disabled: true },
+    { label: "Experience", id: "experience", gapBefore: 18 },
+    { label: "Testimonials", id: "chapter-testimonials", level: 1, disabled: true },
+    { label: "Recognition", id: "chapter-awards", level: 1, disabled: true },
     { label: "Writing", id: "writings", gapBefore: 18 },
     { label: "Contact", id: "contact" }
   ];
 
+  const resolvedActiveSection = ["chapter-what-i-do", "chapter-tech-stack"].includes(activeSection)
+    ? "about"
+    : ["chapter-testimonials", "chapter-awards"].includes(activeSection)
+      ? "experience"
+      : activeSection;
+
   const getActiveIndex = () => {
-    return symbols.findIndex((s) => s.id === activeSection);
+    return symbols.findIndex((s) => s.id === resolvedActiveSection && !s.disabled);
   };
 
   const activeIndex = getActiveIndex();
@@ -70,7 +82,7 @@ export default function RightSidebar({ activeSection, onSymbolClick, variant = "
 
           <ul className="text-left">
             {symbols.map((item, index) => {
-              const isSelected = activeSection === item.id;
+              const isSelected = !item.disabled && resolvedActiveSection === item.id;
               const itemHeight = getItemHeight(item);
               const isNested = Boolean(item.level);
               return (
@@ -83,11 +95,17 @@ export default function RightSidebar({ activeSection, onSymbolClick, variant = "
                   }}
                 >
                   <button
+                    type="button"
+                    disabled={item.disabled}
                     onClick={() => onSymbolClick(item.id)}
-                    className={`w-full text-left font-mono rounded-lg cursor-pointer transition-all duration-150 overflow-hidden text-ellipsis whitespace-nowrap block ${
+                    className={`w-full text-left font-mono rounded-lg transition-all duration-150 overflow-hidden text-ellipsis whitespace-nowrap block ${
                       isNested ? "py-2 pl-9 pr-2 text-[14px]" : "py-2.5 pl-5 pr-2 text-[15px]"
                     } ${
-                      isSelected ? "bg-[#fbbc04]/10" : "hover:bg-white/5"
+                      item.disabled
+                        ? "cursor-default"
+                        : "cursor-pointer hover:bg-white/5"
+                    } ${
+                      isSelected ? "bg-[#fbbc04]/10" : ""
                     }`}
                   >
                     <span

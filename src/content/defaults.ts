@@ -40,6 +40,9 @@ export function mergeContent(overrides: PortfolioContentOverrides): PortfolioCon
   const projects = (overrides.projects ?? defaultContent.projects).map((project) => ({
     ...project,
     imageUrl: safeWebUrl(project.imageUrl),
+    hoverImageUrl: safeWebUrl(project.hoverImageUrl),
+    videoUrl: safeWebUrl(project.videoUrl),
+    videoPosterUrl: safeWebUrl(project.videoPosterUrl),
     links: {
       live: safeWebUrl(project.links.live),
       github: safeWebUrl(project.links.github),

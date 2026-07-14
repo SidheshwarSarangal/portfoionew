@@ -8,6 +8,14 @@ export interface Project {
   technologies: string[];
   accentColor: string;
   imageUrl?: string;
+  hoverImageUrl?: string;
+  videoUrl?: string;
+  videoPosterUrl?: string;
+  contributors?: string[];
+  associatedWith?: string;
+  startedAt?: string;
+  completedAt?: string;
+  status?: string;
   links: {
     live?: string;
     github?: string;
@@ -18,6 +26,8 @@ export interface Project {
     problem: string;
     solution: string;
     outcomes: string[];
+    architecture?: string[];
+    highlights?: string[];
   };
   featured: boolean;
 }

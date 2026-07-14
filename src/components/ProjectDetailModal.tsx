@@ -1,7 +1,8 @@
-import { motion, AnimatePresence } from "motion/react";
-import { X, Github, ExternalLink, Dribbble } from "lucide-react";
+import { motion } from "motion/react";
+import { Building2, CalendarRange, Dribbble, ExternalLink, Github, Layers3, Users, X } from "lucide-react";
 import type { Project } from "../types";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 import { trackEvent } from "../lib/analytics";
 
 interface ProjectDetailModalProps {
@@ -9,160 +10,196 @@ interface ProjectDetailModalProps {
   onClose: () => void;
 }
 
+const linkClasses = "inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 font-mono text-[10px] text-neutral-300 transition-all hover:border-amber-300/35 hover:bg-amber-300/10 hover:text-amber-200";
+
 export default function ProjectDetailModal({ project, onClose }: ProjectDetailModalProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (!project) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [project, onClose]);
 
   if (!project) return null;
+  const architecture = project.details.architecture?.length
+    ? project.details.architecture
+    : project.technologies.slice(0, 5);
 
   return (
-    <AnimatePresence>
-      <div 
-        className="fixed inset-0 z-50 overflow-y-auto" 
-        id="project-detail-modal-wrapper"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="project-modal-title"
-      >
-        {/* Backdrop overlay */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md"
-          id="project-detail-backdrop"
-        />
+    <motion.div
+      className="fixed inset-0 z-[80] overflow-y-auto overscroll-contain"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="project-modal-title"
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.42, ease: [0.4, 0, 0.2, 1] }}
+    >
+      <div className="fixed inset-0 bg-[#020305]/75 backdrop-blur-xl" aria-hidden="true" />
 
-        {/* Modal content area container */}
-        <div className="flex min-h-screen items-center justify-center p-4 sm:p-6 md:p-10 relative">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 15 }}
-            transition={{ type: "spring", stiffness: 300, damping: 28 }}
-            className="w-full max-w-3xl bg-[#0e0f10] border border-white/10 rounded-2xl p-6 sm:p-8 md:p-10 relative shadow-2xl overflow-hidden"
-            id="project-detail-modal-card"
+      <div className="relative flex min-h-full items-start justify-center p-3 sm:p-6 lg:p-10">
+        <motion.article
+          initial={{ opacity: 0, scale: 0.965, y: 28 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.965, y: 28 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          onClick={(event) => event.stopPropagation()}
+          className="relative my-auto w-full max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#0a0c11]/80 shadow-[0_35px_120px_rgba(0,0,0,0.72)] backdrop-blur-2xl"
+        >
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_3%,rgba(251,191,36,0.10),transparent_28%),radial-gradient(circle_at_0%_60%,rgba(59,130,246,0.08),transparent_32%)]" />
+
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Close project details"
+            className="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-black/35 text-neutral-300 backdrop-blur-xl transition-all hover:rotate-90 hover:border-white/30 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
           >
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              aria-label="Close project details"
-              className="absolute top-5 right-5 p-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-neutral-400 hover:text-white cursor-pointer transition-colors"
-              id="project-modal-close-btn"
-            >
-              <X size={16} />
-            </button>
+            <X size={17} />
+          </button>
 
-            {/* Header section */}
-            <div className="border-b border-white/5 pb-6 mb-8" id="project-modal-header">
-              <span className="font-mono text-xs text-neutral-500 font-medium bg-white/5 px-2.5 py-1 rounded-md">
-                Project • {project.year}
-              </span>
-              <h1 id="project-modal-title" className="font-display text-2xl sm:text-3xl md:text-4xl text-white font-medium tracking-tight mt-4">
-                {project.title}
-              </h1>
-              <p className="font-sans text-neutral-400 text-sm mt-3 leading-relaxed font-light">
-                {project.description}
-              </p>
+          <div className="relative grid lg:grid-cols-[1.18fr_0.82fr]">
+            <div className="border-b border-white/10 p-4 sm:p-6 lg:border-b-0 lg:border-r lg:p-8">
+              {project.videoUrl ? (
+                <video
+                  controls
+                  playsInline
+                  preload="metadata"
+                  poster={project.videoPosterUrl ?? project.imageUrl}
+                  className="aspect-video w-full rounded-2xl border border-white/10 bg-black object-cover"
+                >
+                  <source src={project.videoUrl} />
+                  Your browser does not support embedded video.
+                </video>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  {[project.imageUrl, project.hoverImageUrl].filter(Boolean).map((image, index) => (
+                    <figure key={`${image}-${index}`} className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+                      <img
+                        src={image}
+                        alt={`${project.title} ${index === 0 ? "overview" : "alternate view"}`}
+                        className="h-full w-full object-cover brightness-[0.82] transition duration-700 group-hover:scale-105 group-hover:brightness-100"
+                        referrerPolicy="no-referrer"
+                      />
+                      <figcaption className="absolute bottom-3 left-3 rounded-full border border-white/10 bg-black/45 px-3 py-1 font-mono text-[9px] uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
+                        {index === 0 ? "Primary view" : "Detail view"}
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              )}
+
+              <section className="mt-8">
+                <div className="mb-4 flex items-center gap-2 text-neutral-500">
+                  <Layers3 size={14} />
+                  <h2 className="font-mono text-[10px] uppercase tracking-[0.2em]">System diagram</h2>
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  {architecture.map((stage, index) => (
+                    <div key={stage} className="contents">
+                      <div className="flex min-h-14 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/[0.035] px-3 text-center font-mono text-[10px] leading-relaxed text-neutral-300">
+                        {stage}
+                      </div>
+                      {index < architecture.length - 1 && (
+                        <span className="text-center font-mono text-xs text-amber-300/60 sm:-mx-1">→</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
             </div>
 
-            {/* Grid for Roles, Tech and Links */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8" id="project-modal-summary-panel">
-              <div>
-                <h4 className="font-mono text-[10px] uppercase text-neutral-500 tracking-wider font-semibold">My Roles</h4>
-                <ul className="mt-2 text-sm text-neutral-300 font-sans font-light space-y-1">
-                  {project.roles.map((role) => <li key={role}>{role}</li>)}
-                </ul>
+            <div className="relative p-5 sm:p-7 lg:p-8">
+              <span className="inline-flex rounded-full border border-amber-300/15 bg-amber-300/[0.07] px-3 py-1 font-mono text-[9px] uppercase tracking-[0.18em] text-amber-200/80">
+                {project.category} · {project.year}
+              </span>
+              <h1 id="project-modal-title" className="mt-5 max-w-xl font-display text-3xl leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+                {project.title}
+              </h1>
+              <p className="mt-4 font-sans text-sm leading-7 text-neutral-400">{project.description}</p>
+
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Fact icon={<CalendarRange size={14} />} label="Timeline" value={[project.startedAt, project.completedAt].filter(Boolean).join(" — ") || project.year} />
+                <Fact icon={<Building2 size={14} />} label="Associated with" value={project.associatedWith ?? "Independent project"} />
+                <Fact icon={<Users size={14} />} label="Contributors" value={project.contributors?.join(", ") ?? "Sidheshwar Sarangal"} />
+                <Fact icon={<Layers3 size={14} />} label="Status" value={project.status ?? "Completed"} />
               </div>
-              <div>
-                <h4 className="font-mono text-[10px] uppercase text-neutral-500 tracking-wider font-semibold">Tech Palette</h4>
-                <div className="mt-2 flex flex-wrap gap-1">
+
+              <div className="mt-7">
+                <h2 className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">Tech stack</h2>
+                <div className="mt-3 flex flex-wrap gap-2">
                   {project.technologies.map((tech) => (
-                    <span key={tech} className="font-mono text-[10px] text-neutral-400 bg-white/5 border border-white/5 px-2 py-0.5 rounded">
-                      {tech}
-                    </span>
+                    <span key={tech} className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 font-mono text-[9px] text-neutral-300">{tech}</span>
                   ))}
                 </div>
               </div>
-              <div>
-                <h4 className="font-mono text-[10px] uppercase text-neutral-500 tracking-wider font-semibold">Asset Source</h4>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {project.links.github && (
-                    <a
-                      href={project.links.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackEvent("project_repository_click", { project_id: project.id })}
-                      className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-neutral-300 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1.5"
-                    >
-                      <Github size={12} />
-                      <span>Repository</span>
-                    </a>
-                  )}
-                  {project.links.dribbble && (
-                    <a
-                      href={project.links.dribbble}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-neutral-300 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1.5"
-                    >
-                      <Dribbble size={12} />
-                      <span>Shots</span>
-                    </a>
-                  )}
-                  {project.links.live && (
-                    <a
-                      href={project.links.live}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackEvent("live_demo_click", { project_id: project.id })}
-                      className="px-3 py-1.5 rounded-full bg-white text-black text-xs hover:bg-neutral-200 font-medium transition-colors flex items-center gap-1.5"
-                    >
-                      <ExternalLink size={12} />
-                      <span>Live Demo</span>
-                    </a>
-                  )}
-                </div>
+
+              <div className="mt-7 flex flex-wrap gap-2">
+                {project.links.github && <ProjectLink href={project.links.github} label="Repository" icon={<Github size={13} />} onClick={() => trackEvent("project_repository_click", { project_id: project.id })} />}
+                {project.links.live && <ProjectLink href={project.links.live} label="Live demo" icon={<ExternalLink size={13} />} onClick={() => trackEvent("live_demo_click", { project_id: project.id })} />}
+                {project.links.dribbble && <ProjectLink href={project.links.dribbble} label="Dribbble" icon={<Dribbble size={13} />} />}
+                {project.links.behance && <ProjectLink href={project.links.behance} label="Behance" icon={<ExternalLink size={13} />} />}
               </div>
             </div>
+          </div>
 
-            {/* Core Narrative */}
-            <div className="space-y-8" id="project-modal-narrative">
+          <div className="relative border-t border-white/10 p-5 sm:p-7 lg:p-8">
+            <div className="grid gap-8 lg:grid-cols-3">
+              <Narrative title="The brief" text={project.details.problem} />
+              <Narrative title="The approach" text={project.details.solution} />
               <div>
-                <h3 className="font-display text-base text-white font-medium tracking-tight">The Friction (Problem)</h3>
-                <p className="font-sans text-neutral-400 text-sm leading-relaxed mt-2 font-light">
-                  {project.details.problem}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-display text-base text-white font-medium tracking-tight">The Overhaul (Solution)</h3>
-                <p className="font-sans text-neutral-400 text-sm leading-relaxed mt-2 font-light">
-                  {project.details.solution}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-display text-base text-white font-medium tracking-tight">Key Outcomes</h3>
-                <ul className="mt-2 text-sm text-neutral-300 list-inside list-disc font-sans font-light space-y-2">
-                  {project.details.outcomes.map((outcome, idx) => (
-                    <li key={idx} className="leading-relaxed">
-                      {outcome}
+                <h2 className="font-display text-lg text-white">Results & highlights</h2>
+                <ul className="mt-3 space-y-3">
+                  {[...project.details.outcomes, ...(project.details.highlights ?? [])].map((item) => (
+                    <li key={item} className="flex gap-3 font-sans text-xs leading-6 text-neutral-400">
+                      <span className="mt-[0.6rem] h-1 w-1 shrink-0 rounded-full bg-amber-300" />
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.article>
       </div>
-    </AnimatePresence>
+    </motion.div>
+  );
+}
+
+function Fact({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/[0.08] bg-black/15 p-3">
+      <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-600">{icon}{label}</div>
+      <p className="mt-2 font-sans text-xs leading-relaxed text-neutral-300">{value}</p>
+    </div>
+  );
+}
+
+function Narrative({ title, text }: { title: string; text: string }) {
+  return (
+    <section>
+      <h2 className="font-display text-lg text-white">{title}</h2>
+      <p className="mt-3 font-sans text-xs leading-6 text-neutral-400">{text}</p>
+    </section>
+  );
+}
+
+function ProjectLink({ href, label, icon, onClick }: { href: string; label: string; icon: ReactNode; onClick?: () => void }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={linkClasses}>
+      {icon}<span>{label}</span>
+    </a>
   );
 }

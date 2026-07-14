@@ -1,215 +1,235 @@
-import { motion } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
 import { usePortfolioContent } from "../content";
 import { 
   Github, Twitter, Linkedin, ArrowDown
 } from "lucide-react";
 
-export default function JourneyTimeline() {
+interface JourneyTimelineProps {
+  section?: "about" | "experience" | "all";
+  containerRef?: RefObject<HTMLDivElement | null>;
+}
+
+const TOOL_SYMBOLS = [
+  { name: "Python", short: "Py", icon: "https://cdn.simpleicons.org/python/3776ab", color: "#3776ab" },
+  { name: "MERN Stack", short: "M", icon: "https://cdn.simpleicons.org/mongodb/47a248", color: "#47a248" },
+  { name: "Angular", short: "A", icon: "https://cdn.simpleicons.org/angular/dd0031", color: "#dd0031" },
+  { name: "C++", short: "C++", icon: "https://cdn.simpleicons.org/cplusplus/659ad2", color: "#659ad2" },
+  { name: "Git", short: "Git", icon: "https://cdn.simpleicons.org/git/f05032", color: "#f05032" },
+  { name: "VS Code", short: "VS", icon: "https://cdn.simpleicons.org/visualstudiocode/23a8f2", color: "#23a8f2" },
+  { name: "Codex", short: "AI", icon: "https://cdn.simpleicons.org/openai/10a37f", color: "#10a37f" },
+  { name: "JavaScript", short: "JS", icon: "https://cdn.simpleicons.org/javascript/f7df1e", color: "#f7df1e" },
+  { name: "TypeScript", short: "TS", icon: "https://cdn.simpleicons.org/typescript/3178c6", color: "#3178c6" },
+  { name: "Electron", short: "E", icon: "https://cdn.simpleicons.org/electron/9feaf9", color: "#9feaf9" },
+  { name: "React", short: "R", icon: "https://cdn.simpleicons.org/react/61dafb", color: "#61dafb" },
+  { name: "Node.js", short: "N", icon: "https://cdn.simpleicons.org/nodedotjs/5fa04e", color: "#5fa04e" },
+  { name: "Spring Boot", short: "S", icon: "https://cdn.simpleicons.org/springboot/6db33f", color: "#6db33f" },
+  { name: "Docker", short: "D", icon: "https://cdn.simpleicons.org/docker/2496ed", color: "#2496ed" },
+  { name: "Kubernetes", short: "K8s", icon: "https://cdn.simpleicons.org/kubernetes/326ce5", color: "#326ce5" },
+  { name: "PostgreSQL", short: "SQL", icon: "https://cdn.simpleicons.org/postgresql/5b8fc8", color: "#5b8fc8" },
+];
+
+export default function JourneyTimeline({ section = "all", containerRef }: JourneyTimelineProps) {
   const {
     timeline: TIMELINE,
-    experienceSummary: experiences,
     capabilities: whatIDo,
-    techSkills,
     industryAwards,
     teamAwards,
     testimonials: feedback,
   } = usePortfolioContent();
+  const showAbout = section !== "experience";
+  const showExperience = section !== "about";
+  const aboutPortraitUrl = `${import.meta.env.BASE_URL}portfolio-hero.png`;
+  const aboutTrackRef = useRef<HTMLDivElement>(null);
+  const portraitCardRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const [portraitTravel, setPortraitTravel] = useState(0);
+  const [wideAboutLayout, setWideAboutLayout] = useState(false);
+  const { scrollYProgress: aboutScrollProgress } = useScroll({
+    container: containerRef,
+    target: aboutTrackRef,
+    offset: ["start 22%", "end end"],
+  });
+  const portraitY = useTransform(aboutScrollProgress, [0, 1], [-90, portraitTravel]);
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 640px)");
+    const update = () => setWideAboutLayout(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  useLayoutEffect(() => {
+    const track = aboutTrackRef.current;
+    const card = portraitCardRef.current;
+    if (!track || !card || !wideAboutLayout) {
+      setPortraitTravel(0);
+      return;
+    }
+    const measure = () => setPortraitTravel(Math.max(0, track.clientHeight - card.offsetHeight));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [wideAboutLayout]);
 
   return (
-    <section id="about" className="w-full max-w-5xl mx-auto px-6 py-12 border-t border-white/5 space-y-14 relative select-text">
-      
-      {/* SECTION 3.1: ABOUT ME & PREVIOUS LIFE COMBINED */}
-      <div className="relative group" id="chapter-about">
-        {/* Massive Backdrop text: SINCE 2022 left reveal */}
-        <div
-          className="group/since relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
-        >
-          <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
-            <span
-              className="font-display text-[clamp(44px,16cqw,132px)] font-black uppercase text-neutral-700 leading-none transition-colors duration-300 group-hover/since:text-neutral-300"
-            >
+    <section
+      id={section === "experience" ? "experience" : "about"}
+      className="w-full max-w-5xl mx-auto px-6 py-12 border-t border-white/5 space-y-14 relative select-text"
+    >
+      {showAbout && (
+        <div className="relative" id="chapter-about">
+          <motion.div
+            className="mb-8 overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025] px-5 py-6 sm:px-8 sm:py-8 [container-type:inline-size]"
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false, amount: 0.35 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="mb-3 flex items-center gap-1 font-mono text-xs text-neutral-500 select-none">
+              <span>&lt;!--</span><span>About section</span><span>--&gt;</span>
+            </div>
+            <span className="block whitespace-nowrap font-display text-[clamp(3.2rem,14cqw,8.6rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
               SINCE 2022
             </span>
-          </div>
-        </div>
+          </motion.div>
 
-        {/* Commentary Marker */}
-        <div className="font-mono text-[11px] text-neutral-600 mb-4 flex items-center gap-1 select-none">
-          <span>&lt;!--</span>
-          <span className="text-neutral-500 font-medium">About & experience section</span>
-          <span>--&gt;</span>
-        </div>
-
-        
-
-        <div className="relative grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 items-start">
-          {/* Left Column Description + Previous Life */}
-          <div className="sm:col-span-7 md:col-span-8 space-y-10">
-            
-            {/* About text segment */}
-            <div className="space-y-4">
-              <h2 className="font-display text-4xl sm:text-5xl text-white font-extrabold tracking-tight">
-                Inside My Creative Core
-              </h2>
-
-              <div className="text-neutral-400 font-mono text-xs sm:text-[13px] leading-relaxed space-y-3 font-light font-light">
-                <p>
-                  I'm a <span className="px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 font-mono text-xs text-amber-400 font-semibold shadow-sm select-text">Software Engineer and Full-Stack Developer</span> with strong foundations in DSA, REST APIs, and product-focused engineering. I work across Spring Boot, Python, MERN, Docker, and Kubernetes to build reliable, usable systems.
-                </p>
-                <p>
-                  I enjoy collaborating with teams, solving real-world problems, and <span className="px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 font-mono text-xs text-amber-400 font-medium select-text">turning complex workflows into clean application code</span>.
-                </p>
-              </div>
-
-              <div className="pt-2">
-                <button 
-                  onClick={() => window.open("mailto:sidheshwar.sarangal22@gmail.com")}
-                  className="px-5 py-2.5 bg-[#0e0f11] border border-white/5 hover:border-amber-500/25 hover:bg-neutral-900 text-neutral-300 font-mono font-medium text-xs rounded-full flex items-center gap-2 transition-all cursor-pointer shadow-md select-none hover:text-amber-400"
-                >
-                  <span>Download CV</span>
-                  <ArrowDown size={12} className="text-neutral-500" />
-                </button>
-              </div>
-            </div>
-
-            {/* Previous Life Timeline list inside the same grid column to stick the right image */}
-            <div className="space-y-4" id="chapter-previous-life">
-              {/* Commentary Marker */}
-              <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
-                <span>&lt;!--</span>
-                <span className="text-neutral-500 font-medium">In a previous life</span>
-                <span>--&gt;</span>
-              </div>
-
-              <h2 className="font-display text-4xl sm:text-5xl text-white font-extrabold tracking-tight">
-                In a Previous Life
-              </h2>
-
-              {/* Experience Rows */}
-              <div className="divide-y divide-white/5 border-y border-white/5">
-                {experiences.map((exp, idx) => (
-                  <div key={idx} className="py-2.5 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center text-left hover:bg-white/[0.015] px-2 transition-colors group">
-                    <span className="sm:col-span-3 font-mono text-xs text-amber-400 font-semibold leading-none flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                      {exp.period}
-                    </span>
-                    <span className="sm:col-span-5 font-mono text-sm text-white font-medium group-hover:text-amber-400 transition-colors">
-                      {exp.role}
-                    </span>
-                    <span className="sm:col-span-4 font-mono text-xs text-neutral-450 sm:text-right leading-none group-hover:text-neutral-300 transition-colors">
-                      {exp.org}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-          </div>
-
-          {/* Right Column Sticky Headshot Card */}
-          <div className="sm:col-span-5 md:col-span-4 sm:sticky sm:top-24 flex flex-col items-center sm:items-end space-y-4 w-full sm:w-auto">
-            <div className="w-full max-w-[280px] aspect-[3/4] sm:max-w-none md:max-w-[280px] rounded-xl overflow-hidden border border-white/10 sm:self-end bg-neutral-900 shadow-xl relative group">
-              <div className="absolute inset-0 bg-amber-500/5 mix-blend-color opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-              <img 
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&h=400&fit=crop" 
-                alt="Portrait"
-                className="w-full h-full object-cover grayscale brightness-95 contrast-105 group-hover:grayscale-[20%] transition-all duration-500"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            {/* Social quick connection */}
-            <div className="flex items-center gap-3 font-mono text-[10px] text-neutral-500 pr-1 select-none">
-              <span>follow me:</span>
-              <a href="https://github.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors" title="GitHub"><Github size={12} /></a>
-              <a href="https://x.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors" title="X"><Twitter size={12} /></a>
-              <a href="https://www.linkedin.com/in/sidheshwar-sarangal-0b31482b8/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors" title="LinkedIn"><Linkedin size={12} /></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* SECTION 3.3: WHAT I DO */}
-      <div className="space-y-5 scroll-mt-24" id="chapter-what-i-do">
-        {/* Commentary Marker */}
-        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
-          <span>&lt;!--</span>
-          <span className="text-neutral-500 font-medium">What I do</span>
-          <span>--&gt;</span>
-        </div>
-
-        {/* Capabilities Lists */}
-        <div className="space-y-5 pl-1">
-          {whatIDo.map((section, idx) => (
-            <div key={idx} className="space-y-2">
-              <div className="flex items-center gap-2 font-mono text-xs font-semibold text-white">
-                <span className="text-amber-400">{section.num}</span>
-                <span className="tracking-tight hover:text-amber-400 transition-colors">{section.title}</span>
-              </div>
-              <div className="flex flex-wrap gap-x-2 gap-y-1 pl-5">
-                {section.items.map((item, itemIdx) => (
-                  <span key={itemIdx} className="font-mono text-xs text-neutral-450 flex items-center gap-1.5 last:after:content-none after:after:text-neutral-700 hover:text-white transition-colors">
-                    {item} <span className="text-neutral-700 ml-1.5">|</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* SECTION 3.4: MY TECH STACK */}
-      <div className="space-y-5 scroll-mt-24" id="chapter-tech-stack">
-        {/* Commentary Marker */}
-        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
-          <span>&lt;!--</span>
-          <span className="text-neutral-500 font-medium">My tech stack</span>
-          <span>--&gt;</span>
-        </div>
-
-        {/* Skill progress circles */}
-        <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 pl-1 pt-1">
-          {techSkills.map((skill, idx) => {
-            // Circle math
-            const radius = 24;
-            const strokeWidth = 3;
-            const circumference = 2 * Math.PI * radius;
-            const strokeDashoffset = circumference - (skill.level / 100) * circumference;
-
-            return (
-              <div key={idx} className="p-4 bg-[#0d0e10]/30 border border-white/5 rounded-xl flex flex-col items-center space-y-3 hover:border-amber-550/[0.15] hover:bg-neutral-900/[0.2] transition-colors group">
-                <div className="relative w-[56px] h-[56px] flex items-center justify-center">
-                  {/* Gauge background */}
-                  <svg className="absolute w-full h-full -rotate-90">
-                    <circle 
-                      cx="28" 
-                      cy="28" 
-                      r={radius} 
-                      className="stroke-white/5 fill-none" 
-                      strokeWidth={strokeWidth} 
-                    />
-                    <motion.circle 
-                      cx="28" 
-                      cy="28" 
-                      r={radius} 
-                      className="stroke-amber-400 fill-none" 
-                      strokeWidth={strokeWidth}
-                      strokeDasharray={circumference}
-                      initial={{ strokeDashoffset: circumference }}
-                      whileInView={{ strokeDashoffset: strokeDashoffset }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.2, ease: "easeOut", delay: idx * 0.05 }}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="font-mono text-[10px] text-white font-bold group-hover:text-amber-400 transition-colors">{skill.level}%</span>
+          <div ref={aboutTrackRef} className="relative grid grid-cols-1 gap-12 sm:grid-cols-12 sm:gap-8 lg:gap-12">
+            <div className="space-y-20 sm:col-span-7 lg:col-span-8">
+              <motion.div
+                className="space-y-6"
+                initial={{ opacity: 0, x: -86 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false, amount: 0.22 }}
+                transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <h2 className="font-display text-5xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  Inside My Creative Core
+                </h2>
+                <div className="space-y-5 font-mono text-sm font-light leading-7 text-neutral-300 sm:text-[15px] lg:text-base lg:leading-8">
+                  <p>
+                    I'm a <span className="rounded border border-amber-500/20 bg-amber-500/10 px-1.5 py-0.5 text-amber-400 font-semibold">Software Engineer and Full-Stack Developer</span> with strong foundations in DSA, REST APIs, and product-focused engineering. I work across Spring Boot, Python, MERN, Docker, and Kubernetes to build reliable, usable systems.
+                  </p>
+                  <p>
+                    I enjoy collaborating with teams, solving real-world problems, and <span className="rounded border border-amber-500/20 bg-amber-500/10 px-1.5 py-0.5 text-amber-400 font-medium">turning complex workflows into clean application code</span>.
+                  </p>
                 </div>
-                <span className="font-mono text-[10px] text-neutral-400 group-hover:text-white transition-all capitalize">{skill.name}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+                <button
+                  onClick={() => window.open("mailto:sidheshwar.sarangal22@gmail.com")}
+                  className="flex items-center gap-2 rounded-full border border-white/10 bg-[#0e0f11] px-6 py-3 font-mono text-sm font-medium text-neutral-300 shadow-md transition-all hover:border-amber-500/25 hover:bg-neutral-900 hover:text-amber-400"
+                >
+                  <span>Download CV</span><ArrowDown size={14} className="text-neutral-500" />
+                </button>
+              </motion.div>
 
+              <motion.div
+                className="space-y-7 scroll-mt-24"
+                id="chapter-what-i-do"
+                initial={{ opacity: 0, x: -86 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="flex items-center gap-1 font-mono text-xs text-neutral-500 select-none">
+                  <span>&lt;!--</span><span>What I do</span><span>--&gt;</span>
+                </div>
+                <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Capabilities</h2>
+                <div className="space-y-7 border-l border-white/10 pl-5 sm:pl-6">
+                  {whatIDo.map((capability) => (
+                    <div key={capability.num} className="space-y-3">
+                      <div className="flex items-center gap-3 font-mono text-sm font-semibold text-white sm:text-base">
+                        <span className="text-amber-400">{capability.num}</span>
+                        <span className="tracking-tight transition-colors hover:text-amber-400">{capability.title}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-x-3 gap-y-2 sm:pl-7">
+                        {capability.items.map((item) => (
+                          <span key={item} className="font-mono text-[13px] leading-6 text-neutral-400 transition-colors hover:text-white sm:text-sm">
+                            {item}<span className="ml-3 text-neutral-700">/</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="space-y-7 scroll-mt-24"
+                id="chapter-tech-stack"
+                initial={{ opacity: 0, x: -86 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false, amount: 0.16 }}
+                transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="flex items-center gap-1 font-mono text-xs text-neutral-500 select-none">
+                  <span>&lt;!--</span><span>My tech stack</span><span>--&gt;</span>
+                </div>
+                <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Tools I Build With</h2>
+                <div className="grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {TOOL_SYMBOLS.map((tool, idx) => (
+                    <motion.div
+                      key={tool.name}
+                      className="group relative aspect-square min-h-40 overflow-hidden rounded-2xl border border-white/[0.12] bg-white/[0.035] shadow-[inset_0_1px_0_rgba(255,255,255,0.11),0_18px_45px_rgba(0,0,0,0.22)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.06] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_24px_60px_rgba(0,0,0,0.34)]"
+                      initial={{ opacity: 0, y: 18 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.3 }}
+                      transition={{ duration: 0.5, delay: (idx % 3) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <div
+                        className="pointer-events-none absolute inset-0 opacity-35 transition-opacity duration-500 group-hover:opacity-55"
+                        style={{ background: `radial-gradient(circle at 50% 44%, ${tool.color}45 0%, ${tool.color}16 34%, transparent 70%)` }}
+                      />
+                      <div className="absolute inset-0 grid place-items-center p-[22%] transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-95">
+                        <span className="font-mono text-2xl font-black" style={{ color: tool.color }}>{tool.short}</span>
+                        <img
+                          src={tool.icon}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.34)]"
+                        />
+                      </div>
+                      <div className="absolute inset-x-3 bottom-3 translate-y-3 rounded-xl border border-white/15 bg-black/30 px-3 py-3 text-center opacity-0 shadow-lg backdrop-blur-xl transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100">
+                        <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-white sm:text-sm">{tool.name}</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+
+            <div className="sm:col-span-5 lg:col-span-4">
+                <motion.div
+                  ref={portraitCardRef}
+                  className="flex flex-col items-center gap-4 sm:items-end"
+                  initial={{ opacity: 0, x: 100 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: false, amount: 0.2 }}
+                  transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+                  style={wideAboutLayout && !reduceMotion ? { y: portraitY } : undefined}
+                >
+                  <div className="relative aspect-[2/3] w-full max-w-[310px] overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-2xl">
+                    <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
+                    <img src={aboutPortraitUrl} alt="Sidheshwar Sarangal" className="h-full w-full object-contain object-bottom transition-transform duration-700 hover:scale-[1.02]" />
+                  </div>
+                  <div className="flex items-center gap-4 pr-1 font-mono text-xs text-neutral-500 select-none">
+                    <span>follow me:</span>
+                    <a href="https://github.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-amber-400" title="GitHub"><Github size={14} /></a>
+                    <a href="https://x.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-amber-400" title="X"><Twitter size={14} /></a>
+                    <a href="https://www.linkedin.com/in/sidheshwar-sarangal-0b31482b8/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-amber-400" title="LinkedIn"><Linkedin size={14} /></a>
+                  </div>
+                </motion.div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showExperience && (
+        <>
       {/* SECTION 3.5: METICULOUS EDUCATION ARCHIVES (Practice Chronology List) */}
       <div className="space-y-5 scroll-mt-24" id="chapter-history">
         {/* Massive Backdrop text: EXPERIENCE left reveal */}
@@ -415,7 +435,8 @@ export default function JourneyTimeline() {
           </div>
         </div>
       </div>
-
+        </>
+      )}
     </section>
   );
 }

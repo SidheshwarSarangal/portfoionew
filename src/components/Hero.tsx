@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 
 const leftHighlights = ["Full-stack Developer", "Problem Solver", "Python Developer", "IIT Roorkee Graduate"];
 const rightHighlights = ["Backend Systems", "Quick Learner", "MERN Developer"];
+const entranceEase = [0.22, 1, 0.36, 1] as const;
 
-export default function Hero() {
+interface HeroProps {
+  playIntro?: boolean;
+}
+
+export default function Hero({ playIntro = true }: HeroProps) {
   const portraitUrl = `${import.meta.env.BASE_URL}portfolio-hero.png`;
   const [highlightIndex, setHighlightIndex] = useState(0);
   const [highlightsVisible, setHighlightsVisible] = useState(true);
+  const reduceMotion = useReducedMotion();
+  const skipIntro = reduceMotion || !playIntro;
 
   useEffect(() => {
     let displayTimer: number | undefined;
@@ -36,32 +44,70 @@ export default function Hero() {
       id="hero"
       className="relative min-h-[calc(100svh-4rem)] w-full max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 flex flex-col justify-center select-text overflow-hidden"
     >
-      <div className="relative mt-3 h-[520px] sm:h-[680px] md:h-[790px] flex items-center justify-center [container-type:inline-size]">
+      <div className="relative isolate mt-3 h-[520px] sm:h-[680px] md:h-[790px] flex items-center justify-center [container-type:inline-size]">
         <h1 className="sr-only">Software Engineer</h1>
 
-        <div className="absolute inset-x-0 top-[15%] z-0 text-center overflow-visible select-none" aria-hidden="true">
-          <span
-            className="hero-software-title block font-black leading-[0.86] tracking-[0.02em] text-white whitespace-nowrap"
-          >
-            SOFTWARE
-          </span>
-        </div>
-
-        <div className="absolute left-1/2 top-[48%] z-0 h-[34%] w-[76%] -translate-x-1/2 rounded-full bg-[#4285f4]/8 blur-[70px]" aria-hidden="true" />
-
-        <div
-          className="relative z-10 -translate-y-8 sm:-translate-y-12 w-[min(88vw,340px)] sm:w-[430px] md:w-[480px] aspect-[2/3] overflow-hidden"
-          style={{ borderRadius: "0 0 50% 50% / 0 0 30% 30%" }}
+        <motion.div
+          className="absolute inset-x-0 top-[15%] z-0 text-center overflow-visible select-none transform-gpu"
+          aria-hidden="true"
+          initial={skipIntro ? false : { opacity: 0, x: -64 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={reduceMotion ? undefined : { opacity: 0, y: 300, transition: { duration: 0.72, ease: entranceEase } }}
+          transition={skipIntro ? { duration: 0 } : { duration: 1.05, delay: 0.1, ease: entranceEase }}
+          style={{ willChange: "transform, opacity" }}
         >
-          <img
-            src={portraitUrl}
-            alt="Sidheshwar Sarangal"
-            className="h-full w-full object-contain"
-            fetchPriority="high"
-          />
-        </div>
+          <span className="relative inline-block">
+            <span className="hero-software-title block font-black leading-[0.86] tracking-[0.045em] text-white whitespace-nowrap">
+              SOFTWARE
+            </span>
+            <span
+              className={`hero-software-title ${playIntro ? "hero-software-glow" : "hero-software-glow-static"} pointer-events-none absolute inset-0 block font-black leading-[0.86] tracking-[0.045em] text-transparent whitespace-nowrap`}
+              aria-hidden="true"
+            >
+              SOFTWARE
+            </span>
+          </span>
+        </motion.div>
 
-        <div className="absolute inset-x-0 top-[65%] z-20 flex items-center justify-center select-none" aria-hidden="true">
+        <motion.div
+          className="absolute left-1/2 top-[48%] z-0 h-[34%] w-[76%] -translate-x-1/2 rounded-full bg-[#4285f4]/8 blur-[70px]"
+          aria-hidden="true"
+          initial={skipIntro ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduceMotion ? undefined : { opacity: 0, transition: { duration: 0.45 } }}
+          transition={skipIntro ? { duration: 0 } : { duration: 1.6, delay: 2.9, ease: "easeOut" }}
+        />
+
+        <motion.div
+          className="relative z-10"
+          initial={skipIntro ? false : { opacity: 0, scale: 0.86 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={reduceMotion ? undefined : { opacity: 0, y: -260, scale: 0.96, transition: { duration: 0.72, ease: entranceEase } }}
+          transition={skipIntro ? { duration: 0 } : { duration: 1, delay: 1.25, ease: entranceEase }}
+          style={{ willChange: "transform, opacity" }}
+        >
+          <div
+            className="-translate-y-8 sm:-translate-y-12 w-[min(88vw,340px)] sm:w-[430px] md:w-[480px] aspect-[2/3] overflow-hidden"
+            style={{ borderRadius: "0 0 50% 50% / 0 0 30% 30%" }}
+          >
+            <img
+              src={portraitUrl}
+              alt="Sidheshwar Sarangal"
+              className="h-full w-full object-contain"
+              fetchPriority="high"
+            />
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="absolute inset-x-0 top-[65%] z-20 flex items-center justify-center select-none transform-gpu"
+          aria-hidden="true"
+          initial={skipIntro ? false : { opacity: 0, x: 64 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={reduceMotion ? undefined : { opacity: 0, y: -225, transition: { duration: 0.72, ease: entranceEase } }}
+          transition={skipIntro ? { duration: 0 } : { duration: 1.05, delay: 0.65, ease: entranceEase }}
+          style={{ willChange: "transform, opacity" }}
+        >
           <svg
             viewBox="0 0 600 220"
             className="w-[min(108%,820px)] overflow-visible drop-shadow-[0_8px_18px_rgba(0,0,0,0.8)]"
@@ -81,26 +127,47 @@ export default function Hero() {
               </textPath>
             </text>
           </svg>
-        </div>
+        </motion.div>
 
         <div className="absolute left-[7%] top-[58%] z-20 hidden lg:block w-[205px] -translate-y-1/2" aria-live="polite">
-          <span
-            className={`block font-serif text-[clamp(1.7rem,2.5vw,2.5rem)] italic leading-[1.05] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "-translate-x-4 opacity-0 blur-sm"}`}
+          <motion.div
+            initial={skipIntro ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, transition: { duration: 0.4 } }}
+            transition={skipIntro ? { duration: 0 } : { duration: 0.75, delay: 1.95, ease: entranceEase }}
           >
-            {leftHighlights[highlightIndex % leftHighlights.length]}
-          </span>
+            <span
+              className={`block font-serif text-[clamp(1.7rem,2.5vw,2.5rem)] italic leading-[1.05] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "-translate-x-4 opacity-0 blur-sm"}`}
+            >
+              {leftHighlights[highlightIndex % leftHighlights.length]}
+            </span>
+          </motion.div>
         </div>
 
         <div className="absolute right-[7%] top-[60%] z-20 hidden lg:block w-[200px] -translate-y-1/2 text-right" aria-live="polite">
-          <span
-            className={`block font-serif text-[clamp(1.7rem,2.5vw,2.5rem)] italic leading-[1.05] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "translate-x-4 opacity-0 blur-sm"}`}
+          <motion.div
+            initial={skipIntro ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, transition: { duration: 0.4 } }}
+            transition={skipIntro ? { duration: 0 } : { duration: 0.75, delay: 2.1, ease: entranceEase }}
           >
-            {rightHighlights[highlightIndex % rightHighlights.length]}
-          </span>
+            <span
+              className={`block font-serif text-[clamp(1.7rem,2.5vw,2.5rem)] italic leading-[1.05] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "translate-x-4 opacity-0 blur-sm"}`}
+            >
+              {rightHighlights[highlightIndex % rightHighlights.length]}
+            </span>
+          </motion.div>
         </div>
       </div>
 
-      <div className="relative z-20 -mt-4 sm:-mt-8 md:-mt-12 grid min-h-[132px] sm:min-h-[88px] grid-cols-1 sm:grid-cols-2 content-start gap-3 sm:gap-6 px-4 py-4 text-center sm:text-left lg:hidden" aria-live="polite">
+      <motion.div
+        className="relative z-20 -mt-4 sm:-mt-8 md:-mt-12 grid min-h-[132px] sm:min-h-[88px] grid-cols-1 sm:grid-cols-2 content-start gap-3 sm:gap-6 px-4 py-4 text-center sm:text-left lg:hidden"
+        aria-live="polite"
+        initial={skipIntro ? false : { opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={reduceMotion ? undefined : { opacity: 0, transition: { duration: 0.4 } }}
+        transition={skipIntro ? { duration: 0 } : { duration: 0.8, delay: 1.95, ease: entranceEase }}
+      >
         <span
           className={`font-serif text-[1.7rem] sm:text-[2rem] italic leading-tight tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-y-0 opacity-100 blur-0" : "translate-y-3 opacity-0 blur-sm"}`}
         >
@@ -111,7 +178,7 @@ export default function Hero() {
         >
           {rightHighlights[highlightIndex % rightHighlights.length]}
         </span>
-      </div>
+      </motion.div>
 
     </section>
   );
