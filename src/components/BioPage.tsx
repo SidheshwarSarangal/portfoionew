@@ -1,20 +1,18 @@
-import { useState } from "react";
 import {
   User, MapPin, Mail, Download,
   Phone, Globe, Copy, Check, Linkedin
 } from "lucide-react";
 import { usePortfolioContent } from "../content";
 import SocialLinks, { findSocialLink } from "./SocialLinks";
+import { useCopyFeedback } from "../hooks/useCopyFeedback";
 
 export default function BioPage() {
   const { personalBio: PERSONAL_BIO, socialLinks: SOCIAL_LINKS } = usePortfolioContent();
-  const [copied, setCopied] = useState(false);
+  const { copied, copyText } = useCopyFeedback();
   const linkedin = findSocialLink(SOCIAL_LINKS, "LinkedIn");
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText(PERSONAL_BIO.email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    void copyText(PERSONAL_BIO.email);
   };
 
   const handleCall = () => {
@@ -46,7 +44,7 @@ export default function BioPage() {
                 {PERSONAL_BIO.fullName}
                 <span className="text-[#fbbc04] font-mono text-xs font-light"> .info</span>
               </h1>
-              <p className="font-mono text-[12px] text-[#8e9196] tracking-wider uppercase">
+              <p className="font-mono text-sm text-[#a3a6ab] tracking-wider uppercase">
                 {PERSONAL_BIO.title}
               </p>
             </div>
@@ -54,9 +52,6 @@ export default function BioPage() {
 
           <div className="space-y-5 w-full">
             <div className="space-y-2 text-left">
-              <span className="block font-mono text-xs uppercase text-[#fbbc04] tracking-wider font-semibold">
-                // BIO
-              </span>
               <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02]">
                 <p className="font-mono text-sm text-neutral-300 leading-6 font-light">
                   I am a B.Tech undergraduate at <strong className="text-[#fbbc04] font-medium">IIT Roorkee</strong> building full-stack products, REST APIs, and backend systems.
@@ -65,10 +60,6 @@ export default function BioPage() {
             </div>
 
             <div className="space-y-2.5 text-left">
-              <span className="block font-mono text-xs uppercase text-[#fbbc04] tracking-wider font-semibold">
-                // PROFILE DETAILS
-              </span>
-
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-sm text-neutral-300 font-light">
                 <li className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.015] p-3">
                   <User size={16} className="text-[#fbbc04] shrink-0" />

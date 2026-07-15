@@ -1,7 +1,6 @@
-import { lazy, Suspense, useState, useEffect, useRef } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, UIEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowDown, ArrowUp } from "lucide-react";
 import type { Project, Article } from "./types";
 import Header from "./components/Header";
 import type { PortfolioView } from "./components/Header";
@@ -13,7 +12,6 @@ import WritingList from "./components/WritingList";
 import ContactSection from "./components/ContactSection";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
-import SocialPostsGrid from "./components/SocialPostsGrid";
 import ViewDescriptionSidebar from "./components/ViewDescriptionSidebar";
 import ScrollScene from "./components/ScrollScene";
 import SectionTransition from "./components/SectionTransition";
@@ -24,14 +22,8 @@ import { useSeoMetadata } from "./lib/seo";
 
 const ProjectDetailModal = lazy(() => import("./components/ProjectDetailModal"));
 const ArticleModal = lazy(() => import("./components/ArticleModal"));
-const portfolioSections = [
-  { id: "hero", label: "Intro" },
-  { id: "work", label: "Projects" },
-  { id: "about", label: "About" },
-  { id: "experience", label: "Experience" },
-  { id: "writings", label: "Writing" },
-  { id: "contact", label: "Contact" },
-];
+const INFO_SECTION_IDS = ["hero", "work", "about", "experience", "writings", "contact"] as const;
+const EDITOR_LINE_NUMBERS = Array.from({ length: 80 }, (_, index) => String(index + 1).padStart(3, "0"));
 const sectionRailAccents: Record<string, { primary: string; secondary: string }> = {
   hero: { primary: "#4285f4", secondary: "#7aa7ff" },
   work: { primary: "#fbbc04", secondary: "#f59e0b" },
@@ -51,11 +43,16 @@ export default function App() {
   const [activeSection, setActiveSection] = useState("hero");
   const [activeView, setActiveView] = useState<PortfolioView>("info");
   const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
+  const [isDirectSectionChange, setIsDirectSectionChange] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const infoSlideScrollerRef = useRef<HTMLDivElement>(null);
   const activeSectionFrameRef = useRef<number | null>(null);
   const scrollIdleTimerRef = useRef<number | null>(null);
+  const sectionJumpTimerRef = useRef<number | null>(null);
+  const sectionRevealTimerRef = useRef<number | null>(null);
+  const sectionRevealFrameRef = useRef<number | null>(null);
+  const directSectionChangeRef = useRef(false);
   const viewAccentSection = activeView === "projects"
     ? "work"
     : activeView === "social"
@@ -64,41 +61,36 @@ export default function App() {
         ? "hero"
         : activeSection;
   const railAccent = sectionRailAccents[viewAccentSection] ?? sectionRailAccents.hero;
-  const railAccentStyle = {
+  const railAccentStyle = useMemo(() => ({
     "--rail-primary": railAccent.primary,
     "--rail-secondary": railAccent.secondary,
-  } as CSSProperties;
-  const currentPortfolioSectionIndex = Math.max(0, portfolioSections.findIndex(({ id }) => id === activeSection));
-  const atPortfolioEnd = currentPortfolioSectionIndex === portfolioSections.length - 1;
-  const scrollControlTarget = atPortfolioEnd
-    ? portfolioSections[0]
-    : portfolioSections[currentPortfolioSectionIndex + 1];
+  } as CSSProperties), [railAccent.primary, railAccent.secondary]);
 
-  const syncRoute = () => {
+  const syncRoute = useCallback(() => {
     const route = readContentRoute();
     setSelectedProject(route.type === "project" ? projects.find((project) => project.id === route.value) ?? null : null);
     setSelectedArticle(route.type === "article" ? articles.find((article) => article.slug === route.value) ?? null : null);
-  };
+  }, [articles, projects]);
 
-  const openProject = (project: Project) => {
+  const openProject = useCallback((project: Project) => {
     window.history.pushState({}, "", projectPath(project.id));
     setSelectedArticle(null);
     setSelectedProject(project);
     trackEvent("project_open", { project_id: project.id, project_title: project.title });
-  };
+  }, []);
 
-  const openArticle = (article: Article) => {
+  const openArticle = useCallback((article: Article) => {
     window.history.pushState({}, "", articlePath(article.slug));
     setSelectedProject(null);
     setSelectedArticle(article);
     trackEvent("article_open", { article_id: article.id, article_title: article.title });
-  };
+  }, []);
 
-  const closeDetail = () => {
+  const closeDetail = useCallback(() => {
     window.history.pushState({}, "", homePath());
     setSelectedProject(null);
     setSelectedArticle(null);
-  };
+  }, []);
 
   useSeoMetadata({ personalBio, socialLinks, project: selectedProject, article: selectedArticle });
 
@@ -106,32 +98,55 @@ export default function App() {
     syncRoute();
     window.addEventListener("popstate", syncRoute);
     return () => window.removeEventListener("popstate", syncRoute);
-  }, [projects, articles]);
+  }, [syncRoute]);
 
-  const handleScrollToSection = (sectionId: string) => {
+  const handleScrollToSection = useCallback((sectionId: string) => {
+    if (sectionJumpTimerRef.current !== null) window.clearTimeout(sectionJumpTimerRef.current);
+    if (sectionRevealTimerRef.current !== null) window.clearTimeout(sectionRevealTimerRef.current);
+    if (sectionRevealFrameRef.current !== null) window.cancelAnimationFrame(sectionRevealFrameRef.current);
+
+    directSectionChangeRef.current = true;
     setActiveView("info");
     setActiveSection(sectionId);
-    window.requestAnimationFrame(() => {
+    setIsDirectSectionChange(true);
+
+    sectionJumpTimerRef.current = window.setTimeout(() => {
+      sectionJumpTimerRef.current = null;
       const scroller = infoSlideScrollerRef.current;
       const target = document.getElementById(sectionId);
-      if (!scroller || !target) return;
+      if (!scroller || !target) {
+        directSectionChangeRef.current = false;
+        setIsDirectSectionChange(false);
+        return;
+      }
       const top = scroller.scrollTop + target.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
-      scroller.scrollTo({ top, behavior: "smooth" });
-    });
-  };
+      scroller.scrollTo({ top, behavior: "auto" });
 
-  const handleViewChange = (view: PortfolioView) => {
+      sectionRevealFrameRef.current = window.requestAnimationFrame(() => {
+        sectionRevealFrameRef.current = null;
+        setIsDirectSectionChange(false);
+        sectionRevealTimerRef.current = window.setTimeout(() => {
+          directSectionChangeRef.current = false;
+          sectionRevealTimerRef.current = null;
+        }, 420);
+      });
+    }, 190);
+  }, []);
+
+  const handleViewChange = useCallback((view: PortfolioView) => {
     setRightDrawerOpen(false);
     setActiveView(view);
     window.scrollTo({ top: 0, behavior: "auto" });
-  };
+  }, []);
 
-  const handleDrawerSectionClick = (sectionId: string) => {
+  const handleDrawerSectionClick = useCallback((sectionId: string) => {
     setRightDrawerOpen(false);
     handleScrollToSection(sectionId);
-  };
+  }, [handleScrollToSection]);
 
-  const handleInfoSlideScroll = (event: UIEvent<HTMLDivElement>) => {
+  const handleInfoSlideScroll = useCallback((event: UIEvent<HTMLDivElement>) => {
+    if (directSectionChangeRef.current) return;
+
     document.documentElement.classList.add("portfolio-is-scrolling");
     if (scrollIdleTimerRef.current !== null) {
       window.clearTimeout(scrollIdleTimerRef.current);
@@ -147,15 +162,7 @@ export default function App() {
       activeSectionFrameRef.current = null;
       const scrollerRect = scroller.getBoundingClientRect();
       const readingLine = scrollerRect.top + scrollerRect.height * 0.36;
-      const sectionIds = [
-        "hero",
-        "work",
-        "about",
-        "experience",
-        "writings",
-        "contact",
-      ];
-      const visibleSection = sectionIds
+      const visibleSection = INFO_SECTION_IDS
         .map((id) => ({ id, element: document.getElementById(id) }))
         .filter((item): item is { id: string; element: HTMLElement } => Boolean(item.element))
         .find(({ element }) => {
@@ -167,7 +174,10 @@ export default function App() {
         setActiveSection((current) => current === visibleSection.id ? current : visibleSection.id);
       }
     });
-  };
+  }, []);
+
+  const showProjectsView = useCallback(() => handleViewChange("projects"), [handleViewChange]);
+  const showSocialView = useCallback(() => handleViewChange("social"), [handleViewChange]);
 
   useEffect(() => () => {
     if (activeSectionFrameRef.current !== null) {
@@ -175,6 +185,15 @@ export default function App() {
     }
     if (scrollIdleTimerRef.current !== null) {
       window.clearTimeout(scrollIdleTimerRef.current);
+    }
+    if (sectionJumpTimerRef.current !== null) {
+      window.clearTimeout(sectionJumpTimerRef.current);
+    }
+    if (sectionRevealTimerRef.current !== null) {
+      window.clearTimeout(sectionRevealTimerRef.current);
+    }
+    if (sectionRevealFrameRef.current !== null) {
+      window.cancelAnimationFrame(sectionRevealFrameRef.current);
     }
     document.documentElement.classList.remove("portfolio-is-scrolling");
   }, []);
@@ -294,25 +313,30 @@ export default function App() {
           >
             <div className="section-height-gradient-rail absolute inset-y-0 left-0 w-[4px]" aria-hidden="true" />
             <div className="section-height-gradient-wash absolute inset-y-0 left-0 right-0" aria-hidden="true" />
-            {Array.from({ length: 80 }).map((_, i) => (
-              <div key={i} className="relative z-10 h-[23px] tabular-nums font-light">
-                {String(i + 1).padStart(3, '0')}
+            {EDITOR_LINE_NUMBERS.map((lineNumber) => (
+              <div key={lineNumber} className="relative z-10 h-[23px] tabular-nums font-light">
+                {lineNumber}
               </div>
             ))}
           </div>
 
           {activeView === "info" ? (
-            <div
+            <motion.div
               ref={infoSlideScrollerRef}
-              className="section-slide-scroller absolute inset-0 z-10 overflow-y-auto overscroll-y-contain scroll-smooth"
+              className={`section-slide-scroller absolute inset-0 z-10 overflow-y-auto overscroll-y-contain ${isDirectSectionChange ? "pointer-events-none scroll-auto" : "scroll-smooth"}`}
               onScroll={handleInfoSlideScroll}
+              animate={{ opacity: isDirectSectionChange ? 0 : 1 }}
+              transition={{
+                duration: isDirectSectionChange ? 0.19 : 0.42,
+                ease: isDirectSectionChange ? "easeOut" : [0.22, 1, 0.36, 1],
+              }}
             >
               <ScrollScene containerRef={infoSlideScrollerRef}>
                 <Hero />
               </ScrollScene>
               <SectionTransition from="Intro" to="Projects" />
               <ScrollScene containerRef={infoSlideScrollerRef}>
-                <ProjectsGrid onProjectClick={openProject} onViewAll={() => handleViewChange("projects")} />
+                <ProjectsGrid onProjectClick={openProject} onViewAll={showProjectsView} />
               </ScrollScene>
               <SectionTransition from="Projects" to="About" />
               <ScrollScene containerRef={infoSlideScrollerRef}>
@@ -324,13 +348,13 @@ export default function App() {
               </ScrollScene>
               <SectionTransition from="Experience" to="Writing" />
               <ScrollScene containerRef={infoSlideScrollerRef}>
-                <WritingList onArticleClick={openArticle} />
+                <WritingList onArticleClick={openArticle} onViewAll={showSocialView} />
               </ScrollScene>
               <SectionTransition from="Writing" to="Contact" />
               <ScrollScene containerRef={infoSlideScrollerRef}>
                 <ContactSection />
               </ScrollScene>
-            </div>
+            </motion.div>
           ) : activeView === "bio" ? (
             <div className="relative z-10 py-8 sm:py-10">
               <BioPage />
@@ -340,40 +364,13 @@ export default function App() {
               <ProjectsGrid onProjectClick={openProject} />
             </div>
           ) : (
-            <div className="relative z-10 py-8 sm:py-10">
-              <SocialPostsGrid />
+            <div className="relative z-10">
+              <WritingList onArticleClick={openArticle} />
             </div>
           )}
           
         </main>
       </div>
-
-      <AnimatePresence>
-        {activeView === "info" && !selectedProject && !selectedArticle && !rightDrawerOpen && (
-          <motion.button
-            type="button"
-            key="portfolio-scroll-control"
-            onClick={() => handleScrollToSection(scrollControlTarget.id)}
-            aria-label={atPortfolioEnd ? "Back to the intro" : `Scroll to ${scrollControlTarget.label}`}
-            className="portfolio-scroll-control fixed bottom-5 z-40 flex items-center gap-2.5 rounded-full border border-white/10 bg-black/55 px-3 py-2.5 text-white/80 shadow-[0_14px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-colors hover:border-[var(--rail-primary)] hover:text-white sm:px-4"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <span className="hidden font-mono text-[9px] uppercase tracking-[0.16em] text-neutral-400 sm:block">
-              {atPortfolioEnd ? "Back to top" : scrollControlTarget.label}
-            </span>
-            <motion.span
-              className="grid h-7 w-7 place-items-center rounded-full border border-white/10 bg-white/[0.06] text-[var(--rail-primary)]"
-              animate={{ y: atPortfolioEnd ? [0, -3, 0] : [0, 3, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            >
-              {atPortfolioEnd ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
-            </motion.span>
-          </motion.button>
-        )}
-      </AnimatePresence>
 
       {/* Interactive Detail modal for case studies */}
       <Suspense fallback={null}>

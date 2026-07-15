@@ -337,6 +337,26 @@ export const ARTICLES: Article[] = [
     readTime: "4 min read",
     summary: "How structured typographic contrast, eye-safe low-contrast buffers, and removing visual noise can naturally guide a visitor's gaze directly into call-to-action buttons.",
     content: "## The Architecture of Focus\n\nConversion optimization is often mistakenly equated with adding glowing banner elements, persistent modal popups, and artificial FOMO indicators. Elite design does the opposite: it removes visual noise to clear a pristine highway toward the core user action.\n\n### Rules for High-Density Layout Response\n\n1. **Intentional Typographic Contrast**: Pair large Display headings (Space Grotesk) with Mono codes (JetBrains Mono) for facts and clean Sans (Inter) for copy.\n2. **Tactile Friction**: Actionable buttons must respond with absolute spring metrics. When touched or hovered, give positive tactile feedback to assure the action took place.\n3. **Generous Spacing Boundaries**: Give your headings breathing space. Clutter creates cognitive strain, making visitors hit the browser back button."
+  },
+  {
+    id: "interfaces-feel-fast",
+    title: "Designing interfaces that feel fast",
+    slug: "interfaces-feel-fast",
+    category: "Interaction Design / Performance",
+    publishedAt: "Jun 12, 2025",
+    readTime: "4 min read",
+    summary: "How immediate feedback, restrained motion, and predictable layout behavior make an interface feel responsive before optimization metrics enter the conversation.",
+    content: "## Perceived Speed Is Part of the Design\n\nA technically fast interface can still feel slow when actions produce no immediate visual response. Good interaction design closes that gap with clear state changes, stable layouts, and motion that explains what changed.\n\n### Build a Responsive Rhythm\n\nUse lightweight hover and press feedback, preserve space for asynchronous content, and keep transitions short enough to support the task. Motion should clarify continuity rather than delay the user."
+  },
+  {
+    id: "systems-that-scale",
+    title: "Building design systems that scale",
+    slug: "systems-that-scale",
+    category: "Design Systems / Engineering",
+    publishedAt: "May 28, 2025",
+    readTime: "6 min read",
+    summary: "A practical look at turning repeated interface decisions into durable tokens, components, and patterns without removing room for creative expression.",
+    content: "## Consistency Without Sameness\n\nA useful design system does more than collect components. It records the decisions behind spacing, typography, color, interaction, and accessibility so teams can build new surfaces without restarting every discussion.\n\n### Start With Repeated Decisions\n\nExtract patterns only after they repeat, keep component APIs focused, and treat documentation as part of the product. Strong foundations create more room for expressive work because the essential behavior is already dependable."
   }
 ];
 

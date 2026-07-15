@@ -7,7 +7,7 @@ interface ViewDescriptionSidebarProps {
 }
 
 export default function ViewDescriptionSidebar({ view, variant = "desktop" }: ViewDescriptionSidebarProps) {
-  const { projects, socialPosts } = usePortfolioContent();
+  const { projects, articles } = usePortfolioContent();
   const isProjects = view === "projects";
   const Icon = isProjects ? FolderKanban : MessageSquareText;
 
@@ -22,21 +22,18 @@ export default function ViewDescriptionSidebar({ view, variant = "desktop" }: Vi
           <Icon size={30} />
         </div>
         <div className="space-y-4">
-          <p className="font-display text-base font-semibold uppercase tracking-[0.16em] text-[#fbbc04]">
-            // {isProjects ? "Projects" : "Social"}
-          </p>
           <h2 className="font-display text-3xl font-semibold leading-tight text-white">
-            {isProjects ? "Selected work" : "Posts & updates"}
+            {isProjects ? "Selected work" : "From my desk"}
           </h2>
           <p className="font-mono text-[15px] leading-7 text-neutral-300/85">
             {isProjects
               ? "A focused collection of products, backend systems, experiments, and full-stack applications I have built."
-              : "A growing collection of technical notes, project announcements, articles, and updates from my social profiles."}
+              : "A focused reading desk for technical notes, interface thinking, engineering articles, and project reflections."}
           </p>
         </div>
         <div className="border-t border-white/10 pt-6 font-mono text-sm text-neutral-400">
-          <span className="text-[#fbbc04] font-semibold">{isProjects ? projects.length : socialPosts.length}</span>
-          <span className="ml-2">{isProjects ? "projects available" : "posts available"}</span>
+          <span className="text-[#fbbc04] font-semibold">{isProjects ? projects.length : articles.length}</span>
+          <span className="ml-2">{isProjects ? "projects available" : "articles available"}</span>
         </div>
       </div>
     </aside>

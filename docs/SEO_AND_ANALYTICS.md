@@ -30,7 +30,7 @@ GA4 is disabled when the measurement ID is empty.
 | JSON-LD | `ProfilePage`, `Person`, `WebSite`, `Article`, `CreativeWork` |
 | Crawlable content URLs | `/projects/:id`, `/articles/:slug` |
 | Sitemap and robots | `scripts/generate-seo.mjs` |
-| Static route output | Build lifecycle |
+| Static route output | Route-specific title, description, canonical, social metadata, and JSON-LD during the build lifecycle |
 | GA4 | `src/lib/analytics.ts` |
 
 ```mermaid
@@ -56,6 +56,21 @@ Remote-provider entries are not available to the build-time script. For fully pr
 [ ] Monitor indexing + Core Web Vitals
 ```
 
+After each meaningful content release, inspect the new URL rather than repeatedly requesting the unchanged homepage. Sitemap submission is a discovery hint; indexing and rankings are not guaranteed.
+
+## Organic reach priorities
+
+```text
+[ ] Publish first-hand engineering case studies with real constraints, decisions, code, and outcomes
+[ ] Link every important article and project from at least one crawlable internal page
+[ ] Add the portfolio URL to LinkedIn contact info, GitHub profile, and relevant project repositories
+[ ] Use descriptive article and project titles written for the reader's actual search intent
+[ ] Keep screenshots sharp, descriptive, and close to the text they explain
+[ ] Update or remove content that is no longer accurate
+```
+
+Avoid meta-keyword tags, keyword stuffing, artificial backlink schemes, and filler written only to reach a word count.
+
 ## Analytics events
 
 ```mermaid
@@ -78,6 +93,8 @@ Additional automatic link events include `email_click`, `github_click`, `linkedi
 | PageSpeed Insights | Mobile/desktop performance |
 | GA4 DebugView | Events |
 | Social preview validator | Open Graph image/text |
+
+For Core Web Vitals, target LCP within 2.5 seconds, INP below 200 milliseconds, and CLS below 0.1 at the 75th percentile of real visits.
 
 ## Content credibility
 

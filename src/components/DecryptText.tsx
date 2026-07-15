@@ -21,14 +21,15 @@ export default function DecryptText({
     if (!trigger) return;
 
     let isMounted = true;
+    let animationFrameId: number | null = null;
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}|:<>?-=[]\\;',./";
     let start: number | null = null;
 
     const triggerAnimation = () => {
       const step = (timestamp: number) => {
-        if (!start) start = timestamp;
+        if (start === null) start = timestamp;
         const progress = timestamp - start;
-        const percentage = Math.min(progress / duration, 1);
+        const percentage = duration <= 0 ? 1 : Math.min(progress / duration, 1);
 
         const decryptedCount = Math.floor(text.length * percentage);
 
@@ -48,12 +49,12 @@ export default function DecryptText({
         }
 
         if (percentage < 1) {
-          requestAnimationFrame(step);
+          animationFrameId = requestAnimationFrame(step);
         } else {
           if (isMounted) setDisplayText(text);
         }
       };
-      requestAnimationFrame(step);
+      animationFrameId = requestAnimationFrame(step);
     };
 
     const timeoutId = setTimeout(triggerAnimation, delay);
@@ -61,6 +62,7 @@ export default function DecryptText({
     return () => {
       isMounted = false;
       clearTimeout(timeoutId);
+      if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
     };
   }, [text, delay, duration, trigger]);
 

@@ -18,6 +18,10 @@ function upsertMeta(selector: string, attributes: Record<string, string>) {
   Object.entries(attributes).forEach(([key, value]) => element?.setAttribute(key, value));
 }
 
+function removeMeta(selector: string) {
+  document.head.querySelector(selector)?.remove();
+}
+
 function upsertLink(rel: string, href: string) {
   let element = document.head.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`);
   if (!element) {
@@ -35,7 +39,14 @@ function absoluteUrl(pathOrUrl: string) {
 
   const siteBase = configuredSiteUrl.replace(/\/$/, "");
   if (pathOrUrl === "/") return `${siteBase}/`;
-  if (pathOrUrl.startsWith("/")) return new URL(pathOrUrl, new URL(siteBase).origin).toString();
+  if (pathOrUrl.startsWith("/")) {
+    const configuredUrl = new URL(siteBase);
+    const basePath = configuredUrl.pathname.replace(/\/$/, "");
+    if (basePath && (pathOrUrl === basePath || pathOrUrl.startsWith(`${basePath}/`))) {
+      return new URL(pathOrUrl, configuredUrl.origin).toString();
+    }
+    return new URL(pathOrUrl.slice(1), `${siteBase}/`).toString();
+  }
   return new URL(pathOrUrl, `${siteBase}/`).toString();
 }
 
@@ -55,7 +66,7 @@ export function useSeoMetadata({ personalBio, socialLinks, project, article }: S
         : `${personalBio.fullName} — ${personalBio.title}`;
     const description = project?.description || article?.summary || personalBio.about;
     const canonical = absoluteUrl(window.location.pathname);
-    const image = absoluteUrl(project?.imageUrl || personalBio.avatarUrl || `${import.meta.env.BASE_URL}favicon.svg`);
+    const image = absoluteUrl(project?.imageUrl || `${import.meta.env.BASE_URL}portfolio-hero.png`);
 
     document.title = title;
     upsertMeta('meta[name="description"]', { name: "description", content: description });
@@ -65,11 +76,18 @@ export function useSeoMetadata({ personalBio, socialLinks, project, article }: S
     upsertMeta('meta[property="og:description"]', { property: "og:description", content: description });
     upsertMeta('meta[property="og:url"]', { property: "og:url", content: canonical });
     upsertMeta('meta[property="og:image"]', { property: "og:image", content: image });
+    upsertMeta('meta[property="og:image:alt"]', { property: "og:image:alt", content: `${title} preview` });
     upsertMeta('meta[property="og:site_name"]', { property: "og:site_name", content: personalBio.fullName });
     upsertMeta('meta[name="twitter:card"]', { name: "twitter:card", content: "summary_large_image" });
     upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: title });
     upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: description });
     upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: image });
+    const publishedAt = article ? toIsoDate(article.publishedAt) : undefined;
+    if (publishedAt) {
+      upsertMeta('meta[property="article:published_time"]', { property: "article:published_time", content: publishedAt });
+    } else {
+      removeMeta('meta[property="article:published_time"]');
+    }
     upsertLink("canonical", canonical);
 
     const sameAs = socialLinks.filter((link) => /^https?:\/\//.test(link.url)).map((link) => link.url);
@@ -78,11 +96,13 @@ export function useSeoMetadata({ personalBio, socialLinks, project, article }: S
       "@id": `${absoluteUrl("/")}#person`,
       name: personalBio.fullName,
       jobTitle: personalBio.title,
+      description: personalBio.about,
       url: absoluteUrl("/"),
       image: absoluteUrl(personalBio.avatarUrl),
       email: personalBio.email,
       sameAs,
       alumniOf: { "@type": "CollegeOrUniversity", name: "Indian Institute of Technology Roorkee" },
+      knowsAbout: ["Software Engineering", "Full-Stack Development", "REST APIs", "Python", "Spring Boot", "MERN", "Docker", "Kubernetes"],
     };
     const schema = isProject && project
       ? {
@@ -91,6 +111,7 @@ export function useSeoMetadata({ personalBio, socialLinks, project, article }: S
           name: project.title,
           description: project.description,
           url: canonical,
+          mainEntityOfPage: canonical,
           image,
           author: person,
           keywords: project.technologies.join(", "),
@@ -102,8 +123,11 @@ export function useSeoMetadata({ personalBio, socialLinks, project, article }: S
             headline: article.title,
             description: article.summary,
             url: canonical,
-            author: person,
-            datePublished: toIsoDate(article.publishedAt),
+            mainEntityOfPage: canonical,
+            image: [image],
+            author: { "@id": person["@id"], "@type": "Person", name: personalBio.fullName, url: absoluteUrl("/") },
+            datePublished: publishedAt,
+            dateModified: publishedAt,
           }
         : {
             "@context": "https://schema.org",

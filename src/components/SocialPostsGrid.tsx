@@ -5,16 +5,18 @@ export default function SocialPostsGrid() {
   const { socialPosts } = usePortfolioContent();
 
   return (
-    <section className="w-full max-w-5xl mx-auto px-6 py-12 select-text">
+    <section className="mx-auto w-full max-w-5xl px-4 py-10 select-text sm:px-6 sm:py-12">
       <div className="mb-8 space-y-2">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#fbbc04]">// SOCIAL</p>
         <h1 className="font-display text-3xl sm:text-5xl font-semibold text-white">Posts & updates</h1>
-        <p className="max-w-2xl font-mono text-sm leading-6 text-neutral-500">
+        <p className="max-w-2xl font-mono text-base leading-7 text-neutral-400">
           Notes, articles, releases, and updates from across my social profiles.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div
+        className="grid gap-5"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))" }}
+      >
         {socialPosts.map((post) => {
           const card = (
             <>
@@ -26,12 +28,12 @@ export default function SocialPostsGrid() {
                 </div>
               )}
               <div className="p-5 space-y-3">
-                <div className="flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-wider">
+                <div className="flex items-center justify-between gap-3 font-mono text-xs uppercase tracking-wider">
                   <span className="text-[#fbbc04]">{post.platform}</span>
-                  <span className="text-neutral-600">{post.publishedAt}</span>
+                  <span className="text-neutral-400">{post.publishedAt}</span>
                 </div>
-                <h2 className="font-mono text-base font-semibold text-white group-hover:text-[#fbbc04] transition-colors">{post.title}</h2>
-                <p className="font-mono text-xs leading-5 text-neutral-500">{post.summary}</p>
+                <h2 className="font-mono text-lg font-semibold text-white group-hover:text-[#fbbc04] transition-colors">{post.title}</h2>
+                <p className="font-mono text-sm leading-6 text-neutral-400">{post.summary}</p>
                 {post.url && <ArrowUpRight size={15} className="text-neutral-600 group-hover:text-white transition-colors" />}
               </div>
             </>

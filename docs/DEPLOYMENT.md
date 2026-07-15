@@ -65,19 +65,10 @@ Build-time sitemap routes come from `src/data.ts`. Remote-only projects and arti
 
 ## GitHub Pages base path
 
-For `https://username.github.io/repository-name/`, set the Vite base in `vite.config.ts`:
-
-```ts
-export default defineConfig({
-  base: "/repository-name/",
-  plugins: [react(), tailwindcss()],
-});
-```
-
-Also include the path in the production URL:
+For `https://username.github.io/repository-name/`, include the repository path in the production URL:
 
 ```env
 VITE_SITE_URL=https://username.github.io/repository-name
 ```
 
-Keep the default `/` base when using a custom domain or a root deployment.
+The production Vite base is derived automatically from this URL. Local development continues to use `/`, while custom-domain and root deployments automatically keep the production base at `/`.

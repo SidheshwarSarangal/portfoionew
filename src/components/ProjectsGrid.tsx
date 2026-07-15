@@ -14,20 +14,7 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
   const reduceMotion = useReducedMotion();
 
   return (
-    <section id="work" className="w-full max-w-[1080px] mx-auto px-5 sm:px-7 lg:px-5 xl:px-8 py-14 sm:py-16 lg:py-20 select-text overflow-hidden">
-      <motion.div
-        className="mb-8 sm:mb-10 flex items-center justify-between gap-4 border-b border-white/[0.07] pb-4"
-        initial={reduceMotion ? false : { opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.75 }}
-        transition={{ duration: reduceMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <div className="font-mono text-[10px] sm:text-[11px] text-neutral-500 select-none">
-          &lt;!-- <span className="text-neutral-300">Selected projects</span> --&gt;
-        </div>
-        <span className="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-neutral-600">Hover to reveal · click to inspect</span>
-      </motion.div>
-
+    <section id="work" className="mx-auto w-full max-w-[1080px] overflow-hidden px-4 py-12 select-text sm:px-7 sm:py-16 lg:px-5 lg:py-20 xl:px-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 xl:gap-x-8 gap-y-10 sm:gap-y-12" id="projects-grid-list">
         {projects.slice(0, 10).map((project, index) => {
           const fromLeft = index % 2 === 0;
@@ -47,10 +34,10 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
               transition={{ duration: reduceMotion ? 0 : 0.9, delay: reduceMotion ? 0 : (index % 2) * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="flex min-h-[2.75rem] items-end justify-between gap-4 px-1">
-                <h3 className="font-mono text-sm sm:text-base text-white font-semibold leading-snug tracking-tight transition-colors group-hover:text-amber-300">
+                <h3 className="font-mono text-base font-semibold leading-snug tracking-tight text-white transition-colors group-hover:text-amber-300 sm:text-lg">
                   {project.title}
                 </h3>
-                <span className="shrink-0 pb-0.5 font-mono text-[9px] text-neutral-600">{project.year}</span>
+                <span className="shrink-0 pb-0.5 font-mono text-xs text-neutral-400">{project.year}</span>
               </div>
 
               <div className="relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-[#090b0e] shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
@@ -85,10 +72,10 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
                   <div className="rounded-xl border border-white/10 bg-black/45 p-4 shadow-xl backdrop-blur-md">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-amber-300/90">
+                        <p className="font-mono text-xs uppercase tracking-[0.14em] text-amber-300">
                           {String(index + 1).padStart(2, "0")} · {project.category}
                         </p>
-                        <p className="mt-2 line-clamp-3 font-sans text-[11px] leading-relaxed text-white/80 sm:text-xs">
+                        <p className="mt-2 line-clamp-3 font-sans text-sm leading-6 text-white/90">
                           {project.description}
                         </p>
                       </div>
@@ -98,10 +85,10 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
                     </div>
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {project.technologies.slice(0, 4).map((tech) => (
-                        <span key={tech} className="rounded-full border border-white/10 bg-white/[0.06] px-2 py-1 font-mono text-[8px] text-white/65">{tech}</span>
+                        <span key={tech} className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 font-mono text-[11px] text-white/80">{tech}</span>
                       ))}
                     </div>
-                    <p className="mt-3 font-mono text-[8px] uppercase tracking-[0.14em] text-white/45">{project.status ?? project.year}</p>
+                    <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.12em] text-white/65">{project.status ?? project.year}</p>
                   </div>
                 </div>
               </div>
@@ -120,12 +107,12 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
         >
           <div>
             <p className="font-display text-lg text-white">Want the uninterrupted project view?</p>
-            <p className="mt-1 font-sans text-xs text-neutral-500">Switch the center workspace and its information panel entirely to projects.</p>
+            <p className="mt-1 font-sans text-sm leading-6 text-neutral-400">Switch the center workspace and its information panel entirely to projects.</p>
           </div>
           <button
             type="button"
             onClick={onViewAll}
-            className="group flex shrink-0 items-center justify-center gap-2 rounded-xl border border-amber-400/20 bg-amber-400/10 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-amber-200 transition-all hover:border-amber-400/45 hover:bg-amber-400/15 active:scale-[0.98]"
+            className="group flex shrink-0 items-center justify-center gap-2 rounded-xl border border-amber-400/20 bg-amber-400/10 px-5 py-3 font-mono text-xs uppercase tracking-[0.1em] text-amber-200 transition-all hover:border-amber-400/45 hover:bg-amber-400/15 active:scale-[0.98]"
           >
             <span>See more projects</span>
             <ArrowRight size={13} className="transition-transform group-hover:translate-x-1" />

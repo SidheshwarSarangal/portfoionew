@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { usePortfolioContent } from "../content";
@@ -11,23 +11,29 @@ interface JourneyTimelineProps {
   containerRef?: RefObject<HTMLDivElement | null>;
 }
 
-const TOOL_SYMBOLS = [
-  { name: "Python", short: "Py", icon: "https://cdn.simpleicons.org/python/3776ab", color: "#3776ab" },
-  { name: "MERN Stack", short: "M", icon: "https://cdn.simpleicons.org/mongodb/47a248", color: "#47a248" },
-  { name: "Angular", short: "A", icon: "https://cdn.simpleicons.org/angular/dd0031", color: "#dd0031" },
-  { name: "C++", short: "C++", icon: "https://cdn.simpleicons.org/cplusplus/659ad2", color: "#659ad2" },
-  { name: "Git", short: "Git", icon: "https://cdn.simpleicons.org/git/f05032", color: "#f05032" },
-  { name: "VS Code", short: "VS", icon: "https://cdn.simpleicons.org/visualstudiocode/23a8f2", color: "#23a8f2" },
-  { name: "Codex", short: "AI", icon: "https://cdn.simpleicons.org/openai/10a37f", color: "#10a37f" },
-  { name: "JavaScript", short: "JS", icon: "https://cdn.simpleicons.org/javascript/f7df1e", color: "#f7df1e" },
-  { name: "TypeScript", short: "TS", icon: "https://cdn.simpleicons.org/typescript/3178c6", color: "#3178c6" },
-  { name: "Electron", short: "E", icon: "https://cdn.simpleicons.org/electron/9feaf9", color: "#9feaf9" },
-  { name: "React", short: "R", icon: "https://cdn.simpleicons.org/react/61dafb", color: "#61dafb" },
-  { name: "Node.js", short: "N", icon: "https://cdn.simpleicons.org/nodedotjs/5fa04e", color: "#5fa04e" },
-  { name: "Spring Boot", short: "S", icon: "https://cdn.simpleicons.org/springboot/6db33f", color: "#6db33f" },
-  { name: "Docker", short: "D", icon: "https://cdn.simpleicons.org/docker/2496ed", color: "#2496ed" },
-  { name: "Kubernetes", short: "K8s", icon: "https://cdn.simpleicons.org/kubernetes/326ce5", color: "#326ce5" },
-  { name: "PostgreSQL", short: "SQL", icon: "https://cdn.simpleicons.org/postgresql/5b8fc8", color: "#5b8fc8" },
+const DEVICON_ROOT = "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons";
+const LINKEDIN_RECOMMENDATIONS_URL = "https://www.linkedin.com/in/sidheshwar-sarangal-0b31482b8/";
+
+const TOOL_SYMBOLS: Array<{
+  name: string;
+  icon: string;
+  color: string;
+}> = [
+  { name: "Python", icon: `${DEVICON_ROOT}/python/python-original.svg`, color: "#3776ab" },
+  { name: "MongoDB", icon: `${DEVICON_ROOT}/mongodb/mongodb-original.svg`, color: "#47a248" },
+  { name: "Express", icon: "https://cdn.simpleicons.org/express/ffffff", color: "#ffffff" },
+  { name: "Angular", icon: `${DEVICON_ROOT}/angular/angular-original.svg`, color: "#dd0031" },
+  { name: "C++", icon: `${DEVICON_ROOT}/cplusplus/cplusplus-original.svg`, color: "#659ad2" },
+  { name: "Git", icon: `${DEVICON_ROOT}/git/git-original.svg`, color: "#f05032" },
+  { name: "JavaScript", icon: `${DEVICON_ROOT}/javascript/javascript-original.svg`, color: "#f7df1e" },
+  { name: "TypeScript", icon: `${DEVICON_ROOT}/typescript/typescript-original.svg`, color: "#3178c6" },
+  { name: "Electron", icon: `${DEVICON_ROOT}/electron/electron-original.svg`, color: "#9feaf9" },
+  { name: "React", icon: `${DEVICON_ROOT}/react/react-original.svg`, color: "#61dafb" },
+  { name: "Node.js", icon: `${DEVICON_ROOT}/nodejs/nodejs-original.svg`, color: "#5fa04e" },
+  { name: "Spring Boot", icon: `${DEVICON_ROOT}/spring/spring-original.svg`, color: "#6db33f" },
+  { name: "Docker", icon: `${DEVICON_ROOT}/docker/docker-original.svg`, color: "#2496ed" },
+  { name: "Kubernetes", icon: `${DEVICON_ROOT}/kubernetes/kubernetes-original.svg`, color: "#326ce5" },
+  { name: "PostgreSQL", icon: `${DEVICON_ROOT}/postgresql/postgresql-original.svg`, color: "#5b8fc8" },
 ];
 
 export default function JourneyTimeline({ section = "all", containerRef }: JourneyTimelineProps) {
@@ -51,14 +57,21 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
     target: aboutTrackRef,
     offset: ["start 22%", "end end"],
   });
-  const portraitY = useTransform(aboutScrollProgress, [0, 1], [-90, portraitTravel]);
+  const portraitY = useTransform(aboutScrollProgress, [0, 1], [0, portraitTravel]);
+  const smoothPortraitY = useSpring(portraitY, {
+    stiffness: 42,
+    damping: 24,
+    mass: 1.35,
+  });
 
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 640px)");
-    const update = () => setWideAboutLayout(query.matches);
+    const track = aboutTrackRef.current;
+    if (!track) return;
+    const update = () => setWideAboutLayout(track.clientWidth >= 760);
     update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
+    const observer = new ResizeObserver(update);
+    observer.observe(track);
+    return () => observer.disconnect();
   }, []);
 
   useLayoutEffect(() => {
@@ -79,7 +92,7 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
   return (
     <section
       id={section === "experience" ? "experience" : "about"}
-      className="w-full max-w-5xl mx-auto px-6 py-12 border-t border-white/5 space-y-14 relative select-text"
+      className="relative mx-auto w-full max-w-5xl space-y-14 border-t border-white/5 px-4 py-10 [container-type:inline-size] select-text sm:px-6 sm:py-12"
     >
       {showAbout && (
         <div className="relative" id="chapter-about">
@@ -90,16 +103,13 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
             viewport={{ once: false, amount: 0.35 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="mb-3 flex items-center gap-1 font-mono text-xs text-neutral-500 select-none">
-              <span>&lt;!--</span><span>About section</span><span>--&gt;</span>
-            </div>
             <span className="block whitespace-nowrap font-display text-[clamp(3.2rem,14cqw,8.6rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
               SINCE 2022
             </span>
           </motion.div>
 
-          <div ref={aboutTrackRef} className="relative grid grid-cols-1 gap-12 sm:grid-cols-12 sm:gap-8 lg:gap-12">
-            <div className="space-y-20 sm:col-span-7 lg:col-span-8">
+          <div ref={aboutTrackRef} className="about-track relative grid gap-12">
+            <div className="min-w-0 space-y-16 sm:space-y-20">
               <motion.div
                 className="space-y-6"
                 initial={{ opacity: 0, x: -86 }}
@@ -134,9 +144,6 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
                 viewport={{ once: false, amount: 0.2 }}
                 transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="flex items-center gap-1 font-mono text-xs text-neutral-500 select-none">
-                  <span>&lt;!--</span><span>What I do</span><span>--&gt;</span>
-                </div>
                 <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Capabilities</h2>
                 <div className="space-y-7 border-l border-white/10 pl-5 sm:pl-6">
                   {whatIDo.map((capability) => (
@@ -157,52 +164,9 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
                 </div>
               </motion.div>
 
-              <motion.div
-                className="space-y-7 scroll-mt-24"
-                id="chapter-tech-stack"
-                initial={{ opacity: 0, x: -86 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false, amount: 0.16 }}
-                transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="flex items-center gap-1 font-mono text-xs text-neutral-500 select-none">
-                  <span>&lt;!--</span><span>My tech stack</span><span>--&gt;</span>
-                </div>
-                <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Tools I Build With</h2>
-                <div className="grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {TOOL_SYMBOLS.map((tool, idx) => (
-                    <motion.div
-                      key={tool.name}
-                      className="group relative aspect-square min-h-40 overflow-hidden rounded-2xl border border-white/[0.12] bg-white/[0.035] shadow-[inset_0_1px_0_rgba(255,255,255,0.11),0_18px_45px_rgba(0,0,0,0.22)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.06] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_24px_60px_rgba(0,0,0,0.34)]"
-                      initial={{ opacity: 0, y: 18 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
-                      transition={{ duration: 0.5, delay: (idx % 3) * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <div
-                        className="pointer-events-none absolute inset-0 opacity-35 transition-opacity duration-500 group-hover:opacity-55"
-                        style={{ background: `radial-gradient(circle at 50% 44%, ${tool.color}45 0%, ${tool.color}16 34%, transparent 70%)` }}
-                      />
-                      <div className="absolute inset-0 grid place-items-center p-[22%] transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-95">
-                        <span className="font-mono text-2xl font-black" style={{ color: tool.color }}>{tool.short}</span>
-                        <img
-                          src={tool.icon}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.34)]"
-                        />
-                      </div>
-                      <div className="absolute inset-x-3 bottom-3 translate-y-3 rounded-xl border border-white/15 bg-black/30 px-3 py-3 text-center opacity-0 shadow-lg backdrop-blur-xl transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100">
-                        <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-white sm:text-sm">{tool.name}</span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
             </div>
 
-            <div className="sm:col-span-5 lg:col-span-4">
+            <div className="min-w-0">
                 <motion.div
                   ref={portraitCardRef}
                   className="flex flex-col items-center gap-4 sm:items-end"
@@ -210,21 +174,66 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: false, amount: 0.2 }}
                   transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
-                  style={wideAboutLayout && !reduceMotion ? { y: portraitY } : undefined}
+                  style={wideAboutLayout && !reduceMotion ? { y: smoothPortraitY } : undefined}
                 >
                   <div className="relative aspect-[2/3] w-full max-w-[310px] overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-2xl">
                     <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
                     <img src={aboutPortraitUrl} alt="Sidheshwar Sarangal" className="h-full w-full object-contain object-bottom transition-transform duration-700 hover:scale-[1.02]" />
                   </div>
-                  <div className="flex items-center gap-4 pr-1 font-mono text-xs text-neutral-500 select-none">
+                  <div className="flex items-center gap-4 pr-1 font-mono text-sm text-neutral-400 select-none">
                     <span>follow me:</span>
                     <a href="https://github.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-amber-400" title="GitHub"><Github size={14} /></a>
                     <a href="https://x.com/mrsidverse" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-amber-400" title="X"><Twitter size={14} /></a>
                     <a href="https://www.linkedin.com/in/sidheshwar-sarangal-0b31482b8/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-amber-400" title="LinkedIn"><Linkedin size={14} /></a>
                   </div>
-                </motion.div>
+              </motion.div>
             </div>
           </div>
+
+          <motion.div
+            className="mt-20 w-full space-y-7 scroll-mt-24"
+            id="chapter-tech-stack"
+            initial={{ opacity: 0, x: -86 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false, amount: 0.16 }}
+            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Tools I Build With</h2>
+            <div className="tech-gallery relative overflow-hidden rounded-2xl border border-white/[0.1] bg-white/[0.018] py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_55px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:py-8">
+              <div className="tech-gallery-track flex w-max items-center">
+                {[0, 1].map((copy) => (
+                  <div key={copy} className="flex shrink-0 items-center gap-4 pr-4 sm:gap-5 sm:pr-5" aria-hidden={copy === 1}>
+                    {TOOL_SYMBOLS.map((tool) => (
+                      <div
+                        key={`${copy}-${tool.name}`}
+                        role="img"
+                        aria-label={copy === 0 ? tool.name : undefined}
+                        tabIndex={copy === 0 ? 0 : -1}
+                        className="group relative grid h-28 w-28 shrink-0 place-items-center outline-none sm:h-32 sm:w-32"
+                      >
+                        <span className="pointer-events-none absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2 scale-90 whitespace-nowrap rounded-full border border-white/20 bg-neutral-950/85 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-white opacity-0 shadow-[0_8px_28px_rgba(0,0,0,0.48)] backdrop-blur-xl transition-all duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
+                          {tool.name}
+                        </span>
+                        <span className="relative grid h-full w-full place-items-center overflow-hidden rounded-2xl border border-white/[0.11] bg-black/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] transition-colors duration-300 group-hover:border-white/25 group-focus-visible:border-white/25">
+                          <span
+                            className="pointer-events-none absolute inset-0 opacity-20 blur-xl transition-opacity duration-300 group-hover:opacity-40 group-focus-visible:opacity-40"
+                            style={{ background: `radial-gradient(circle at center, ${tool.color} 0%, transparent 68%)` }}
+                          />
+                          <img
+                            src={tool.icon}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            className="relative h-[68px] w-[68px] object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.38)] transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 sm:h-20 sm:w-20"
+                          />
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </div>
       )}
 
@@ -233,17 +242,17 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
       {/* SECTION 3.5: METICULOUS EDUCATION ARCHIVES (Practice Chronology List) */}
       <div className="space-y-5 scroll-mt-24" id="chapter-history">
         {/* Massive Backdrop text: EXPERIENCE left reveal */}
-        <div
-          className="group/experience relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
+        <motion.div
+          className="mb-8 overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025] px-5 py-6 sm:px-8 sm:py-8 [container-type:inline-size]"
+          initial={{ opacity: 0, x: -100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.35 }}
+          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
-            <span
-              className="font-display text-[clamp(44px,16cqw,132px)] font-black uppercase text-neutral-700 leading-none transition-colors duration-300 group-hover/experience:text-neutral-300"
-            >
-              EXPERIENCE
-            </span>
-          </div>
-        </div>
+          <span className="block whitespace-nowrap font-display text-[clamp(3.2rem,14cqw,8.6rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
+            EXPERIENCE
+          </span>
+        </motion.div>
 
         {/* Massive Backdrop text: EXPERIENCE (Continuous Arrow Marquee) */}
         <div className="hidden">
@@ -256,18 +265,17 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
             </div>
           </div>
         </div>
-        {/* Commentary Marker */}
-        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
-          <span>&lt;!--</span>
-          <span className="text-neutral-500 font-medium">Practice Chronologies</span>
-          <span>--&gt;</span>
-        </div>
-
-        
-
         <div className="relative border-l border-white/5 ml-3 pl-6 space-y-6" id="histories-timeline-track">
-          {TIMELINE.map((event) => (
-            <div key={event.id} className="relative group" id={`history-node-${event.id}`}>
+          {TIMELINE.map((event, idx) => (
+            <motion.div
+              key={event.id}
+              className="group relative rounded-xl border border-transparent px-3 py-3 transition-colors hover:border-white/[0.06] hover:bg-white/[0.025]"
+              id={`history-node-${event.id}`}
+              initial={{ opacity: 0, x: -72 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false, amount: 0.35 }}
+              transition={{ duration: 0.7, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            >
               <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-[#070809] border border-white/10 flex items-center justify-center text-neutral-500 group-hover:border-amber-500/30 transition-colors">
                 <span className="w-1.5 h-1.5 rounded-full bg-neutral-600 group-hover:bg-amber-400 transition-colors" />
               </div>
@@ -275,41 +283,89 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
               <div className="space-y-2" id={`history-node-body-${event.id}`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5" id={`history-node-header-${event.id}`}>
                   <div>
-                    <h3 className="font-mono text-sm sm:text-base text-white/90 font-semibold group-hover:text-amber-400 transition-colors">
+                    <h3 className="font-display text-lg font-semibold tracking-tight text-white/90 transition-colors group-hover:text-amber-400 sm:text-xl">
                       {event.role}
                     </h3>
-                    <div className="font-mono text-[11px] text-neutral-500 mt-0.5">
+                    <div className="mt-1 font-mono text-sm text-neutral-400">
                       <span className="text-neutral-300 font-medium">{event.organization}</span>
                       <span className="mx-1.5">•</span>
                       <span>{event.location}</span>
                     </div>
                   </div>
-                  <span className="font-mono text-[10px] text-neutral-400 bg-white/5 border border-[#ffffff08] px-2 py-0.5 rounded self-start sm:self-center group-hover:text-amber-400 group-hover:border-amber-500/25 transition-all">
+                  <span className="self-start rounded border border-[#ffffff08] bg-white/5 px-2.5 py-1 font-mono text-xs text-neutral-300 transition-all group-hover:border-amber-500/25 group-hover:text-amber-400 sm:self-center">
                     {event.period}
                   </span>
                 </div>
 
-                <p className="font-mono text-xs sm:text-sm text-neutral-450 font-light leading-relaxed">
+                <p className="font-mono text-sm font-light leading-7 text-neutral-400 sm:text-base sm:leading-8">
                   {event.description}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
 
-      {/* SECTION 3.6: CLIENT WORDS */}
-      <div className="space-y-6 relative py-4 scroll-mt-24" id="chapter-testimonials">
-        {/* Huge backdrop of words left reveal */}
-        <div
-          className="group/words relative w-full overflow-hidden select-none mb-5 h-[clamp(88px,16cqw,180px)] flex items-center [container-type:inline-size]"
-        >
-          <div className="relative w-full flex items-center justify-start px-[clamp(12px,4vw,72px)] whitespace-nowrap">
-            <span className="font-display text-[clamp(44px,16cqw,132px)] font-black uppercase text-neutral-700 leading-none transition-colors duration-300 group-hover/words:text-neutral-300">
-              WORDS MATTER
-            </span>
+      {/* SECTION 3.6: ACHIEVEMENTS & AWARDS */}
+      <motion.div
+        className="space-y-6 border-t border-white/5 pt-12 scroll-mt-24"
+        id="chapter-awards"
+        initial={{ opacity: 0, x: -90 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: false, amount: 0.2 }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className="mb-8 overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025] px-5 py-6 sm:px-8 sm:py-8 [container-type:inline-size]">
+          <span className="block whitespace-nowrap font-display text-[clamp(2.5rem,11.5cqw,7.2rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
+            ACHIEVEMENTS
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 pl-1 md:grid-cols-2">
+          <div className="space-y-3">
+            <h4 className="font-display text-lg font-semibold tracking-tight text-amber-400">
+              Industry recognition
+            </h4>
+            <div className="space-y-2">
+              {industryAwards.map((item, idx) => (
+                <div key={idx} className="group flex items-center justify-between border-b border-white/[0.03] py-2.5 text-sm transition-colors hover:border-amber-500/20">
+                  <span className="font-mono text-base text-neutral-200 transition-colors group-hover:text-amber-400">{item.award}</span>
+                  <span className="font-mono text-sm text-neutral-400 transition-colors group-hover:text-white">{item.year}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-display text-lg font-semibold tracking-tight text-amber-400">
+              Personal &amp; Team recognition
+            </h4>
+            <div className="space-y-2">
+              {teamAwards.map((item, idx) => (
+                <div key={idx} className="group flex items-center justify-between border-b border-white/[0.03] py-2.5 text-sm transition-colors hover:border-amber-500/20">
+                  <span className="font-mono text-base text-neutral-200 transition-colors group-hover:text-amber-400">{item.award}</span>
+                  <span className="font-mono text-sm text-neutral-400 transition-colors group-hover:text-white">{item.year}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+      </motion.div>
+
+      {/* SECTION 3.7: CLIENT WORDS */}
+      <div className="space-y-6 relative py-4 scroll-mt-24" id="chapter-testimonials">
+        {/* Huge backdrop of words left reveal */}
+        <motion.div
+          className="mb-8 overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025] px-5 py-6 sm:px-8 sm:py-8 [container-type:inline-size]"
+          initial={{ opacity: 0, x: -90 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.3 }}
+          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <span className="block whitespace-nowrap font-display text-[clamp(2.6rem,12cqw,7.5rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
+            WORDS MATTER
+          </span>
+        </motion.div>
 
         {/* Huge backdrop of words (Continuous Arrow Marquee) */}
         <div className="hidden">
@@ -322,34 +378,39 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
             </div>
           </div>
         </div>
-        {/* Commentary Marker */}
-        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
-          <span>&lt;!--</span>
-          <span className="text-neutral-500 font-medium">What clients say</span>
-          <span>--&gt;</span>
-        </div>
-
-        
-
         <div className="relative space-y-10">
-          <div className="text-center">
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, scale: 0.86 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: false, amount: 0.5 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
             <h3 className="font-display text-4xl sm:text-6xl text-white font-extrabold tracking-tight select-none">
               Feedback That <span className="text-neutral-500">Fuels Me</span>
             </h3>
-          </div>
+          </motion.div>
 
-          <div className="space-y-6 max-w-2xl mx-auto px-6 relative" id="testimonials-list">
+          <div className="relative mx-auto max-w-2xl space-y-6 px-2 sm:px-6" id="testimonials-list">
             {feedback.map((f, idx) => {
               const isEven = idx % 2 === 0;
               return (
-                <div
-                  key={idx} 
-                  className={`relative p-6 sm:p-8 bg-[#090a0c]/85 border border-white/5 rounded-2xl hover:border-amber-500/20 transition-all duration-300 flex flex-col justify-between ${
+                <motion.a
+                  key={idx}
+                  href={LINKEDIN_RECOMMENDATIONS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open ${f.author}'s recommendation on LinkedIn`}
+                  className={`group/recommendation relative flex cursor-pointer flex-col justify-between rounded-2xl border border-white/[0.09] bg-white/[0.012] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_45px_rgba(0,0,0,0.12)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/25 hover:bg-white/[0.035] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.11),0_24px_60px_rgba(0,0,0,0.22)] sm:p-8 ${
                     isEven 
                       ? "pl-14 sm:pl-20 text-left" 
                       : "pr-14 sm:pr-20 text-left"
                   }`}
                   id={`testimonial-row-${idx}`}
+                  initial={{ opacity: 0, scale: 0.82 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: false, amount: 0.35 }}
+                  transition={{ duration: 0.72, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 >
                   {/* Floating Avatar. Offset left or right depending on row layout */}
                   <div className={`absolute w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border border-white/10 bg-neutral-900 shadow-2xl top-1/2 -translate-y-1/2 ${
@@ -363,78 +424,34 @@ export default function JourneyTimeline({ section = "all", containerRef }: Journ
                       loading="lazy"
                       decoding="async"
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover grayscale brightness-[0.85] hover:grayscale-0 hover:brightness-100 transition-all duration-300"
+                      className="w-full h-full object-cover grayscale brightness-[0.85] transition-all duration-300 group-hover/recommendation:grayscale-0 group-hover/recommendation:brightness-100"
                     />
                   </div>
 
                   {/* Body Copy - Monospace code block style */}
-                  <p className="font-mono text-xs sm:text-[13px] text-neutral-300 font-light leading-relaxed select-text mb-4">
+                  <p className="mb-5 font-mono text-sm font-light leading-7 text-neutral-200 select-text sm:text-base sm:leading-8">
                     <span className="text-amber-400 font-bold text-sm mr-1">“</span>
                     {f.quote}
                     <span className="text-amber-400 font-bold text-sm ml-1">”</span>
                   </p>
                   
                   {/* Author Line */}
-                  <div className="font-mono text-[10px] sm:text-xs">
-                    <span className="text-white font-bold">{f.author}</span>
-                    <span className="text-neutral-500">, {f.role}</span>
+                  <div className="flex flex-wrap items-center justify-between gap-3 font-mono text-xs sm:text-sm">
+                    <span>
+                      <span className="text-white font-bold">{f.author}</span>
+                      <span className="text-neutral-400">, {f.role}</span>
+                    </span>
+                    <span className="text-amber-400 transition-transform duration-300 group-hover/recommendation:translate-x-1">
+                      Click here →
+                    </span>
                   </div>
-                </div>
+                </motion.a>
               );
             })}
           </div>
-
-          {/* Load More Button */}
-          <div className="flex justify-center pt-4">
-            <button className="px-5 py-2 bg-white/5 border border-white/5 hover:border-amber-500/20 hover:text-amber-400 text-neutral-300 font-mono text-[10px] rounded-lg transition-colors hover:bg-white/10 select-none">
-              Load more
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* SECTION 3.7: ACHIEVEMENTS & AWARDS */}
-      <div className="space-y-5 border-t border-white/5 pt-12 scroll-mt-24" id="chapter-awards">
-        {/* Commentary Marker */}
-        <div className="font-mono text-[11px] text-neutral-600 flex items-center gap-1 select-none">
-          <span>&lt;!--</span>
-          <span className="text-neutral-500 font-medium">Achievements & Awards</span>
-          <span>--&gt;</span>
-        </div>
-
-        {/* Table representation */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pl-1">
-          {/* Industry Recognition Column */}
-          <div className="space-y-3">
-            <h4 className="font-mono text-[10px] text-amber-500 uppercase tracking-widest font-bold">
-              // Industry recognition
-            </h4>
-            <div className="space-y-2">
-              {industryAwards.map((item, idx) => (
-                <div key={idx} className="flex justify-between items-center py-1.5 border-b border-white/[0.03] text-sm group hover:border-amber-550/20 transition-colors">
-                  <span className="font-mono text-neutral-200 group-hover:text-amber-400 transition-colors">{item.award}</span>
-                  <span className="font-mono text-xs text-neutral-500 group-hover:text-white transition-colors">{item.year}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Personal Recognition Column */}
-          <div className="space-y-3">
-            <h4 className="font-mono text-[10px] text-amber-500 uppercase tracking-widest font-bold">
-              // Personal & Team recognition
-            </h4>
-            <div className="space-y-2">
-              {teamAwards.map((item, idx) => (
-                <div key={idx} className="flex justify-between items-center py-1.5 border-b border-white/[0.03] text-sm group hover:border-amber-550/20 transition-colors">
-                  <span className="font-mono text-neutral-200 group-hover:text-amber-400 transition-colors">{item.award}</span>
-                  <span className="font-mono text-xs text-neutral-500 group-hover:text-white transition-colors">{item.year}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
         </>
       )}
     </section>

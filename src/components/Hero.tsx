@@ -17,6 +17,8 @@ export default function Hero({ playIntro = true }: HeroProps) {
   const skipIntro = reduceMotion || !playIntro;
 
   useEffect(() => {
+    if (reduceMotion) return;
+
     let displayTimer: number | undefined;
     let swapTimer: number | undefined;
 
@@ -37,7 +39,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
       if (displayTimer !== undefined) window.clearTimeout(displayTimer);
       if (swapTimer !== undefined) window.clearTimeout(swapTimer);
     };
-  }, []);
+  }, [reduceMotion]);
 
   return (
     <section

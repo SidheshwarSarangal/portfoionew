@@ -12,12 +12,12 @@ interface HeaderProps {
 }
 
 export default function Header({ activeView, onViewChange, isSidebarOpen, onSidebarToggle }: HeaderProps) {
-  const { projects: PROJECTS, socialPosts: SOCIAL_POSTS } = usePortfolioContent();
+  const { projects: PROJECTS, articles: ARTICLES } = usePortfolioContent();
 
   const desktopTabs = [
     { label: "info", id: "info" as const, icon: <FileText size={18} className="text-current" /> },
     { label: "projects", id: "projects" as const, icon: <FolderKanban size={18} className="text-[#fbbc04]" />, badge: PROJECTS.length },
-    { label: "social", id: "social" as const, icon: <MessageSquareText size={18} className="text-current" />, badge: SOCIAL_POSTS.length },
+    { label: "social", id: "social" as const, icon: <MessageSquareText size={18} className="text-current" />, badge: ARTICLES.length },
   ];
 
   const compactTabs = [
@@ -33,7 +33,7 @@ export default function Header({ activeView, onViewChange, isSidebarOpen, onSide
         key={tab.id}
         type="button"
         onClick={() => onViewChange(tab.id)}
-        className={`${compact ? "text-[11px] sm:text-xs gap-1.5" : "min-w-36 px-7 text-sm gap-3"} h-full border-r border-white/10 flex items-center justify-center font-mono cursor-pointer relative transition-all duration-150 ${
+        className={`${compact ? "text-xs sm:text-sm gap-1.5" : "min-w-36 px-7 text-sm gap-3"} h-full border-r border-white/10 flex items-center justify-center font-mono cursor-pointer relative transition-all duration-150 ${
           isSelected ? "bg-[#fbbc04]/20 text-white font-semibold" : "text-white/80 hover:text-[#fbbc04] hover:bg-white/5"
         }`}
       >
@@ -46,10 +46,10 @@ export default function Header({ activeView, onViewChange, isSidebarOpen, onSide
         )}
 
         {tab.icon}
-        <span className="tracking-tight">{tab.label}</span>
+        <span className={`tracking-tight ${compact ? "compact-tab-label" : ""}`}>{tab.label}</span>
 
         {"badge" in tab && tab.badge !== undefined && !compact && (
-          <span className="font-mono text-[10px] bg-white/10 text-white/65 px-1.5 py-0.5 rounded border border-white/10 font-semibold">
+          <span className="font-mono text-xs bg-white/10 text-white/80 px-1.5 py-0.5 rounded border border-white/10 font-semibold">
             {tab.badge}
           </span>
         )}
