@@ -1,205 +1,339 @@
-import { motion } from "motion/react";
-import { Building2, CalendarRange, Dribbble, ExternalLink, Github, Layers3, Users, X } from "lucide-react";
-import type { Project } from "../types";
-import { useEffect, useRef } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import {
+  ArrowRight,
+  Building2,
+  CalendarRange,
+  CheckCircle2,
+  Download,
+  ExternalLink,
+  Github,
+  Layers3,
+  Route,
+  Target,
+  Users,
+  Wrench,
+  X,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import type { Project } from "../types";
 import { trackEvent } from "../lib/analytics";
+import { resolveAssetUrl } from "../lib/assets";
 
 interface ProjectDetailModalProps {
   project: Project | null;
   onClose: () => void;
 }
 
-const linkClasses = "inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2.5 font-mono text-xs text-neutral-200 transition-all hover:border-amber-300/35 hover:bg-amber-300/10 hover:text-amber-200";
+const actionClasses = "inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-3 font-mono text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300";
+type DetailView = "problem" | "technology" | "outcomes";
 
 export default function ProjectDetailModal({ project, onClose }: ProjectDetailModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const reduceMotion = useReducedMotion();
+  const [detailView, setDetailView] = useState<DetailView>("problem");
+
+  useEffect(() => {
+    setDetailView("problem");
+  }, [project?.id]);
 
   useEffect(() => {
     if (!project) return;
     const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
     document.body.style.overflow = "hidden";
     closeButtonRef.current?.focus();
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [project, onClose]);
 
   if (!project) return null;
+
   const architecture = project.details.architecture?.length
     ? project.details.architecture
     : project.technologies.slice(0, 5);
+  const technologyRoles = project.details.technologyRoles ?? project.technologies.map((technology) => ({
+    technology,
+    purpose: `Used as part of the ${project.category.toLowerCase()} implementation.`,
+  }));
+  const useCaseImageUrl = resolveAssetUrl(project.hoverImageUrl);
+  const pdfUrl = resolveAssetUrl(project.pdfUrl);
+  const timeline = [project.startedAt, project.completedAt].filter(Boolean).join(" — ") || project.year;
 
   return (
     <motion.div
-      className="fixed inset-0 z-[80] overflow-y-auto overscroll-contain"
+      className="fixed inset-0 z-[80] overflow-y-auto overscroll-contain bg-[#020305]/95 p-2 sm:p-5 lg:p-8"
       role="dialog"
       aria-modal="true"
       aria-labelledby="project-modal-title"
       onClick={onClose}
-      initial={{ opacity: 0 }}
+      initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.42, ease: [0.4, 0, 0.2, 1] }}
+      exit={reduceMotion ? undefined : { opacity: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.28, ease: "easeOut" }}
     >
-      <div className="fixed inset-0 bg-[#020305]/75 backdrop-blur-xl" aria-hidden="true" />
+      <motion.article
+        onClick={(event) => event.stopPropagation()}
+        initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={reduceMotion ? undefined : { opacity: 0, y: 10 }}
+        transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="relative mx-auto my-2 w-full max-w-6xl transform-gpu overflow-hidden rounded-2xl border border-white/[0.12] bg-[#090b0f] shadow-[0_35px_120px_rgba(0,0,0,0.72)] [backface-visibility:hidden] sm:my-5 sm:rounded-[1.75rem]"
+      >
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_16%_0%,rgba(251,191,36,0.11),transparent_38%),radial-gradient(circle_at_88%_8%,rgba(59,130,246,0.09),transparent_36%)]" />
 
-      <div className="relative flex min-h-full items-start justify-center p-2 sm:p-5 lg:p-8">
-        <motion.article
-          initial={{ opacity: 0, scale: 0.965, y: 28 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.965, y: 28 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          onClick={(event) => event.stopPropagation()}
-          className="relative my-auto w-full max-w-6xl overflow-hidden rounded-2xl border border-white/15 bg-[#0a0c11]/80 shadow-[0_35px_120px_rgba(0,0,0,0.72)] backdrop-blur-2xl sm:rounded-[1.75rem]"
+        <button
+          ref={closeButtonRef}
+          type="button"
+          onClick={onClose}
+          aria-label="Close project details"
+          className="absolute right-4 top-4 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-black/65 text-neutral-300 backdrop-blur-md transition-colors hover:border-white/30 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
         >
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_3%,rgba(251,191,36,0.10),transparent_28%),radial-gradient(circle_at_0%_60%,rgba(59,130,246,0.08),transparent_32%)]" />
+          <X size={17} />
+        </button>
 
-          <button
-            ref={closeButtonRef}
-            type="button"
-            onClick={onClose}
-            aria-label="Close project details"
-            className="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-black/35 text-neutral-300 backdrop-blur-xl transition-all hover:rotate-90 hover:border-white/30 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
-          >
-            <X size={17} />
-          </button>
+        <header className="relative isolate overflow-hidden border-b border-white/[0.08] px-5 pb-7 pt-16 sm:px-8 sm:pb-9 sm:pt-12 lg:px-10 lg:py-14">
+          {useCaseImageUrl && (
+            <div className="pointer-events-none absolute inset-0 -z-20" aria-hidden="true">
+              <img
+                src={useCaseImageUrl}
+                alt=""
+                decoding="async"
+                className="h-full w-full scale-[1.04] object-cover opacity-90 blur-[1.5px] saturate-110"
+              />
+            </div>
+          )}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(3,5,8,0.82)_0%,rgba(3,5,8,0.62)_48%,rgba(3,5,8,0.24)_100%),linear-gradient(0deg,rgba(3,5,8,0.78)_0%,rgba(3,5,8,0.16)_58%,rgba(3,5,8,0.28)_100%)]" aria-hidden="true" />
 
-          <div className="relative grid lg:grid-cols-[1.18fr_0.82fr]">
-            <div className="border-b border-white/10 p-4 sm:p-6 lg:border-b-0 lg:border-r lg:p-8">
-              {project.videoUrl ? (
-                <video
-                  controls
-                  playsInline
-                  preload="metadata"
-                  poster={project.videoPosterUrl ?? project.imageUrl}
-                  className="aspect-video w-full rounded-2xl border border-white/10 bg-black object-cover"
+          <div className="relative max-w-4xl rounded-2xl border border-white/10 bg-black/20 p-4 shadow-[0_18px_55px_rgba(0,0,0,0.2)] backdrop-blur-md sm:p-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-amber-300/20 bg-amber-300/[0.08] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-amber-200 sm:text-xs">
+                {project.category}
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-neutral-300 sm:text-xs">
+                {project.status ?? "Completed"}
+              </span>
+            </div>
+
+            <h1 id="project-modal-title" className="mt-5 max-w-3xl font-display text-3xl font-semibold leading-[1.04] tracking-tight text-white sm:text-5xl lg:text-[3.5rem]">
+              {project.title}
+            </h1>
+            <p className="mt-5 max-w-3xl font-sans text-base leading-8 text-neutral-300 sm:text-lg sm:leading-9">
+              {project.description}
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              {project.technologies.map((technology) => (
+                <span
+                  key={technology}
+                  className="rounded-xl border border-white/20 bg-white/[0.12] px-3.5 py-2 font-mono text-xs font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_8px_22px_rgba(0,0,0,0.18)] backdrop-blur-md sm:px-4 sm:py-2.5 sm:text-sm"
                 >
-                  <source src={project.videoUrl} />
-                  Your browser does not support embedded video.
-                </video>
-              ) : (
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                  {[project.imageUrl, project.hoverImageUrl].filter(Boolean).map((image, index) => (
-                    <figure key={`${image}-${index}`} className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-                      <img
-                        src={image}
-                        alt={`${project.title} ${index === 0 ? "overview" : "alternate view"}`}
-                        className="h-full w-full object-cover brightness-[0.82] transition duration-700 group-hover:scale-105 group-hover:brightness-100"
-                        referrerPolicy="no-referrer"
-                      />
-                      <figcaption className="absolute bottom-3 left-3 rounded-full border border-white/10 bg-black/55 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.12em] text-white/85 backdrop-blur-md">
-                        {index === 0 ? "Primary view" : "Detail view"}
-                      </figcaption>
-                    </figure>
+                  {technology}
+                </span>
+              ))}
+            </div>
+
+              <div className="mt-6 flex flex-wrap gap-2.5">
+                {project.links.github && (
+                  <a
+                    href={project.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackEvent("project_repository_click", { project_id: project.id })}
+                    className={`${actionClasses} border-white/15 bg-white/[0.06] text-white hover:border-white/30 hover:bg-white/10`}
+                  >
+                    <Github size={14} /> Repository <ExternalLink size={12} className="text-neutral-500" />
+                  </a>
+                )}
+                {project.links.live && (
+                  <a
+                    href={project.links.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackEvent("live_demo_click", { project_id: project.id })}
+                    className={`${actionClasses} border-white/15 bg-white/[0.06] text-white hover:border-white/30 hover:bg-white/10`}
+                  >
+                    <ExternalLink size={14} /> Live product
+                  </a>
+                )}
+                {pdfUrl && (
+                  <a
+                    href={pdfUrl}
+                    download
+                    className={`${actionClasses} border-amber-300/30 bg-amber-300/10 text-amber-100 hover:border-amber-300/55 hover:bg-amber-300/15`}
+                  >
+                    <Download size={14} /> Download full PDF
+                  </a>
+                )}
+            </div>
+          </div>
+
+          <dl className="relative mt-8 grid gap-px overflow-hidden rounded-xl border border-white/[0.1] bg-white/[0.1] shadow-[0_18px_45px_rgba(0,0,0,0.28)] sm:grid-cols-2 lg:grid-cols-4">
+            <Metadata icon={<CalendarRange size={14} />} label="Date / timeline" value={timeline} />
+            <Metadata icon={<Building2 size={14} />} label="Context" value={project.associatedWith ?? "Independent project"} />
+            <Metadata icon={<Users size={14} />} label="Contributors" value={project.contributors?.join(", ") ?? "Sidheshwar Sarangal"} />
+            <Metadata icon={<Wrench size={14} />} label="Role" value={project.roles.join(" · ")} />
+          </dl>
+        </header>
+
+        <main className="relative space-y-12 px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+          <section aria-label="Project details">
+            <div className="grid gap-2 rounded-2xl border border-white/[0.09] bg-black/25 p-2 sm:grid-cols-3" role="tablist" aria-label="Choose project detail">
+              <DetailTab
+                active={detailView === "problem"}
+                icon={<Target size={17} />}
+                label="Problem solved"
+                onClick={() => setDetailView("problem")}
+              />
+              <DetailTab
+                active={detailView === "technology"}
+                icon={<Wrench size={17} />}
+                label="Technology functions"
+                onClick={() => setDetailView("technology")}
+              />
+              <DetailTab
+                active={detailView === "outcomes"}
+                icon={<CheckCircle2 size={17} />}
+                label="Outcomes"
+                onClick={() => setDetailView("outcomes")}
+              />
+            </div>
+
+            <motion.div
+              key={detailView}
+              role="tabpanel"
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-6"
+            >
+              {detailView === "problem" && (
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <ContentPanel
+                    icon={<Target size={17} />}
+                    label="Real-world problem"
+                    text={project.details.problem}
+                    accent="amber"
+                  />
+                  <ContentPanel
+                    icon={<Route size={17} />}
+                    label="Implementation approach"
+                    text={project.details.solution}
+                    accent="blue"
+                  />
+                </div>
+              )}
+
+              {detailView === "technology" && (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {technologyRoles.map((item, index) => (
+                    <article key={item.technology} className="rounded-xl border border-white/[0.08] bg-white/[0.025] p-5">
+                      <div className="flex items-start gap-4">
+                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-amber-300/20 bg-amber-300/[0.08] font-mono text-[10px] text-amber-200">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <div>
+                          <h3 className="font-mono text-sm font-semibold text-white">{item.technology}</h3>
+                          <p className="mt-2 font-sans text-sm leading-7 text-neutral-400">{item.purpose}</p>
+                        </div>
+                      </div>
+                    </article>
                   ))}
                 </div>
               )}
 
-              <section className="mt-8">
-                <div className="mb-4 flex items-center gap-2 text-neutral-400">
-                  <Layers3 size={14} />
-                  <h2 className="font-mono text-xs uppercase tracking-[0.16em]">System diagram</h2>
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  {architecture.map((stage, index) => (
-                    <div key={stage} className="contents">
-                      <div className="flex min-h-16 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/[0.035] px-3 text-center font-mono text-xs leading-5 text-neutral-200">
-                        {stage}
-                      </div>
-                      {index < architecture.length - 1 && (
-                        <span className="text-center font-mono text-xs text-amber-300/60 sm:-mx-1">→</span>
-                      )}
+              {detailView === "outcomes" && (
+                <div className="grid gap-3 lg:grid-cols-2">
+                  {[...project.details.outcomes, ...(project.details.highlights ?? [])].map((outcome) => (
+                    <div key={outcome} className="flex gap-3 rounded-xl border border-white/[0.07] bg-black/20 p-4">
+                      <CheckCircle2 size={16} className="mt-1 shrink-0 text-emerald-400" />
+                      <p className="font-sans text-sm leading-7 text-neutral-300">{outcome}</p>
                     </div>
                   ))}
                 </div>
-              </section>
-            </div>
+              )}
+            </motion.div>
+          </section>
 
-            <div className="relative p-5 sm:p-7 lg:p-8">
-              <span className="inline-flex rounded-full border border-amber-300/15 bg-amber-300/[0.07] px-3 py-1.5 font-mono text-xs uppercase tracking-[0.14em] text-amber-200/90">
-                {project.category} · {project.year}
-              </span>
-              <h1 id="project-modal-title" className="mt-5 max-w-xl font-display text-3xl leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
-                {project.title}
-              </h1>
-              <p className="mt-4 font-sans text-base leading-8 text-neutral-300">{project.description}</p>
-
-              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Fact icon={<CalendarRange size={14} />} label="Timeline" value={[project.startedAt, project.completedAt].filter(Boolean).join(" — ") || project.year} />
-                <Fact icon={<Building2 size={14} />} label="Associated with" value={project.associatedWith ?? "Independent project"} />
-                <Fact icon={<Users size={14} />} label="Contributors" value={project.contributors?.join(", ") ?? "Sidheshwar Sarangal"} />
-                <Fact icon={<Layers3 size={14} />} label="Status" value={project.status ?? "Completed"} />
-              </div>
-
-              <div className="mt-7">
-                <h2 className="font-mono text-xs uppercase tracking-[0.16em] text-neutral-400">Tech stack</h2>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {project.technologies.map((tech) => (
-                    <span key={tech} className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 font-mono text-xs text-neutral-200">{tech}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-7 flex flex-wrap gap-2">
-                {project.links.github && <ProjectLink href={project.links.github} label="Repository" icon={<Github size={13} />} onClick={() => trackEvent("project_repository_click", { project_id: project.id })} />}
-                {project.links.live && <ProjectLink href={project.links.live} label="Live demo" icon={<ExternalLink size={13} />} onClick={() => trackEvent("live_demo_click", { project_id: project.id })} />}
-                {project.links.dribbble && <ProjectLink href={project.links.dribbble} label="Dribbble" icon={<Dribbble size={13} />} />}
-                {project.links.behance && <ProjectLink href={project.links.behance} label="Behance" icon={<ExternalLink size={13} />} />}
+          <section aria-labelledby="project-system-heading" className="rounded-2xl border border-white/[0.08] bg-white/[0.018] p-5 sm:p-7">
+            <SectionHeading
+              id="project-system-heading"
+              title="Current request flow"
+            />
+            <div className="mt-6 overflow-x-auto pb-2 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.18)_transparent]">
+              <div className="flex min-w-max items-center gap-2">
+                {architecture.map((stage, index) => (
+                  <div key={stage} className="flex items-center gap-2">
+                    <div className="flex min-h-24 w-40 flex-col justify-between rounded-xl border border-white/10 bg-[#0c0f14] p-4">
+                      <span className="font-mono text-[10px] text-amber-300/60">{String(index + 1).padStart(2, "0")}</span>
+                      <span className="font-mono text-xs leading-5 text-neutral-100">{stage}</span>
+                    </div>
+                    {index < architecture.length - 1 && <ArrowRight size={15} className="shrink-0 text-amber-300/45" />}
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
-
-          <div className="relative border-t border-white/10 p-5 sm:p-7 lg:p-8">
-            <div className="grid gap-8 lg:grid-cols-3">
-              <Narrative title="The brief" text={project.details.problem} />
-              <Narrative title="The approach" text={project.details.solution} />
-              <div>
-                <h2 className="font-display text-lg text-white">Results & highlights</h2>
-                <ul className="mt-3 space-y-3">
-                  {[...project.details.outcomes, ...(project.details.highlights ?? [])].map((item) => (
-                    <li key={item} className="flex gap-3 font-sans text-sm leading-7 text-neutral-300">
-                      <span className="mt-[0.6rem] h-1 w-1 shrink-0 rounded-full bg-amber-300" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </motion.article>
-      </div>
+          </section>
+        </main>
+      </motion.article>
     </motion.div>
   );
 }
 
-function Fact({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+function Metadata({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/[0.08] bg-black/15 p-3">
-      <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-neutral-500">{icon}{label}</div>
-      <p className="mt-2 font-sans text-sm leading-6 text-neutral-200">{value}</p>
+    <div className="bg-black/40 p-4 backdrop-blur-md">
+      <dt className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.13em] text-neutral-300">{icon}{label}</dt>
+      <dd className="mt-2 font-sans text-sm leading-6 text-white/90">{value}</dd>
     </div>
   );
 }
 
-function Narrative({ title, text }: { title: string; text: string }) {
+function SectionHeading({ id, title }: { id: string; title: string }) {
   return (
-    <section>
-      <h2 className="font-display text-lg text-white">{title}</h2>
-      <p className="mt-3 font-sans text-sm leading-7 text-neutral-300">{text}</p>
-    </section>
+    <h2 id={id} className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">{title}</h2>
   );
 }
 
-function ProjectLink({ href, label, icon, onClick }: { href: string; label: string; icon: ReactNode; onClick?: () => void }) {
+function DetailTab({ active, icon, label, onClick }: { active: boolean; icon: ReactNode; label: string; onClick: () => void }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={linkClasses}>
-      {icon}<span>{label}</span>
-    </a>
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`flex min-h-14 items-center justify-center gap-2.5 rounded-xl border px-4 py-3 font-mono text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
+        active
+          ? "border-amber-300/35 bg-amber-300/12 text-amber-100"
+          : "border-transparent text-neutral-400 hover:border-white/10 hover:bg-white/[0.04] hover:text-white"
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function ContentPanel({ icon, label, text, accent }: { icon: ReactNode; label: string; text: string; accent: "amber" | "blue" }) {
+  const accentClasses = accent === "amber"
+    ? "border-amber-300/15 bg-amber-300/[0.035] text-amber-200"
+    : "border-blue-300/15 bg-blue-300/[0.035] text-blue-200";
+
+  return (
+    <article className={`rounded-2xl border p-5 sm:p-6 ${accentClasses}`}>
+      <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.13em]">{icon}{label}</div>
+      <p className="mt-4 font-sans text-base leading-8 text-neutral-300">{text}</p>
+    </article>
   );
 }

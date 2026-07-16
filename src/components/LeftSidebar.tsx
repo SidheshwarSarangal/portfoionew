@@ -15,12 +15,16 @@ interface LeftSidebarProps {
 export default function LeftSidebar({ primaryAccent, secondaryAccent }: LeftSidebarProps) {
   const { personalBio: PERSONAL_BIO, socialLinks: SOCIAL_LINKS } = usePortfolioContent();
   const { copied, copyText } = useCopyFeedback();
+  const sidebarPortraitUrl = `${import.meta.env.BASE_URL}general%20image.png`;
 
   const handleCopyEmail = () => {
     void copyText(PERSONAL_BIO.email);
   };
 
   const linkedin = findSocialLink(SOCIAL_LINKS, "LinkedIn");
+  const resumeUrl = PERSONAL_BIO.resumeUrl?.startsWith("/")
+    ? `${import.meta.env.BASE_URL}${PERSONAL_BIO.resumeUrl.slice(1)}`
+    : PERSONAL_BIO.resumeUrl;
 
   const handleCall = () => {
     if (!PERSONAL_BIO.phone) return;
@@ -43,15 +47,15 @@ export default function LeftSidebar({ primaryAccent, secondaryAccent }: LeftSide
         {/* Profile Card & Avatar */}
         <div className="flex flex-col items-center text-center space-y-2.5">
           <div className="relative group">
-            {/* Ambient pulsing glowing border */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-white/25 via-[#fbbc04]/20 to-white/15 rounded-full blur opacity-60 group-hover:opacity-100 transition duration-700 animate-pulse" />
+            <div className="pointer-events-none absolute -inset-2 rounded-full border border-[#fbbc04]/0 opacity-0 scale-90 transition-all duration-500 ease-out group-hover:scale-100 group-hover:border-[#fbbc04]/80 group-hover:opacity-100 group-hover:shadow-[0_0_28px_rgba(251,188,4,0.28)]" />
+            <div className="pointer-events-none absolute -inset-1 rounded-full border border-white/10 transition-all duration-500 ease-out group-hover:border-white/35" />
             <img 
-              src={PERSONAL_BIO.avatarUrl} 
+              src={sidebarPortraitUrl}
               alt={PERSONAL_BIO.name} 
               width="128"
               height="128"
               fetchPriority="high"
-              className="relative w-24 h-24 xl:w-28 xl:h-28 rounded-full border border-white/10 object-cover grayscale brightness-95 group-hover:grayscale-0 transition-all duration-500"
+              className="relative w-24 h-24 xl:w-28 xl:h-28 rounded-full border border-white/10 object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
               referrerPolicy="no-referrer"
             />
           </div>
@@ -71,7 +75,7 @@ export default function LeftSidebar({ primaryAccent, secondaryAccent }: LeftSide
         <div className="space-y-2 text-left">
           <div className="p-4 rounded-xl border border-white/5 bg-white/[0.01]">
             <p className="font-sidebar text-sm xl:text-[15px] text-neutral-200 leading-[1.65] font-normal tracking-[0.005em]">
-              I am a B.Tech undergraduate at <strong className="text-[#fbbc04] font-medium">IIT Roorkee</strong> building full-stack products, REST APIs, and backend systems.
+              I am a B.Tech undergraduate from <strong className="text-[#fbbc04] font-medium">IIT Roorkee</strong> building full-stack products, REST APIs, and backend systems.
             </p>
           </div>
         </div>
@@ -125,10 +129,10 @@ export default function LeftSidebar({ primaryAccent, secondaryAccent }: LeftSide
             <span>Schedule a Call</span>
           </button>}
 
-          {PERSONAL_BIO.resumeUrl ? (
+          {resumeUrl ? (
             <a
-              href={PERSONAL_BIO.resumeUrl}
-              download
+              href={resumeUrl}
+              download="SIDHESHWAR SARANGAL RESUME 18.06.2026.pdf"
               className="w-full py-2.5 border border-white/10 hover:border-[#fbbc04]/35 text-neutral-200 font-sidebar font-semibold text-sm tracking-[0.01em] rounded-lg flex items-center justify-center gap-2.5 text-center hover:bg-[#fbbc04]/10 hover:text-[#fbbc04] active:scale-[0.98] transition-all cursor-pointer"
             >
               <Download size={16} className="text-neutral-500" />

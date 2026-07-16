@@ -9,6 +9,7 @@ export interface Project {
   accentColor: string;
   imageUrl?: string;
   hoverImageUrl?: string;
+  pdfUrl?: string;
   videoUrl?: string;
   videoPosterUrl?: string;
   contributors?: string[];
@@ -26,6 +27,10 @@ export interface Project {
     problem: string;
     solution: string;
     outcomes: string[];
+    technologyRoles?: Array<{
+      technology: string;
+      purpose: string;
+    }>;
     architecture?: string[];
     highlights?: string[];
   };

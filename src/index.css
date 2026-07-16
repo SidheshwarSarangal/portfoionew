@@ -32,6 +32,19 @@ body {
   font-family: var(--font-sans);
 }
 
+html,
+body,
+#root,
+#root * {
+  cursor: default;
+}
+
+#root input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
+#root textarea,
+#root [contenteditable="true"] {
+  cursor: text;
+}
+
 .sidebar-readable-text {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -47,6 +60,8 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
   overscroll-behavior-y: contain;
+  overflow-anchor: none;
+  scroll-behavior: auto;
   scroll-padding-block: 1rem;
   touch-action: pan-y;
 }
@@ -68,7 +83,9 @@ body {
 .portfolio-is-scrolling .google-sidebar-gradient,
 .portfolio-is-scrolling .section-height-gradient-rail,
 .portfolio-is-scrolling .section-height-gradient-wash,
-.portfolio-is-scrolling .topbar-wave-gradient {
+.portfolio-is-scrolling .topbar-wave-gradient,
+.portfolio-is-scrolling .center-pane-gradient::before,
+.portfolio-is-scrolling .center-pane-gradient::after {
   animation-play-state: paused;
 }
 

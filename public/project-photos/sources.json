@@ -1,0 +1,26 @@
+{
+  "license": "Pexels License",
+  "licenseUrl": "https://www.pexels.com/license/",
+  "images": [
+    { "file": "ai-search-stack.jpg", "photographer": "Lisa from Pexels", "source": "https://www.pexels.com/photo/man-working-on-computers-coding-16129724/" },
+    { "file": "ai-search-usecase.jpg", "photographer": "Mathias Reding", "source": "https://www.pexels.com/photo/unrecognizable-students-with-laptops-and-books-studying-in-public-library-4397200/" },
+    { "file": "gmail-stack.jpg", "photographer": "Vitaly Gariev", "source": "https://www.pexels.com/photo/office-worker-using-a-laptop-and-talking-on-the-phone-22046232/" },
+    { "file": "gmail-usecase.jpg", "photographer": "www.kaboompics.com", "source": "https://www.pexels.com/photo/woman-using-headphones-and-microphone-with-laptop-5399014/" },
+    { "file": "nodrica-stack.jpg", "photographer": "Walls.io", "source": "https://www.pexels.com/photo/colleagues-standing-by-whiteboard-17724731/" },
+    { "file": "nodrica-usecase.jpg", "photographer": "Thirdman", "source": "https://www.pexels.com/photo/people-working-in-the-office-7653978/" },
+    { "file": "ai-translation-stack.jpg", "photographer": "Karola G", "source": "https://www.pexels.com/photo/photo-of-a-woman-using-headphones-and-microphone-5399043/" },
+    { "file": "ai-translation-usecase.jpg", "photographer": "Jopwell", "source": "https://www.pexels.com/photo/photo-of-people-talking-to-each-other-1325764/" },
+    { "file": "whiteboard-stack.jpg", "photographer": "Micah Eleazar", "source": "https://www.pexels.com/photo/people-planning-using-a-white-board-on-a-table-10499058/" },
+    { "file": "whiteboard-usecase.jpg", "photographer": "Walls.io", "source": "https://www.pexels.com/photo/colleagues-standing-by-whiteboard-17724731/" },
+    { "file": "social-platform-stack.jpg", "photographer": "Christina Morillo", "source": "https://www.pexels.com/photo/person-using-both-computer-and-a-laptop-1181673/" },
+    { "file": "social-platform-usecase.jpg", "photographer": "Kindel Media", "source": "https://www.pexels.com/photo/a-group-of-friends-using-their-smartphones-7688660/" },
+    { "file": "midas-stack.jpg", "photographer": "Mizuno K", "source": "https://www.pexels.com/photo/back-view-of-a-blond-woman-in-an-office-looking-at-two-computer-screens-with-multicoloured-code-12899189/" },
+    { "file": "midas-usecase.jpg", "photographer": "Kampus Production", "source": "https://www.pexels.com/photo/person-paying-using-card-8834114/" },
+    { "file": "library-stack.jpg", "photographer": "Polina Zimmerman", "source": "https://www.pexels.com/photo/photo-of-person-using-laptop-3747403/" },
+    { "file": "library-usecase.jpg", "photographer": "Yaroslav Shuraev", "source": "https://www.pexels.com/photo/students-studying-at-the-library-6281030/" },
+    { "file": "x-feed-stack.jpg", "photographer": "Jakub Zerdzicki", "source": "https://www.pexels.com/photo/futuristic-workspace-with-coding-on-monitor-33433724/" },
+    { "file": "x-feed-usecase.jpg", "photographer": "Vitaly Gariev", "source": "https://www.pexels.com/photo/office-worker-using-a-laptop-and-talking-on-the-phone-22046232/" },
+    { "file": "investing-stack.jpg", "photographer": "Tiger Lily", "source": "https://www.pexels.com/photo/a-laptop-with-stock-exchange-graph-on-the-screen-7108045/" },
+    { "file": "investing-usecase.jpg", "photographer": "StockRadars Co.", "source": "https://www.pexels.com/photo/stock-market-analysis-on-mobile-and-laptop-28504953/" }
+  ]
+}

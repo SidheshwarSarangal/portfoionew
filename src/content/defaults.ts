@@ -43,6 +43,7 @@ export function mergeContent(overrides: PortfolioContentOverrides): PortfolioCon
     hoverImageUrl: safeWebUrl(project.hoverImageUrl),
     videoUrl: safeWebUrl(project.videoUrl),
     videoPosterUrl: safeWebUrl(project.videoPosterUrl),
+    pdfUrl: safePdfUrl(project.pdfUrl),
     links: {
       live: safeWebUrl(project.links.live),
       github: safeWebUrl(project.links.github),

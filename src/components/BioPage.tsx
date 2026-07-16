@@ -10,6 +10,9 @@ export default function BioPage() {
   const { personalBio: PERSONAL_BIO, socialLinks: SOCIAL_LINKS } = usePortfolioContent();
   const { copied, copyText } = useCopyFeedback();
   const linkedin = findSocialLink(SOCIAL_LINKS, "LinkedIn");
+  const resumeUrl = PERSONAL_BIO.resumeUrl?.startsWith("/")
+    ? `${import.meta.env.BASE_URL}${PERSONAL_BIO.resumeUrl.slice(1)}`
+    : PERSONAL_BIO.resumeUrl;
 
   const handleCopyEmail = () => {
     void copyText(PERSONAL_BIO.email);
@@ -110,10 +113,10 @@ export default function BioPage() {
                 </button>
               )}
 
-              {PERSONAL_BIO.resumeUrl ? (
+              {resumeUrl ? (
                 <a
-                  href={PERSONAL_BIO.resumeUrl}
-                  download
+                  href={resumeUrl}
+                  download="SIDHESHWAR SARANGAL RESUME 18.06.2026.pdf"
                   className="w-full py-2.5 border border-white/10 hover:border-[#fbbc04]/35 text-neutral-300 font-mono font-medium text-[13px] rounded-lg flex items-center justify-center gap-2.5 text-center hover:bg-[#fbbc04]/10 hover:text-[#fbbc04] active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Download size={16} className="text-neutral-500" />

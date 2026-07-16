@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, UIEvent } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { Project, Article } from "./types";
 import Header from "./components/Header";
 import type { PortfolioView } from "./components/Header";
@@ -23,7 +23,12 @@ import { useSeoMetadata } from "./lib/seo";
 const ProjectDetailModal = lazy(() => import("./components/ProjectDetailModal"));
 const ArticleModal = lazy(() => import("./components/ArticleModal"));
 const INFO_SECTION_IDS = ["hero", "work", "about", "experience", "writings", "contact"] as const;
-const EDITOR_LINE_NUMBERS = Array.from({ length: 80 }, (_, index) => String(index + 1).padStart(3, "0"));
+const EDITOR_LINE_NUMBERS = Array.from({ length: 100 }, (_, index) => String(index + 1).padStart(3, "0"));
+const EDITOR_LINE_HEIGHT = 23;
+const EDITOR_LINE_CYCLE = EDITOR_LINE_NUMBERS.length * EDITOR_LINE_HEIGHT;
+const LOOPED_EDITOR_LINE_NUMBERS = Array.from({ length: 2 }, (_, copy) =>
+  EDITOR_LINE_NUMBERS.map((lineNumber) => ({ key: `${copy}-${lineNumber}`, lineNumber })),
+).flat();
 const sectionRailAccents: Record<string, { primary: string; secondary: string }> = {
   hero: { primary: "#4285f4", secondary: "#7aa7ff" },
   work: { primary: "#fbbc04", secondary: "#f59e0b" },
@@ -40,6 +45,7 @@ const sectionRailAccents: Record<string, { primary: string; secondary: string }>
 
 export default function App() {
   const { projects, articles, personalBio, socialLinks } = usePortfolioContent();
+  const reduceMotion = useReducedMotion();
   const [activeSection, setActiveSection] = useState("hero");
   const [activeView, setActiveView] = useState<PortfolioView>("info");
   const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
@@ -47,7 +53,13 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const infoSlideScrollerRef = useRef<HTMLDivElement>(null);
+  const leftLineNumbersRef = useRef<HTMLDivElement>(null);
+  const rightLineNumbersRef = useRef<HTMLDivElement>(null);
   const activeSectionFrameRef = useRef<number | null>(null);
+  const activeSectionTimerRef = useRef<number | null>(null);
+  const keyboardScrollFrameRef = useRef<number | null>(null);
+  const keyboardScrollTargetRef = useRef<number | null>(null);
+  const keyboardScrollDirectionRef = useRef(0);
   const scrollIdleTimerRef = useRef<number | null>(null);
   const sectionJumpTimerRef = useRef<number | null>(null);
   const sectionRevealTimerRef = useRef<number | null>(null);
@@ -144,22 +156,37 @@ export default function App() {
     handleScrollToSection(sectionId);
   }, [handleScrollToSection]);
 
-  const handleInfoSlideScroll = useCallback((event: UIEvent<HTMLDivElement>) => {
-    if (directSectionChangeRef.current) return;
+  const syncLineNumberRails = useCallback((scrollTop: number) => {
+    const offset = -(scrollTop % EDITOR_LINE_CYCLE);
+    const transform = `translate3d(0, ${offset}px, 0)`;
+    if (leftLineNumbersRef.current) leftLineNumbersRef.current.style.transform = transform;
+    if (rightLineNumbersRef.current) rightLineNumbersRef.current.style.transform = transform;
+  }, []);
 
-    document.documentElement.classList.add("portfolio-is-scrolling");
-    if (scrollIdleTimerRef.current !== null) {
-      window.clearTimeout(scrollIdleTimerRef.current);
+  const handleInfoSlideScroll = useCallback((event: UIEvent<HTMLDivElement>) => {
+    if (!directSectionChangeRef.current) {
+      document.documentElement.classList.add("portfolio-is-scrolling");
+      if (scrollIdleTimerRef.current !== null) {
+        window.clearTimeout(scrollIdleTimerRef.current);
+      }
+      scrollIdleTimerRef.current = window.setTimeout(() => {
+        document.documentElement.classList.remove("portfolio-is-scrolling");
+        scrollIdleTimerRef.current = null;
+      }, 320);
     }
-    scrollIdleTimerRef.current = window.setTimeout(() => {
-      document.documentElement.classList.remove("portfolio-is-scrolling");
-      scrollIdleTimerRef.current = null;
-    }, 150);
 
     if (activeSectionFrameRef.current !== null) return;
     const scroller = event.currentTarget;
     activeSectionFrameRef.current = window.requestAnimationFrame(() => {
       activeSectionFrameRef.current = null;
+      syncLineNumberRails(scroller.scrollTop);
+    });
+
+    if (directSectionChangeRef.current || activeSectionTimerRef.current !== null) return;
+    activeSectionTimerRef.current = window.setTimeout(() => {
+      activeSectionTimerRef.current = null;
+      if (directSectionChangeRef.current) return;
+
       const scrollerRect = scroller.getBoundingClientRect();
       const readingLine = scrollerRect.top + scrollerRect.height * 0.36;
       const visibleSection = INFO_SECTION_IDS
@@ -173,8 +200,8 @@ export default function App() {
       if (visibleSection) {
         setActiveSection((current) => current === visibleSection.id ? current : visibleSection.id);
       }
-    });
-  }, []);
+    }, 96);
+  }, [syncLineNumberRails]);
 
   const showProjectsView = useCallback(() => handleViewChange("projects"), [handleViewChange]);
   const showSocialView = useCallback(() => handleViewChange("social"), [handleViewChange]);
@@ -182,6 +209,9 @@ export default function App() {
   useEffect(() => () => {
     if (activeSectionFrameRef.current !== null) {
       window.cancelAnimationFrame(activeSectionFrameRef.current);
+    }
+    if (activeSectionTimerRef.current !== null) {
+      window.clearTimeout(activeSectionTimerRef.current);
     }
     if (scrollIdleTimerRef.current !== null) {
       window.clearTimeout(scrollIdleTimerRef.current);
@@ -197,6 +227,89 @@ export default function App() {
     }
     document.documentElement.classList.remove("portfolio-is-scrolling");
   }, []);
+
+  useEffect(() => {
+    if (activeView !== "info" || selectedProject || selectedArticle) return;
+
+    const stopKeyboardScroll = () => {
+      if (keyboardScrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(keyboardScrollFrameRef.current);
+        keyboardScrollFrameRef.current = null;
+      }
+      keyboardScrollTargetRef.current = null;
+      keyboardScrollDirectionRef.current = 0;
+    };
+
+    const animateKeyboardScroll = () => {
+      const scroller = infoSlideScrollerRef.current;
+      const target = keyboardScrollTargetRef.current;
+      if (!scroller || target === null) {
+        stopKeyboardScroll();
+        return;
+      }
+
+      const distance = target - scroller.scrollTop;
+      if (Math.abs(distance) < 0.75) {
+        scroller.scrollTop = target;
+        stopKeyboardScroll();
+        return;
+      }
+
+      const step = Math.sign(distance) * Math.min(Math.abs(distance) * 0.24, 48);
+      scroller.scrollTop += step;
+      keyboardScrollFrameRef.current = window.requestAnimationFrame(animateKeyboardScroll);
+    };
+
+    const handleArrowScroll = (event: KeyboardEvent) => {
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+
+      const target = event.target;
+      if (target instanceof HTMLElement && (
+        target.isContentEditable
+        || target.tagName === "INPUT"
+        || target.tagName === "TEXTAREA"
+        || target.tagName === "SELECT"
+      )) return;
+
+      const scroller = infoSlideScrollerRef.current;
+      if (!scroller) return;
+
+      const direction = event.key === "ArrowDown" ? 1 : -1;
+      const canScroll = direction > 0
+        ? scroller.scrollTop + scroller.clientHeight < scroller.scrollHeight - 1
+        : scroller.scrollTop > 0;
+      if (!canScroll) return;
+
+      event.preventDefault();
+      if (reduceMotion) {
+        scroller.scrollBy({ top: direction * 88, behavior: "auto" });
+        return;
+      }
+
+      const maxScrollTop = scroller.scrollHeight - scroller.clientHeight;
+      const currentTarget = keyboardScrollDirectionRef.current === direction
+        ? keyboardScrollTargetRef.current ?? scroller.scrollTop
+        : scroller.scrollTop;
+      keyboardScrollDirectionRef.current = direction;
+      keyboardScrollTargetRef.current = Math.max(0, Math.min(maxScrollTop, currentTarget + direction * 88));
+
+      if (keyboardScrollFrameRef.current === null) {
+        keyboardScrollFrameRef.current = window.requestAnimationFrame(animateKeyboardScroll);
+      }
+    };
+
+    const scroller = infoSlideScrollerRef.current;
+    window.addEventListener("keydown", handleArrowScroll);
+    scroller?.addEventListener("wheel", stopKeyboardScroll, { passive: true });
+    scroller?.addEventListener("touchstart", stopKeyboardScroll, { passive: true });
+    return () => {
+      window.removeEventListener("keydown", handleArrowScroll);
+      scroller?.removeEventListener("wheel", stopKeyboardScroll);
+      scroller?.removeEventListener("touchstart", stopKeyboardScroll);
+      stopKeyboardScroll();
+    };
+  }, [activeView, reduceMotion, selectedArticle, selectedProject]);
 
   // Bio is a compact-layout tab. Once that tab is hidden, keep Info in the center pane.
   useEffect(() => {
@@ -303,71 +416,113 @@ export default function App() {
       <div className={`app-shell-1200 xl:pl-[420px] 2xl:pr-[300px] flex flex-col justify-between pt-16 relative z-10 ${activeView === "info" ? "h-screen overflow-hidden" : "min-h-screen"}`}>
         
         {/* Main Scrolling Section Panes */}
-        <main className={`relative flex-grow w-full px-0 lg:pl-16 lg:pr-12 ${activeView === "info" ? "overflow-hidden" : ""}`}>
+        <main className={`relative flex-grow w-full px-0 lg:px-16 ${activeView === "info" ? "overflow-hidden" : ""}`}>
           <div className="center-pane-gradient pointer-events-none absolute inset-0 z-0" aria-hidden="true" />
           
           {/* Editor-style line numbers */}
           <div
             className="section-accent-number-strip absolute left-0 top-0 bottom-0 w-14 border-r border-white/[0.04] bg-[#000000]/55 select-none hidden lg:flex flex-col items-end pt-12 pr-4 text-[10px] font-mono text-neutral-300/55 leading-[23px] z-0 overflow-hidden"
             style={railAccentStyle}
+            aria-hidden="true"
           >
             <div className="section-height-gradient-rail absolute inset-y-0 left-0 w-[4px]" aria-hidden="true" />
             <div className="section-height-gradient-wash absolute inset-y-0 left-0 right-0" aria-hidden="true" />
-            {EDITOR_LINE_NUMBERS.map((lineNumber) => (
-              <div key={lineNumber} className="relative z-10 h-[23px] tabular-nums font-light">
-                {lineNumber}
-              </div>
-            ))}
+            <div ref={leftLineNumbersRef} className="relative z-10 flex w-full flex-col items-end will-change-transform">
+              {LOOPED_EDITOR_LINE_NUMBERS.map(({ key, lineNumber }) => (
+                <div key={key} className="h-[23px] shrink-0 tabular-nums font-light">
+                  {lineNumber}
+                </div>
+              ))}
+            </div>
           </div>
 
-          {activeView === "info" ? (
-            <motion.div
-              ref={infoSlideScrollerRef}
-              className={`section-slide-scroller absolute inset-0 z-10 overflow-y-auto overscroll-y-contain ${isDirectSectionChange ? "pointer-events-none scroll-auto" : "scroll-smooth"}`}
-              onScroll={handleInfoSlideScroll}
-              animate={{ opacity: isDirectSectionChange ? 0 : 1 }}
-              transition={{
-                duration: isDirectSectionChange ? 0.19 : 0.42,
-                ease: isDirectSectionChange ? "easeOut" : [0.22, 1, 0.36, 1],
-              }}
-            >
-              <ScrollScene containerRef={infoSlideScrollerRef}>
-                <Hero />
-              </ScrollScene>
-              <SectionTransition from="Intro" to="Projects" />
-              <ScrollScene containerRef={infoSlideScrollerRef}>
-                <ProjectsGrid onProjectClick={openProject} onViewAll={showProjectsView} />
-              </ScrollScene>
-              <SectionTransition from="Projects" to="About" />
-              <ScrollScene containerRef={infoSlideScrollerRef}>
-                <JourneyTimeline section="about" containerRef={infoSlideScrollerRef} />
-              </ScrollScene>
-              <SectionTransition from="About" to="Experience" />
-              <ScrollScene containerRef={infoSlideScrollerRef}>
-                <JourneyTimeline section="experience" />
-              </ScrollScene>
-              <SectionTransition from="Experience" to="Writing" />
-              <ScrollScene containerRef={infoSlideScrollerRef}>
-                <WritingList onArticleClick={openArticle} onViewAll={showSocialView} />
-              </ScrollScene>
-              <SectionTransition from="Writing" to="Contact" />
-              <ScrollScene containerRef={infoSlideScrollerRef}>
-                <ContactSection />
-              </ScrollScene>
-            </motion.div>
-          ) : activeView === "bio" ? (
-            <div className="relative z-10 py-8 sm:py-10">
-              <BioPage />
+          <div
+            className="absolute bottom-0 right-0 top-0 z-0 hidden w-14 select-none flex-col items-start overflow-hidden border-l border-white/[0.04] bg-[#000000]/55 pl-4 pt-12 font-mono text-[10px] leading-[23px] text-neutral-300/55 lg:flex"
+            aria-hidden="true"
+          >
+            <div ref={rightLineNumbersRef} className="flex w-full flex-col items-start will-change-transform">
+              {LOOPED_EDITOR_LINE_NUMBERS.map(({ key, lineNumber }) => (
+                <div key={key} className="h-[23px] shrink-0 tabular-nums font-light">
+                  {lineNumber}
+                </div>
+              ))}
             </div>
-          ) : activeView === "projects" ? (
-            <div className="relative z-10">
-              <ProjectsGrid onProjectClick={openProject} />
-            </div>
-          ) : (
-            <div className="relative z-10">
-              <WritingList onArticleClick={openArticle} />
-            </div>
-          )}
+          </div>
+
+          <AnimatePresence mode="wait" initial={false}>
+            {activeView === "info" ? (
+              <motion.div
+                key="info-view"
+                ref={infoSlideScrollerRef}
+                className={`section-slide-scroller absolute inset-0 z-10 overflow-y-auto overscroll-y-contain ${isDirectSectionChange ? "pointer-events-none" : ""}`}
+                onScroll={handleInfoSlideScroll}
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: isDirectSectionChange ? 0 : 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0 }}
+                transition={{
+                  duration: reduceMotion ? 0 : isDirectSectionChange ? 0.19 : 0.32,
+                  ease: isDirectSectionChange ? "easeOut" : [0.22, 1, 0.36, 1],
+                }}
+              >
+                <ScrollScene containerRef={infoSlideScrollerRef}>
+                  <Hero />
+                </ScrollScene>
+                <SectionTransition from="Intro" to="Projects" />
+                <ScrollScene containerRef={infoSlideScrollerRef}>
+                  <ProjectsGrid onProjectClick={openProject} onViewAll={showProjectsView} />
+                </ScrollScene>
+                <SectionTransition from="Projects" to="About" />
+                <ScrollScene containerRef={infoSlideScrollerRef}>
+                  <JourneyTimeline section="about" containerRef={infoSlideScrollerRef} />
+                </ScrollScene>
+                <SectionTransition from="About" to="Experience" />
+                <ScrollScene containerRef={infoSlideScrollerRef}>
+                  <JourneyTimeline section="experience" />
+                </ScrollScene>
+                <SectionTransition from="Experience" to="Writing" />
+                <ScrollScene containerRef={infoSlideScrollerRef}>
+                  <WritingList onArticleClick={openArticle} onViewAll={showSocialView} />
+                </ScrollScene>
+                <SectionTransition from="Writing" to="Contact" />
+                <ScrollScene containerRef={infoSlideScrollerRef}>
+                  <ContactSection />
+                </ScrollScene>
+              </motion.div>
+            ) : activeView === "bio" ? (
+              <motion.div
+                key="bio-view"
+                className="relative z-10 py-8 sm:py-10"
+                initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <BioPage />
+              </motion.div>
+            ) : activeView === "projects" ? (
+              <motion.div
+                key="projects-view"
+                className="relative z-10"
+                initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <ProjectsGrid onProjectClick={openProject} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="social-view"
+                className="relative z-10"
+                initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <WritingList onArticleClick={openArticle} />
+              </motion.div>
+            )}
+          </AnimatePresence>
           
         </main>
       </div>

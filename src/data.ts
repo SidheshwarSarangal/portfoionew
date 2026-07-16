@@ -1,4 +1,5 @@
 import { Project, Article, TimelineEvent, SocialLink, SocialPost } from "./types";
+import { PDF_PROJECTS } from "./projectData";
 
 export const PERSONAL_BIO = {
   name: "Sidheshwar",
@@ -7,13 +8,14 @@ export const PERSONAL_BIO = {
   subtitle: "Focused on Full-Stack Systems, APIs, and Product Code",
   location: "IIT Roorkee, India",
   email: "sidheshwar.sarangal22@gmail.com",
-  phone: "",
-  resumeUrl: "",
+  phone: "+919015220662",
+  resumeUrl: "/SIDHESHWAR%20SARANGAL%20RESUME%2018.06.2026.pdf",
   avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=250&h=250&fit=crop",
   about: "I am an entry-level software engineer from IIT Roorkee with strong foundations in DSA and hands-on experience across Spring Boot, Python, MERN, REST APIs, Docker, and Kubernetes. I build full-stack products, backend workflows, and practical systems that connect clean interfaces with reliable application logic.",
 };
 
 export const PROJECTS: Project[] = [
+  ...PDF_PROJECTS,
   {
     id: "blog-article-search",
     title: "Search Engine for Blogs and Articles",
@@ -315,7 +317,7 @@ export const PROJECTS: Project[] = [
     },
     featured: true,
   }
-];
+].slice(0, 10);
 
 export const ARTICLES: Article[] = [
   {
@@ -406,14 +408,14 @@ export const TIMELINE: TimelineEvent[] = [
 export const SOCIAL_LINKS: SocialLink[] = [
   {
     platform: "GitHub",
-    url: "https://github.com/mrsidverse",
-    username: "mrsidverse",
+    url: "https://github.com/SidheshwarSarangal",
+    username: "SidheshwarSarangal",
     iconName: "Github",
   },
   {
     platform: "X / Twitter",
-    url: "https://x.com/mrsidverse",
-    username: "@mrsidverse",
+    url: "https://x.com/Sidheshwar2002",
+    username: "@Sidheshwar2002",
     iconName: "Twitter",
   },
   {
@@ -424,9 +426,45 @@ export const SOCIAL_LINKS: SocialLink[] = [
   },
   {
     platform: "Peerlist",
-    url: "https://peerlist.io/sidheshwar_s_",
-    username: "sidheshwar_s_",
+    url: "https://peerlist.io/sarangal22",
+    username: "sarangal22",
     iconName: "User",
+  },
+  {
+    platform: "Discord",
+    url: "https://discord.com/invite/qvtfYaZG5",
+    username: "qvtfYaZG5",
+    iconName: "MessageCircle",
+  },
+  {
+    platform: "Upwork",
+    url: "https://www.upwork.com/freelancers/~01c3a7c22865209f3d",
+    username: "01c3a7c22865209f3d",
+    iconName: "BriefcaseBusiness",
+  },
+  {
+    platform: "LeetCode",
+    url: "https://leetcode.com/u/SidheshwarSarangal/",
+    username: "SidheshwarSarangal",
+    iconName: "Code2",
+  },
+  {
+    platform: "Wellfound",
+    url: "https://wellfound.com/u/sidheshwar-sarangal",
+    username: "sidheshwar-sarangal",
+    iconName: "BriefcaseBusiness",
+  },
+  {
+    platform: "Dev.to",
+    url: "https://dev.to/sidheshwar_sarangal_fe09b",
+    username: "sidheshwar_sarangal_fe09b",
+    iconName: "Newspaper",
+  },
+  {
+    platform: "Codeforces",
+    url: "https://codeforces.com/profile/sidheshwar.sarangal",
+    username: "sidheshwar.sarangal",
+    iconName: "Code2",
   },
   {
     platform: "Email",
