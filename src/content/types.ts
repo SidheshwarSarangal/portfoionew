@@ -40,7 +40,15 @@ export interface Testimonial {
   quote: string;
   author: string;
   role: string;
+  date?: string;
   avatarUrl: string;
+  avatarCrop?: {
+    x: number;
+    y: number;
+    size: number;
+    sourceWidth: number;
+    sourceHeight: number;
+  };
 }
 
 export interface PortfolioContent {

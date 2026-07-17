@@ -9,7 +9,7 @@ export const PERSONAL_BIO = {
   location: "IIT Roorkee, India",
   email: "sidheshwar.sarangal22@gmail.com",
   phone: "+919015220662",
-  resumeUrl: "/SIDHESHWAR%20SARANGAL%20RESUME%2018.06.2026.pdf",
+  resumeUrl: "/documents/resume/sidheshwar-sarangal-resume-2026.pdf",
   avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=250&h=250&fit=crop",
   about: "I am an entry-level software engineer from IIT Roorkee with strong foundations in DSA and hands-on experience across Spring Boot, Python, MERN, REST APIs, Docker, and Kubernetes. I build full-stack products, backend workflows, and practical systems that connect clean interfaces with reliable application logic.",
 };
@@ -319,46 +319,54 @@ export const PROJECTS: Project[] = [
   }
 ].slice(0, 10);
 
+const LINKEDIN_POST_URLS = {
+  ai2025: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_ai2025-generativeai-humanoidrobots-activity-7323265524765736960-OCOM",
+  pythonPattern: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_the-following-pattern-was-created-in-python-activity-7197606514302312448-rLfm",
+  cppPattern: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_include-include-activity-7198005872638210049-SCEY",
+  longestSubsequence: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_we-have-to-find-the-longest-subsequence-activity-7236296117418680321-T68t",
+  chromeExtension: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_trying-to-create-a-chrome-extension-powered-activity-7307105391325122560-VDvf",
+  hackHazards: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_hackhazards-hackhazards2025-innovationinaction-activity-7320151646720671744-nPH4",
+  kadane: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_kadanes-algorithm-activity-7338610204768358401-7gdp",
+  takeUForward: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_takeuforward-activity-7357443683320741888-fGnw",
+  algorithmQuestion: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_a-very-nice-question-which-is-implemented-activity-7357421667687587841-Fupn",
+  differentQuestion: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_here-i-have-a-very-different-question-here-activity-7358083642981605376-XKqY",
+  publicTwitterFeed: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_im-happy-to-share-this-public-tweeter-feed-activity-7378118912917442560-K1fr",
+  coinDp: "https://www.linkedin.com/posts/sidheshwar-sarangal-0b31482b8_dynamic-programming-problem-regarding-coins-activity-7368278006877798400-SYnM",
+} as const;
+
 export const ARTICLES: Article[] = [
   {
-    id: "framer-future",
-    title: "Why Framer is the future of web development",
-    slug: "framer-future",
-    category: "Product Detail / Visual Engineering",
-    publishedAt: "Jul 2, 2025",
-    readTime: "5 min read",
-    summary: "Reflecting on how the barrier between drawing canvas layouts and shipping responsive interactive custom HTML containers is dissolving.",
-    content: "## Dissolving Barriers between Design and Production\n\nFor decades, the standard workflow of shipping digital interfaces was double-phased: a visual designer drew static polygons in absolute pixel coordinate grids inside programs like Figma, and a frontend engineer spent long hours manually rewriting those layers into dynamic code tokens.\n\n### The Direct Pipeline\n\nFramer alters this dynamic completely by creating canvas elements that are intrinsically born of CSS code attributes. Boxes behave like genuine Flexbox elements; margins, padding, and text frames translate directly. This removes translation lag, enabling ultra-fast shipping speeds and pristine design system alignment.\n\n### Mastery inside Code Limits\n\nTrue elite performance comes from mastering both visual boundaries and computational limits. Embracing code-based design tools allows creative minds to focus purely on elite micro-interactions, responsive touch zones, and direct tactile experiences."
+    id: "linkedin-ai-2025",
+    title: "AI in 2025: Generative AI & Humanoid Robots",
+    slug: "linkedin-ai-2025",
+    category: "AI / Emerging Technology",
+    publishedAt: "Apr 30, 2025",
+    readTime: "1 min read",
+    summary: "A short perspective on the momentum behind generative AI and the growing role of humanoid robotics in the next wave of intelligent products.",
+    content: "## What the post explores\n\nThis post reflects on two highly visible directions in AI during 2025: the rapid progress of generative systems and the development of increasingly capable humanoid robots.\n\n### Why it matters\n\nTogether, these areas show how intelligence is moving beyond text and images toward systems that can understand, decide, and eventually interact with the physical world. The post captures that shift and the engineering curiosity it creates.",
+    externalUrl: LINKEDIN_POST_URLS.ai2025,
   },
   {
-    id: "landing-tips",
-    title: "Landing page tips that drive more bookings",
-    slug: "landing-tips",
-    category: "Conversion Design / Spatial Layout",
-    publishedAt: "Jun 23, 2025",
-    readTime: "4 min read",
-    summary: "How structured typographic contrast, eye-safe low-contrast buffers, and removing visual noise can naturally guide a visitor's gaze directly into call-to-action buttons.",
-    content: "## The Architecture of Focus\n\nConversion optimization is often mistakenly equated with adding glowing banner elements, persistent modal popups, and artificial FOMO indicators. Elite design does the opposite: it removes visual noise to clear a pristine highway toward the core user action.\n\n### Rules for High-Density Layout Response\n\n1. **Intentional Typographic Contrast**: Pair large Display headings (Space Grotesk) with Mono codes (JetBrains Mono) for facts and clean Sans (Inter) for copy.\n2. **Tactile Friction**: Actionable buttons must respond with absolute spring metrics. When touched or hovered, give positive tactile feedback to assure the action took place.\n3. **Generous Spacing Boundaries**: Give your headings breathing space. Clutter creates cognitive strain, making visitors hit the browser back button."
+    id: "linkedin-python-pattern",
+    title: "Creating a Pattern in Python",
+    slug: "linkedin-python-pattern",
+    category: "Python / Problem Solving",
+    publishedAt: "May 18, 2024",
+    readTime: "1 min read",
+    summary: "A programming exercise that uses Python loops and row-by-row reasoning to construct a structured output pattern.",
+    content: "## What the post explores\n\nThis is a code-first Python exercise focused on building a visual pattern through iteration. The key is to translate the expected output into predictable row and column behavior.\n\n### The approach\n\nInstead of treating the full pattern as one large problem, the implementation reasons about one row at a time. Loop boundaries control the structure, while small conditions determine what should be printed at each position.",
+    externalUrl: LINKEDIN_POST_URLS.pythonPattern,
   },
   {
-    id: "interfaces-feel-fast",
-    title: "Designing interfaces that feel fast",
-    slug: "interfaces-feel-fast",
-    category: "Interaction Design / Performance",
-    publishedAt: "Jun 12, 2025",
-    readTime: "4 min read",
-    summary: "How immediate feedback, restrained motion, and predictable layout behavior make an interface feel responsive before optimization metrics enter the conversation.",
-    content: "## Perceived Speed Is Part of the Design\n\nA technically fast interface can still feel slow when actions produce no immediate visual response. Good interaction design closes that gap with clear state changes, stable layouts, and motion that explains what changed.\n\n### Build a Responsive Rhythm\n\nUse lightweight hover and press feedback, preserve space for asynchronous content, and keep transitions short enough to support the task. Motion should clarify continuity rather than delay the user."
-  },
-  {
-    id: "systems-that-scale",
-    title: "Building design systems that scale",
-    slug: "systems-that-scale",
-    category: "Design Systems / Engineering",
-    publishedAt: "May 28, 2025",
-    readTime: "6 min read",
-    summary: "A practical look at turning repeated interface decisions into durable tokens, components, and patterns without removing room for creative expression.",
-    content: "## Consistency Without Sameness\n\nA useful design system does more than collect components. It records the decisions behind spacing, typography, color, interaction, and accessibility so teams can build new surfaces without restarting every discussion.\n\n### Start With Repeated Decisions\n\nExtract patterns only after they repeat, keep component APIs focused, and treat documentation as part of the product. Strong foundations create more room for expressive work because the essential behavior is already dependable."
+    id: "linkedin-cpp-pattern",
+    title: "Pattern Logic with C++",
+    slug: "linkedin-cpp-pattern",
+    category: "C++ / Programming Fundamentals",
+    publishedAt: "May 19, 2024",
+    readTime: "1 min read",
+    summary: "A compact C++ implementation that breaks pattern generation into clear loops, positions, and repeatable conditions.",
+    content: "## What the post explores\n\nThis programming post looks at a pattern-building problem implemented in C++. It demonstrates how a visual result can be translated into a small set of repeatable rules.\n\n### The approach\n\nRows establish the outer progression and nested logic decides the output at each position. This kind of exercise develops careful loop control, observation, and the ability to convert a pattern into executable steps.",
+    externalUrl: LINKEDIN_POST_URLS.cppPattern,
   }
 ];
 
@@ -366,42 +374,86 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: "exp-1",
     period: "Jan 2026 - Feb 2026",
-    role: "Software Engineer Intern",
+    role: "Frontend Developer Intern",
     organization: "Investing Accelerator Summit",
-    location: "Remote",
-    description: "Supported payment, refund, and subscription backend workflows while building frontend architecture using Next.js and improving transactional data handling.",
+    location: "India · Remote",
+    description: "Built frontend architecture with Next.js while supporting payment, refund, and subscription workflows. Managed application data flow and transactional persistence, monitored logs, debugged production issues, and collaborated across teams to improve system stability.",
     bulletPoints: [
-      "Crafted bespoke interactive frontends with complex custom scroll behaviors and sensory animations using Framer Motion.",
-      "Developed modular design grids to support easy maintenance across diverse client branding parameters.",
-      "Designed clean vector assets, layouts, and typography palettes for desktop and mobile environments."
+      "Built and maintained frontend architecture using Next.js.",
+      "Supported payment, refund, and subscription workflows with correct transactional data handling.",
+      "Monitored logs and debugged production failures with cross-functional teams."
     ],
-    skills: ["Next.js", "Backend Workflows", "Databases", "Debugging"],
+    skills: ["Next.js", "Transactional Workflows", "Data Persistence", "Production Debugging"],
     logoText: "IAS"
   },
   {
     id: "exp-2",
-    period: "Mar 2025 - May 2025",
-    role: "Software Developer",
-    organization: "Suhane Safar",
-    location: "Remote",
-    description: "Built internal testing workflows around Cashfree payments, Groq AI APIs, Cloudinary, JWT authentication, and Angular/React frontend experiments.",
+    period: "Dec 2025",
+    role: "Software Engineering Job Simulation",
+    organization: "JPMorganChase · Forage",
+    location: "India · Remote",
+    description: "Integrated Kafka into a Spring Boot microservice for high-volume transaction messages. Implemented validation, entity persistence, user balance updates, an external incentive REST integration, and a balance-query API, then verified the full workflow with Maven tests and debugger-led inspection.",
     bulletPoints: [
-      "Designed high-fidelity mockups and functional react interfaces for internal academic and event trackers.",
-      "Established typography hierarchy and components library used across multiple student repositories.",
-      "Promoted responsive web guidelines, ensuring 100% accessible contrast ratios and mobile responsiveness."
+      "Consumed and deserialized transaction messages with Kafka and an embedded Kafka test setup.",
+      "Persisted validated transactions and updated balances using Spring Data JPA and H2.",
+      "Connected an incentive REST API and exposed user balances through a Spring REST controller."
     ],
-    skills: ["Angular", "React", "Groq AI", "Cashfree APIs"],
-    logoText: "SS"
+    skills: ["Java", "Spring Boot", "Apache Kafka", "Spring Data JPA", "H2", "Maven"],
+    logoText: "JPMC"
   },
   {
     id: "exp-3",
-    role: "Undergraduate Scholar",
-    period: "2022 - 2026",
+    period: "Mar 2025 - Nov 2025",
+    role: "Web Developer",
+    organization: "Department of Biosciences and Bioengineering, IIT Roorkee",
+    location: "IIT Roorkee · On-site",
+    description: "Helped build a responsive MERN application for students and librarians to manage departmental book issue and return workflows, working under the guidance of Vikram Gurjar and Prof. Maya S. Nair.",
+    bulletPoints: [
+      "Developed student and librarian workflows for issuing and returning books.",
+      "Contributed to a responsive, user-friendly MERN stack interface."
+    ],
+    skills: ["MongoDB", "Express", "React", "Node.js"],
+    logoText: "BSBE"
+  },
+  {
+    id: "exp-4",
+    period: "Mar 2025 - May 2025",
+    role: "Web Development Intern",
+    organization: "Suhane Safar",
+    location: "IIT Roorkee · On-site",
+    description: "Proposed a Google Sheets workflow for tracking user feedback and built an internal application to evaluate Cashfree payments, Groq AI text, audio, and image analysis, and Angular frontend workflows. Also worked with React, Cloudinary, and JWT authentication.",
+    bulletPoints: [
+      "Structured end-user feedback and query tracking through Google Sheets.",
+      "Prototyped Cashfree subscription and payment integrations.",
+      "Evaluated Groq AI APIs for text, audio, and image analysis."
+    ],
+    skills: ["Angular", "React", "Cloudinary", "JWT", "Groq AI", "Cashfree APIs"],
+    logoText: "SS"
+  },
+  {
+    id: "exp-5",
+    period: "Dec 2024",
+    role: "Full Stack Developer Intern",
+    organization: "Unified Mentor",
+    location: "Delhi, India · Remote",
+    description: "Completed a one-month full-stack internship and delivered four applications: an interactive web application, a responsive resume, a Gram Panchayat application, and a shopping mall application. Used React and Firebase for dynamic interfaces, realtime data, authentication, deployment, and hosting.",
+    bulletPoints: [
+      "Built foundational projects with JavaScript, HTML, and CSS.",
+      "Developed React applications with Firebase database and authentication.",
+      "Deployed completed applications using Firebase Hosting."
+    ],
+    skills: ["React", "Firebase", "JavaScript", "HTML", "CSS"],
+    logoText: "UM"
+  },
+  {
+    id: "exp-6",
+    period: "Jun 2024 - Dec 2024",
+    role: "Web Developer",
     organization: "Indian Institute of Technology, Roorkee",
-    location: "Roorkee, Uttarakhand",
-    description: "Pursuing B.Tech in Biosciences and Bioengineering with strong foundations in DSA, OOP, REST APIs, and full-stack software development.",
-    skills: ["Data Structures", "OOP", "REST APIs", "Full-Stack Development"],
-    logoText: "R"
+    location: "Institute Innovation Council · On-site",
+    description: "Contributed as a web developer to IIT Roorkee's Institute Innovation Council, which supports the campus startup and entrepreneurial ecosystem through innovation programs, industry engagement, intellectual-property workshops, and student challenges.",
+    skills: ["Web Development", "MERN Stack", "Responsive UI"],
+    logoText: "IIC"
   }
 ];
 
@@ -476,50 +528,147 @@ export const SOCIAL_LINKS: SocialLink[] = [
 
 export const SOCIAL_POSTS: SocialPost[] = [
   {
-    id: "post-placeholder-1",
+    id: "linkedin-ai-2025",
     platform: "LinkedIn",
-    title: "Your first social post",
-    summary: "Replace this placeholder with a post, update, article, or project announcement.",
-    publishedAt: "Coming soon",
+    title: "AI in 2025: Generative AI & Humanoid Robots",
+    summary: "A perspective on generative AI, humanoid robotics, and the direction of intelligent systems.",
+    publishedAt: "Apr 30, 2025",
+    url: LINKEDIN_POST_URLS.ai2025,
   },
   {
-    id: "post-placeholder-2",
-    platform: "Dev.to",
-    title: "A technical article goes here",
-    summary: "Social tiles are controlled by the socialPosts array in your content source.",
-    publishedAt: "Coming soon",
+    id: "linkedin-python-pattern",
+    platform: "LinkedIn",
+    title: "Creating a Pattern in Python",
+    summary: "A Python exercise using iteration and row-by-row reasoning to generate a structured pattern.",
+    publishedAt: "May 18, 2024",
+    url: LINKEDIN_POST_URLS.pythonPattern,
   },
   {
-    id: "post-placeholder-3",
-    platform: "X / Twitter",
-    title: "Share a short update",
-    summary: "Add an optional URL and imageUrl when the final post content is ready.",
-    publishedAt: "Coming soon",
+    id: "linkedin-cpp-pattern",
+    platform: "LinkedIn",
+    title: "Pattern Logic with C++",
+    summary: "A compact C++ pattern implementation built with nested loops and repeatable conditions.",
+    publishedAt: "May 19, 2024",
+    url: LINKEDIN_POST_URLS.cppPattern,
+  },
+  {
+    id: "linkedin-longest-subsequence",
+    platform: "LinkedIn",
+    title: "Finding the Longest Subsequence",
+    summary: "A data-structures and algorithms problem focused on reasoning about subsequences and an efficient solution path.",
+    publishedAt: "Sep 2, 2024",
+    url: LINKEDIN_POST_URLS.longestSubsequence,
+  },
+  {
+    id: "linkedin-chrome-extension",
+    platform: "LinkedIn",
+    title: "Building a Chrome Extension",
+    summary: "An update from experimenting with a Chrome extension and connecting browser capabilities to a practical workflow.",
+    publishedAt: "Mar 16, 2025",
+    url: LINKEDIN_POST_URLS.chromeExtension,
+  },
+  {
+    id: "linkedin-hackhazards-2025",
+    platform: "LinkedIn",
+    title: "HackHazards 2025",
+    summary: "A hackathon update about building, collaborating, and turning an idea into a working submission under time pressure.",
+    publishedAt: "Apr 21, 2025",
+    url: LINKEDIN_POST_URLS.hackHazards,
+  },
+  {
+    id: "linkedin-kadane-algorithm",
+    platform: "LinkedIn",
+    title: "Understanding Kadane's Algorithm",
+    summary: "A problem-solving note on maximum subarray reasoning and the compact dynamic decision behind Kadane's algorithm.",
+    publishedAt: "Jun 11, 2025",
+    url: LINKEDIN_POST_URLS.kadane,
+  },
+  {
+    id: "linkedin-take-u-forward",
+    platform: "LinkedIn",
+    title: "Learning with Take U Forward",
+    summary: "A DSA learning update inspired by structured practice and consistent problem solving with Take U Forward.",
+    publishedAt: "Aug 2, 2025",
+    url: LINKEDIN_POST_URLS.takeUForward,
+  },
+  {
+    id: "linkedin-algorithm-question",
+    platform: "LinkedIn",
+    title: "A Nice Algorithmic Question",
+    summary: "A concise walkthrough of an interesting programming question and the reasoning used to implement its solution.",
+    publishedAt: "Aug 2, 2025",
+    url: LINKEDIN_POST_URLS.algorithmQuestion,
+  },
+  {
+    id: "linkedin-different-question",
+    platform: "LinkedIn",
+    title: "A Different Problem-Solving Approach",
+    summary: "An exploration of a less familiar question that calls for careful observation before choosing the implementation strategy.",
+    publishedAt: "Aug 4, 2025",
+    url: LINKEDIN_POST_URLS.differentQuestion,
+  },
+  {
+    id: "linkedin-public-twitter-feed",
+    platform: "LinkedIn",
+    title: "Building a Public Twitter Feed",
+    summary: "A project update sharing a public social-feed experience and the product work behind making it usable.",
+    publishedAt: "Sep 28, 2025",
+    url: LINKEDIN_POST_URLS.publicTwitterFeed,
+  },
+  {
+    id: "linkedin-coin-dp",
+    platform: "LinkedIn",
+    title: "Dynamic Programming with Coins",
+    summary: "A coin-based dynamic programming problem that demonstrates state definition, transitions, and reusable subproblem results.",
+    publishedAt: "Sep 1, 2025",
+    url: LINKEDIN_POST_URLS.coinDp,
   },
 ];
 
 export const EXPERIENCE_SUMMARY = [
-  { period: "Jan 2026 - Feb 2026", role: "Software Engineer Intern", org: "Investing Accelerator Summit" },
-  { period: "Mar 2025 - May 2025", role: "Software Developer", org: "Suhane Safar" },
-  { period: "2024 - present", role: "Web Developer", org: "Institute Innovation Council, IIT Roorkee" },
-  { period: "2022 - 2026", role: "B.Tech Undergraduate", org: "Indian Institute of Technology, Roorkee" },
+  { period: "Jan 2026 - Feb 2026", role: "Frontend Developer Intern", org: "Investing Accelerator Summit" },
+  { period: "Dec 2025", role: "Software Engineering Job Simulation", org: "JPMorganChase · Forage" },
+  { period: "Mar 2025 - Nov 2025", role: "Web Developer", org: "Department of Biosciences and Bioengineering, IIT Roorkee" },
+  { period: "Mar 2025 - May 2025", role: "Web Development Intern", org: "Suhane Safar" },
+  { period: "Dec 2024", role: "Full Stack Developer Intern", org: "Unified Mentor" },
+  { period: "Jun 2024 - Dec 2024", role: "Web Developer", org: "Institute Innovation Council, IIT Roorkee" },
 ];
 
 export const CAPABILITIES = [
   {
     num: "1.",
-    title: "Software Engineering",
-    items: ["Data Structures & Algorithms", "Object-oriented programming", "REST API design", "Transaction workflows", "Debugging and testing", "System stability"],
+    title: "Engineering Foundations",
+    items: ["Data Structures & Algorithms", "Object-Oriented Programming", "System Design", "API Contracts", "Workflow & DAG Design", "Reliability & Retry Logic", "Debugging", "Automated Testing"],
   },
   {
     num: "2.",
-    title: "Full-Stack Development",
-    items: ["React", "Angular", "Next.js", "Node.js", "FastAPI", "Spring Boot"],
+    title: "Languages",
+    items: ["Java 17", "Python", "C++", "JavaScript", "TypeScript"],
   },
   {
     num: "3.",
-    title: "DevOps and Data",
-    items: ["MongoDB", "MySQL", "Docker", "Kubernetes basics", "Kind cluster", "Linux"],
+    title: "Frontend & Product UI",
+    items: ["React", "Angular", "Next.js", "Redux Toolkit", "Tailwind CSS", "Vite", "Electron", "Canvas", "Responsive UI", "Component Architecture", "Chrome Extensions"],
+  },
+  {
+    num: "4.",
+    title: "Backend & APIs",
+    items: ["Node.js", "Express", "FastAPI", "Spring Boot", "REST APIs", "JWT", "Passport", "bcrypt", "Email OTP", "Async Handlers"],
+  },
+  {
+    num: "5.",
+    title: "Data, Events & Realtime",
+    items: ["MongoDB", "Mongoose", "MySQL", "Spring Data JPA", "H2", "OpenSearch", "Apache Kafka", "Socket.IO"],
+  },
+  {
+    num: "6.",
+    title: "AI, Search & Integrations",
+    items: ["Ollama", "Gemma 3", "Groq AI", "Scrapy", "Gmail API", "Cloudinary", "Cashfree", "MIME Processing", "Browser Storage"],
+  },
+  {
+    num: "7.",
+    title: "DevOps & Tooling",
+    items: ["Docker", "Kubernetes", "Kind", "Git", "Linux", "Maven", "Zod", "Unit Tests", "Embedded Kafka"],
   },
 ];
 
@@ -547,21 +696,19 @@ export const TEAM_AWARDS = [
 
 export const TESTIMONIALS = [
   {
-    quote: "The designs were modern, intuitive, and perfectly aligned with our brand. One of the best UI/UX experts we've hired!",
-    author: "James P.",
-    role: "Founder",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&h=150&fit=crop",
+    quote: "I worked with Sidheshwar on the same team and found him to be a dedicated and talented developer. He learns quickly, takes ownership of his work, and consistently delivers quality results. His positive attitude and willingness to help others make him a great teammate. I highly recommend him.",
+    author: "Manoj Kumar",
+    role: "Generative AI & DevOps · Full Stack Engineer",
+    date: "June 6, 2026",
+    avatarUrl: "/images/profile/linkedin-recommendations-reference.png",
+    avatarCrop: { x: 20, y: 112, size: 51, sourceWidth: 783, sourceHeight: 458 },
   },
   {
-    quote: "Not only is the work visually stunning, but it's also grounded in real usability. A true professional.",
-    author: "Ananya Rames",
-    role: "Tech Lead at CoreUX Labs",
-    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&h=150&fit=crop",
-  },
-  {
-    quote: "From Figma to functional code – everything was delivered on time.",
-    author: "David K.",
-    role: "CEO of LaunchFoundry",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&h=150&fit=crop",
+    quote: "I had the opportunity to work closely with Sidheshwar during a recent hackathon, and I was genuinely impressed by his skills and potential as a developer. Even as a pre-final year student, Sidheshwar showed a remarkable ability to quickly learn and adapt to new technologies, which was a huge asset to our team. He demonstrated strong problem-solving skills and was always eager to take on challenging tasks.",
+    author: "Sayantan Gain",
+    role: "SDE at UIDAI · IIT Roorkee '25",
+    date: "April 29, 2025",
+    avatarUrl: "/images/profile/linkedin-recommendations-reference.png",
+    avatarCrop: { x: 20, y: 257, size: 51, sourceWidth: 783, sourceHeight: 458 },
   },
 ];

@@ -68,7 +68,10 @@ export function mergeContent(overrides: PortfolioContentOverrides): PortfolioCon
   return {
     personalBio,
     projects,
-    articles: overrides.articles ?? defaultContent.articles,
+    articles: (overrides.articles ?? defaultContent.articles).map((article) => ({
+      ...article,
+      externalUrl: safeWebUrl(article.externalUrl),
+    })),
     timeline: overrides.timeline ?? defaultContent.timeline,
     socialLinks,
     socialPosts: (overrides.socialPosts ?? defaultContent.socialPosts).map((post) => ({

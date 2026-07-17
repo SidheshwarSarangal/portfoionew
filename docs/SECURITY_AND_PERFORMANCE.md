@@ -39,6 +39,7 @@ flowchart TD
 | GA4 measurement ID | CMS write token |
 | Public REST endpoint | Personal access token |
 | Sanity project/dataset | Private API key |
+| Google Form ID and `entry.*` field IDs | Google password, cookies, OAuth secret |
 
 ## Hosting headers
 
@@ -88,3 +89,5 @@ npm audit
 ```
 
 Authentication, sessions, CSRF, write-rate limits, and database authorization belong to a user-supplied backend; this repository is a read-only frontend.
+
+The optional Google Forms contact transport writes to a published public form. It does not expose Google account credentials. For server-verifiable delivery, advanced spam protection, rate limits, or private workflows, place submission behind a serverless endpoint instead.

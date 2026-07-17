@@ -13,6 +13,7 @@ export type AnalyticsEvent =
   | "resume_download"
   | "email_click"
   | "contact_submit"
+  | "contact_error"
   | "linkedin_click"
   | "github_click";
 

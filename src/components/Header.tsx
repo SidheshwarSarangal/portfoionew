@@ -12,12 +12,12 @@ interface HeaderProps {
 }
 
 export default function Header({ activeView, onViewChange, isSidebarOpen, onSidebarToggle }: HeaderProps) {
-  const { projects: PROJECTS, articles: ARTICLES } = usePortfolioContent();
+  const { projects: PROJECTS, socialPosts: SOCIAL_POSTS } = usePortfolioContent();
 
   const desktopTabs = [
     { label: "info", id: "info" as const, icon: <FileText size={18} className="text-current" /> },
     { label: "projects", id: "projects" as const, icon: <FolderKanban size={18} className="text-[#fbbc04]" />, badge: PROJECTS.length },
-    { label: "social", id: "social" as const, icon: <MessageSquareText size={18} className="text-current" />, badge: ARTICLES.length },
+    { label: "social", id: "social" as const, icon: <MessageSquareText size={18} className="text-current" />, badge: SOCIAL_POSTS.length },
   ];
 
   const compactTabs = [
@@ -33,7 +33,7 @@ export default function Header({ activeView, onViewChange, isSidebarOpen, onSide
         key={tab.id}
         type="button"
         onClick={() => onViewChange(tab.id)}
-        className={`${compact ? "text-xs sm:text-sm gap-1.5" : "min-w-36 px-7 text-sm gap-3"} h-full border-r border-white/10 flex items-center justify-center font-mono cursor-pointer relative transition-all duration-150 ${
+        className={`${compact ? "gap-1 px-1 text-[11px] sm:gap-1.5 sm:px-2 sm:text-sm" : "min-w-36 px-7 text-sm gap-3"} h-full min-w-0 border-r border-white/10 flex items-center justify-center font-mono cursor-pointer relative transition-all duration-150 ${
           isSelected ? "bg-[#fbbc04]/20 text-white font-semibold" : "text-white/80 hover:text-[#fbbc04] hover:bg-white/5"
         }`}
       >

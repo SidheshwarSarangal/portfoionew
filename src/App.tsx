@@ -9,6 +9,7 @@ import BioPage from "./components/BioPage";
 import ProjectsGrid from "./components/ProjectsGrid";
 import JourneyTimeline from "./components/JourneyTimeline";
 import WritingList from "./components/WritingList";
+import SocialPostsGrid from "./components/SocialPostsGrid";
 import ContactSection from "./components/ContactSection";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
@@ -23,12 +24,6 @@ import { useSeoMetadata } from "./lib/seo";
 const ProjectDetailModal = lazy(() => import("./components/ProjectDetailModal"));
 const ArticleModal = lazy(() => import("./components/ArticleModal"));
 const INFO_SECTION_IDS = ["hero", "work", "about", "experience", "writings", "contact"] as const;
-const EDITOR_LINE_NUMBERS = Array.from({ length: 100 }, (_, index) => String(index + 1).padStart(3, "0"));
-const EDITOR_LINE_HEIGHT = 23;
-const EDITOR_LINE_CYCLE = EDITOR_LINE_NUMBERS.length * EDITOR_LINE_HEIGHT;
-const LOOPED_EDITOR_LINE_NUMBERS = Array.from({ length: 2 }, (_, copy) =>
-  EDITOR_LINE_NUMBERS.map((lineNumber) => ({ key: `${copy}-${lineNumber}`, lineNumber })),
-).flat();
 const sectionRailAccents: Record<string, { primary: string; secondary: string }> = {
   hero: { primary: "#4285f4", secondary: "#7aa7ff" },
   work: { primary: "#fbbc04", secondary: "#f59e0b" },
@@ -53,9 +48,6 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const infoSlideScrollerRef = useRef<HTMLDivElement>(null);
-  const leftLineNumbersRef = useRef<HTMLDivElement>(null);
-  const rightLineNumbersRef = useRef<HTMLDivElement>(null);
-  const activeSectionFrameRef = useRef<number | null>(null);
   const activeSectionTimerRef = useRef<number | null>(null);
   const keyboardScrollFrameRef = useRef<number | null>(null);
   const keyboardScrollTargetRef = useRef<number | null>(null);
@@ -156,13 +148,6 @@ export default function App() {
     handleScrollToSection(sectionId);
   }, [handleScrollToSection]);
 
-  const syncLineNumberRails = useCallback((scrollTop: number) => {
-    const offset = -(scrollTop % EDITOR_LINE_CYCLE);
-    const transform = `translate3d(0, ${offset}px, 0)`;
-    if (leftLineNumbersRef.current) leftLineNumbersRef.current.style.transform = transform;
-    if (rightLineNumbersRef.current) rightLineNumbersRef.current.style.transform = transform;
-  }, []);
-
   const handleInfoSlideScroll = useCallback((event: UIEvent<HTMLDivElement>) => {
     if (!directSectionChangeRef.current) {
       document.documentElement.classList.add("portfolio-is-scrolling");
@@ -175,13 +160,7 @@ export default function App() {
       }, 320);
     }
 
-    if (activeSectionFrameRef.current !== null) return;
     const scroller = event.currentTarget;
-    activeSectionFrameRef.current = window.requestAnimationFrame(() => {
-      activeSectionFrameRef.current = null;
-      syncLineNumberRails(scroller.scrollTop);
-    });
-
     if (directSectionChangeRef.current || activeSectionTimerRef.current !== null) return;
     activeSectionTimerRef.current = window.setTimeout(() => {
       activeSectionTimerRef.current = null;
@@ -191,7 +170,7 @@ export default function App() {
       const readingLine = scrollerRect.top + scrollerRect.height * 0.36;
       const visibleSection = INFO_SECTION_IDS
         .map((id) => ({ id, element: document.getElementById(id) }))
-        .filter((item): item is { id: string; element: HTMLElement } => Boolean(item.element))
+        .filter((item): item is { id: (typeof INFO_SECTION_IDS)[number]; element: HTMLElement } => Boolean(item.element))
         .find(({ element }) => {
           const rect = element.getBoundingClientRect();
           return rect.top <= readingLine && rect.bottom >= readingLine;
@@ -201,15 +180,12 @@ export default function App() {
         setActiveSection((current) => current === visibleSection.id ? current : visibleSection.id);
       }
     }, 96);
-  }, [syncLineNumberRails]);
+  }, []);
 
   const showProjectsView = useCallback(() => handleViewChange("projects"), [handleViewChange]);
   const showSocialView = useCallback(() => handleViewChange("social"), [handleViewChange]);
 
   useEffect(() => () => {
-    if (activeSectionFrameRef.current !== null) {
-      window.cancelAnimationFrame(activeSectionFrameRef.current);
-    }
     if (activeSectionTimerRef.current !== null) {
       window.clearTimeout(activeSectionTimerRef.current);
     }
@@ -413,43 +389,13 @@ export default function App() {
       </AnimatePresence>
 
       {/* 3. MIDDLE CHROME / PANES ENVELOPE */}
-      <div className={`app-shell-1200 xl:pl-[420px] 2xl:pr-[300px] flex flex-col justify-between pt-16 relative z-10 ${activeView === "info" ? "h-screen overflow-hidden" : "min-h-screen"}`}>
+      <div className={`app-shell-1200 xl:pl-[420px] 2xl:pr-[300px] flex flex-col justify-between pt-16 relative z-10 ${activeView === "info" ? "h-[100dvh] overflow-hidden" : "min-h-[100dvh]"}`}>
         
         {/* Main Scrolling Section Panes */}
-        <main className={`relative flex-grow w-full px-0 lg:px-16 ${activeView === "info" ? "overflow-hidden" : ""}`}>
+        <main className={`relative flex-grow w-full px-0 ${activeView === "info" ? "overflow-hidden" : ""}`}>
           <div className="center-pane-gradient pointer-events-none absolute inset-0 z-0" aria-hidden="true" />
-          
-          {/* Editor-style line numbers */}
-          <div
-            className="section-accent-number-strip absolute left-0 top-0 bottom-0 w-14 border-r border-white/[0.04] bg-[#000000]/55 select-none hidden lg:flex flex-col items-end pt-12 pr-4 text-[10px] font-mono text-neutral-300/55 leading-[23px] z-0 overflow-hidden"
-            style={railAccentStyle}
-            aria-hidden="true"
-          >
-            <div className="section-height-gradient-rail absolute inset-y-0 left-0 w-[4px]" aria-hidden="true" />
-            <div className="section-height-gradient-wash absolute inset-y-0 left-0 right-0" aria-hidden="true" />
-            <div ref={leftLineNumbersRef} className="relative z-10 flex w-full flex-col items-end will-change-transform">
-              {LOOPED_EDITOR_LINE_NUMBERS.map(({ key, lineNumber }) => (
-                <div key={key} className="h-[23px] shrink-0 tabular-nums font-light">
-                  {lineNumber}
-                </div>
-              ))}
-            </div>
-          </div>
 
-          <div
-            className="absolute bottom-0 right-0 top-0 z-0 hidden w-14 select-none flex-col items-start overflow-hidden border-l border-white/[0.04] bg-[#000000]/55 pl-4 pt-12 font-mono text-[10px] leading-[23px] text-neutral-300/55 lg:flex"
-            aria-hidden="true"
-          >
-            <div ref={rightLineNumbersRef} className="flex w-full flex-col items-start will-change-transform">
-              {LOOPED_EDITOR_LINE_NUMBERS.map(({ key, lineNumber }) => (
-                <div key={key} className="h-[23px] shrink-0 tabular-nums font-light">
-                  {lineNumber}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="wait">
             {activeView === "info" ? (
               <motion.div
                 key="info-view"
@@ -467,23 +413,23 @@ export default function App() {
                 <ScrollScene containerRef={infoSlideScrollerRef}>
                   <Hero />
                 </ScrollScene>
-                <SectionTransition from="Intro" to="Projects" />
+                <SectionTransition from="Intro" to="Projects" containerRef={infoSlideScrollerRef} />
                 <ScrollScene containerRef={infoSlideScrollerRef}>
                   <ProjectsGrid onProjectClick={openProject} onViewAll={showProjectsView} />
                 </ScrollScene>
-                <SectionTransition from="Projects" to="About" />
+                <SectionTransition from="Projects" to="About" containerRef={infoSlideScrollerRef} />
                 <ScrollScene containerRef={infoSlideScrollerRef}>
                   <JourneyTimeline section="about" containerRef={infoSlideScrollerRef} />
                 </ScrollScene>
-                <SectionTransition from="About" to="Experience" />
+                <SectionTransition from="About" to="Experience" containerRef={infoSlideScrollerRef} />
                 <ScrollScene containerRef={infoSlideScrollerRef}>
                   <JourneyTimeline section="experience" />
                 </ScrollScene>
-                <SectionTransition from="Experience" to="Writing" />
+                <SectionTransition from="Experience" to="Writing" containerRef={infoSlideScrollerRef} />
                 <ScrollScene containerRef={infoSlideScrollerRef}>
                   <WritingList onArticleClick={openArticle} onViewAll={showSocialView} />
                 </ScrollScene>
-                <SectionTransition from="Writing" to="Contact" />
+                <SectionTransition from="Writing" to="Contact" containerRef={infoSlideScrollerRef} />
                 <ScrollScene containerRef={infoSlideScrollerRef}>
                   <ContactSection />
                 </ScrollScene>
@@ -519,7 +465,7 @@ export default function App() {
                 exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
                 transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
               >
-                <WritingList onArticleClick={openArticle} />
+                <SocialPostsGrid />
               </motion.div>
             )}
           </AnimatePresence>

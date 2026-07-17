@@ -46,6 +46,7 @@ export interface Article {
   readTime: string;
   summary: string;
   content: string;
+  externalUrl?: string;
 }
 
 export interface TimelineEvent {

@@ -45,6 +45,7 @@ Defined in [`src/content/types.ts`](../src/content/types.ts).
 | `articles` | Array | Complete replacement |
 | `timeline` | Array | Complete replacement |
 | `socialLinks` | Array | Complete replacement |
+| `socialPosts` | Array | Complete replacement |
 | `experienceSummary` | Array | Complete replacement |
 | `capabilities` | Array | Complete replacement |
 | `techSkills` | Array | Complete replacement |
@@ -58,6 +59,7 @@ classDiagram
   PortfolioContent --> Project
   PortfolioContent --> Article
   PortfolioContent --> TimelineEvent
+  PortfolioContent --> SocialPost
   class Project {
     id
     title
@@ -105,6 +107,7 @@ Secrets never enter VITE_* variables
 Components never inspect provider names
 Failures always fall back to src/data.ts
 Backend changes never alter the design layer
+Array overrides replace complete sections; partial arrays do not merge by item
 ```
 
 ## Extension point

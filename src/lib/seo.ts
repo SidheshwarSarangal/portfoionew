@@ -66,7 +66,7 @@ export function useSeoMetadata({ personalBio, socialLinks, project, article }: S
         : `${personalBio.fullName} — ${personalBio.title}`;
     const description = project?.description || article?.summary || personalBio.about;
     const canonical = absoluteUrl(window.location.pathname);
-    const image = absoluteUrl(project?.imageUrl || `${import.meta.env.BASE_URL}portfolio-hero.png`);
+    const image = absoluteUrl(project?.imageUrl || `${import.meta.env.BASE_URL}images/profile/portfolio-hero.png`);
 
     document.title = title;
     upsertMeta('meta[name="description"]', { name: "description", content: description });

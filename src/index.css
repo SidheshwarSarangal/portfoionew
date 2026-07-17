@@ -34,6 +34,24 @@ body {
 
 html,
 body,
+#root {
+  max-width: 100%;
+  overflow-x: clip;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root *::-webkit-scrollbar {
+  display: none;
+}
+
+#root * {
+  scrollbar-width: none;
+}
+
+html,
+body,
 #root,
 #root * {
   cursor: default;
@@ -78,6 +96,22 @@ body,
 .scroll-scene-content {
   backface-visibility: hidden;
   transform-origin: center;
+}
+
+.project-popup-readable header h1,
+.project-popup-readable header p,
+.project-popup-readable header span,
+.project-popup-readable header a,
+.project-popup-readable header dt,
+.project-popup-readable header dd {
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 95%),
+    0 2px 10px rgb(0 0 0 / 72%);
+}
+
+.project-card-base-image,
+.project-card-hover-image {
+  transition: opacity 620ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .portfolio-is-scrolling .google-sidebar-gradient,
@@ -164,7 +198,7 @@ body,
 }
 
 .tech-gallery-track {
-  animation: tech-gallery-flow 28s linear infinite;
+  animation: tech-gallery-flow 104s linear infinite;
   will-change: transform;
 }
 
@@ -437,11 +471,41 @@ body,
   .about-track {
     grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
   }
+
+  .about-portrait-sticky {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+  }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 540px) {
   .compact-tab-label {
     display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Keep the small-screen composition light enough for mobile GPUs. */
+  .center-pane-gradient::before,
+  .center-pane-gradient::after,
+  .topbar-wave-gradient {
+    animation: none;
+    will-change: auto;
+  }
+
+  .center-pane-gradient::before {
+    transform: translate3d(-4%, 6%, 0) scale(1.06);
+  }
+
+  .center-pane-gradient::after {
+    transform: translate3d(5%, -4%, 0) scale(1.08);
+  }
+}
+
+@media (max-width: 767px) and (max-height: 620px) {
+  .hero-stage {
+    height: 400px;
   }
 }
 

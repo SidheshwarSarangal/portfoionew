@@ -47,7 +47,7 @@ export default function RightSidebar({ activeSection, onSymbolClick, variant = "
   return (
     <aside
       id={variant === "desktop" ? "right-indexes-sidebar" : "right-indexes-drawer"}
-      className={`sidebar-readable-text border-l border-white/10 pt-28 pb-10 px-7 bg-[#08090c]/70 backdrop-blur-2xl backdrop-saturate-150 shadow-[-24px_0_70px_rgba(0,0,0,0.22)] flex-col select-none ${
+      className={`sidebar-readable-text border-l border-white/10 px-5 pb-8 pt-24 sm:px-7 sm:pb-10 sm:pt-28 bg-[#08090c]/70 backdrop-blur-2xl backdrop-saturate-150 shadow-[-24px_0_70px_rgba(0,0,0,0.22)] flex-col select-none ${
         variant === "desktop"
           ? "w-[300px] h-screen fixed right-0 top-0 hidden 2xl:flex z-20"
           : "relative flex h-full w-full overflow-y-auto"

@@ -12,11 +12,11 @@ export default function WritingList({ onArticleClick, onViewAll }: WritingListPr
   const { articles: ARTICLES } = usePortfolioContent();
   const visibleArticles = onViewAll ? ARTICLES.slice(0, 3) : ARTICLES;
   return (
-    <section id="writings" className="mx-auto w-full max-w-5xl border-t border-white/5 px-4 py-10 select-text sm:px-6 sm:py-12">
+    <section id="writings" className="mx-auto w-full max-w-5xl border-t border-white/5 px-3 py-9 select-text sm:px-6 sm:py-12">
       
       <div className="mb-6 border-b border-transparent">
-        <h2 className="font-display text-4xl sm:text-5xl text-white font-extrabold tracking-tight">
-          From My Design Desk
+        <h2 className="font-display text-3xl font-extrabold tracking-tight text-white min-[380px]:text-4xl sm:text-5xl">
+          From My Desk
         </h2>
       </div>
 
@@ -30,7 +30,7 @@ export default function WritingList({ onArticleClick, onViewAll }: WritingListPr
               event.preventDefault();
               onArticleClick(article);
             }}
-            className="group flex min-h-[270px] cursor-pointer flex-col justify-between rounded-2xl border border-white/[0.1] bg-white/[0.015] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/25 hover:bg-white/[0.04] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.11),0_20px_55px_rgba(0,0,0,0.22)] sm:p-7"
+            className="group flex min-h-[230px] cursor-pointer flex-col justify-between rounded-2xl border border-white/[0.1] bg-white/[0.015] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/25 hover:bg-white/[0.04] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.11),0_20px_55px_rgba(0,0,0,0.22)] sm:min-h-[270px] sm:p-7"
             id={`article-card-${article.id}`}
           >
             <div className="flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.12em] text-neutral-300 transition-colors group-hover:text-amber-400">
@@ -49,7 +49,7 @@ export default function WritingList({ onArticleClick, onViewAll }: WritingListPr
 
             <div className="flex items-center" id={`article-card-footer-${article.id}`}>
               <span className="font-mono text-xs text-amber-500 flex items-center gap-2 group-hover:text-amber-400 font-semibold transition-colors">
-                <span>Read full blog</span>
+                <span>Open post brief</span>
                 <ArrowRight size={13} className="text-amber-500/70 group-hover:translate-x-1 group-hover:text-amber-400 transition-all duration-300" />
               </span>
             </div>
@@ -61,16 +61,16 @@ export default function WritingList({ onArticleClick, onViewAll }: WritingListPr
             type="button"
             onClick={onViewAll}
             id="article-view-all-card"
-            className="group flex min-h-[270px] cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.12] bg-white/[0.015] p-7 text-center backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/35 hover:bg-white/[0.04] hover:shadow-[0_20px_55px_rgba(0,0,0,0.25)]"
+            className="group flex min-h-[230px] cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.12] bg-white/[0.015] p-5 text-center backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/35 hover:bg-white/[0.04] hover:shadow-[0_20px_55px_rgba(0,0,0,0.25)] sm:min-h-[270px] sm:p-7"
           >
             <span className="mb-4 grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-black/30 text-neutral-500 transition-colors group-hover:border-amber-500/30 group-hover:text-amber-400">
               <ArrowUpRight size={20} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </span>
             <span className="font-display text-2xl font-bold tracking-tight text-white transition-colors group-hover:text-amber-400 sm:text-3xl">
-              View all blogs
+              View all posts
             </span>
             <span className="mt-3 max-w-xs font-mono text-sm leading-7 text-neutral-400 group-hover:text-neutral-300">
-              Explore more notes, articles, and updates from my social profiles.
+              Explore every LinkedIn post, programming note, and project update.
             </span>
           </button>
         )}

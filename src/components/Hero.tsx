@@ -10,7 +10,7 @@ interface HeroProps {
 }
 
 export default function Hero({ playIntro = true }: HeroProps) {
-  const portraitUrl = `${import.meta.env.BASE_URL}portfolio-hero.png`;
+  const portraitUrl = `${import.meta.env.BASE_URL}images/profile/portfolio-hero.png`;
   const [highlightIndex, setHighlightIndex] = useState(0);
   const [highlightsVisible, setHighlightsVisible] = useState(true);
   const reduceMotion = useReducedMotion();
@@ -44,9 +44,9 @@ export default function Hero({ playIntro = true }: HeroProps) {
   return (
     <section
       id="hero"
-      className="relative min-h-[calc(100svh-4rem)] w-full max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 flex flex-col justify-center select-text overflow-hidden"
+      className="relative min-h-[calc(100svh-4rem)] w-full max-w-6xl mx-auto px-2 py-3 sm:px-6 sm:py-8 flex flex-col justify-center select-text overflow-hidden"
     >
-      <div className="relative isolate mt-3 h-[520px] sm:h-[680px] md:h-[790px] flex items-center justify-center [container-type:inline-size]">
+      <div className="hero-stage relative isolate mt-1 h-[clamp(430px,68svh,520px)] sm:mt-3 sm:h-[680px] md:h-[790px] flex items-center justify-center [container-type:inline-size]">
         <h1 className="sr-only">Software Engineer</h1>
 
         <motion.div
@@ -89,7 +89,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
           style={{ willChange: "transform, opacity" }}
         >
           <div
-            className="-translate-y-8 sm:-translate-y-12 w-[min(88vw,340px)] sm:w-[430px] md:w-[480px] aspect-[2/3] overflow-hidden"
+            className="-translate-y-6 sm:-translate-y-12 w-[min(84vw,320px)] sm:w-[430px] md:w-[480px] aspect-[2/3] overflow-hidden"
             style={{ borderRadius: "0 0 50% 50% / 0 0 30% 30%" }}
           >
             <img
@@ -163,7 +163,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
       </div>
 
       <motion.div
-        className="relative z-20 -mt-4 sm:-mt-8 md:-mt-12 grid min-h-[132px] sm:min-h-[88px] grid-cols-1 sm:grid-cols-2 content-start gap-3 sm:gap-6 px-4 py-4 text-center sm:text-left lg:hidden"
+        className="relative z-20 -mt-5 sm:-mt-8 md:-mt-12 grid min-h-[112px] sm:min-h-[88px] grid-cols-1 sm:grid-cols-2 content-start gap-2 sm:gap-6 px-3 py-3 sm:px-4 sm:py-4 text-center sm:text-left lg:hidden"
         aria-live="polite"
         initial={skipIntro ? false : { opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
@@ -171,12 +171,12 @@ export default function Hero({ playIntro = true }: HeroProps) {
         transition={skipIntro ? { duration: 0 } : { duration: 0.8, delay: 1.95, ease: entranceEase }}
       >
         <span
-          className={`font-serif text-[1.7rem] sm:text-[2rem] italic leading-tight tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-y-0 opacity-100 blur-0" : "translate-y-3 opacity-0 blur-sm"}`}
+          className={`font-serif text-[1.45rem] min-[380px]:text-[1.7rem] sm:text-[2rem] italic leading-tight tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-y-0 opacity-100 blur-0" : "translate-y-3 opacity-0 blur-sm"}`}
         >
           {leftHighlights[highlightIndex % leftHighlights.length]}
         </span>
         <span
-          className={`font-serif text-[1.7rem] sm:text-[2rem] italic leading-tight tracking-[-0.035em] text-center sm:text-right text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-y-0 opacity-100 blur-0" : "translate-y-3 opacity-0 blur-sm"}`}
+          className={`font-serif text-[1.45rem] min-[380px]:text-[1.7rem] sm:text-[2rem] italic leading-tight tracking-[-0.035em] text-center sm:text-right text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-y-0 opacity-100 blur-0" : "translate-y-3 opacity-0 blur-sm"}`}
         >
           {rightHighlights[highlightIndex % rightHighlights.length]}
         </span>

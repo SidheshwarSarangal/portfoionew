@@ -4,7 +4,6 @@ import {
   Code2,
   Github,
   Layers3,
-  Linkedin,
   MessageCircle,
   Newspaper,
   Sparkles,
@@ -15,7 +14,6 @@ import type { SocialLink } from "../types";
 
 const SOCIAL_ICONS: Record<string, LucideIcon> = {
   discord: MessageCircle,
-  linkedin: Linkedin,
   x: Twitter,
   twitter: Twitter,
   "x / twitter": Twitter,
@@ -31,6 +29,21 @@ const SOCIAL_ICONS: Record<string, LucideIcon> = {
   codechef: Utensils,
   peerlist: Sparkles,
 };
+
+export function LinkedInBrandMark({ size = 18 }: { size?: number }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="currentColor"
+      className="shrink-0"
+    >
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9H7.12v11.452z" />
+    </svg>
+  );
+}
 
 const SOCIAL_STYLES: Record<string, string> = {
   discord: "text-[#8b9dff] hover:border-[#5865f2]/50 hover:bg-[#5865f2]/10",
@@ -53,6 +66,10 @@ const SOCIAL_STYLES: Record<string, string> = {
 
 function PlatformMark({ platform, size }: { platform: string; size: number }) {
   const name = platform.trim().toLowerCase();
+
+  if (name === "linkedin") {
+    return <LinkedInBrandMark size={size} />;
+  }
 
   if (name === "dev" || name === "dev.to") {
     return <span className={`font-sans font-black tracking-[-0.08em] ${size >= 20 ? "text-[11px]" : "text-[9px]"}`}>DEV</span>;
@@ -98,13 +115,27 @@ export function findSocialLink(links: SocialLink[], platform: string) {
 interface SocialLinksProps {
   links: SocialLink[];
   size?: number;
-  tileSize?: "normal" | "large";
+  tileSize?: "normal" | "large" | "xlarge";
   className?: string;
+  includeLinkedIn?: boolean;
+  showTooltip?: boolean;
 }
 
-export default function SocialLinks({ links, size = 15, tileSize = "normal", className = "" }: SocialLinksProps) {
+export default function SocialLinks({
+  links,
+  size = 15,
+  tileSize = "normal",
+  className = "",
+  includeLinkedIn = false,
+  showTooltip = false,
+}: SocialLinksProps) {
   const visibleLinks = links.filter(
-    (link) => !["email", "linkedin"].includes(link.platform.toLowerCase()) && hasSocialUrl(link),
+    (link) => {
+      const platform = link.platform.toLowerCase();
+      return platform !== "email"
+        && (includeLinkedIn || platform !== "linkedin")
+        && hasSocialUrl(link);
+    },
   );
 
   if (!visibleLinks.length) return null;
@@ -113,6 +144,11 @@ export default function SocialLinks({ links, size = 15, tileSize = "normal", cla
     <div className={className}>
       {visibleLinks.map((social) => {
         const platformKey = social.platform.trim().toLowerCase();
+        const tileClass = tileSize === "xlarge"
+          ? "h-14 w-14 rounded-xl"
+          : tileSize === "large"
+            ? "h-11 w-11 rounded-lg"
+            : "h-9 w-9 rounded-lg";
 
         return (
           <a
@@ -120,11 +156,16 @@ export default function SocialLinks({ links, size = 15, tileSize = "normal", cla
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className={`group flex items-center justify-center rounded-lg border border-white/10 bg-white/[0.035] shadow-sm shadow-black/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${tileSize === "large" ? "h-11 w-11" : "h-9 w-9"} ${SOCIAL_STYLES[platformKey] ?? "text-neutral-300 hover:border-amber-400/40 hover:bg-amber-400/10 hover:text-amber-300"}`}
-            title={social.platform}
+            className={`group relative flex items-center justify-center border border-white/10 bg-white/[0.035] shadow-sm shadow-black/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/60 ${tileClass} ${SOCIAL_STYLES[platformKey] ?? "text-neutral-300 hover:border-amber-400/40 hover:bg-amber-400/10 hover:text-amber-300"}`}
+            title={showTooltip ? undefined : social.platform}
             aria-label={social.platform}
           >
             <PlatformMark platform={social.platform} size={size} />
+            {showTooltip && (
+              <span className="pointer-events-none absolute left-1/2 top-full z-30 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-full border border-white/15 bg-neutral-950/95 px-2.5 py-1 font-mono text-[10px] font-semibold tracking-wide text-white opacity-0 shadow-xl backdrop-blur-xl transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
+                {social.platform}
+              </span>
+            )}
           </a>
         );
       })}

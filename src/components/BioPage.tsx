@@ -1,15 +1,16 @@
 import {
   User, MapPin, Mail, Download,
-  Phone, Globe, Copy, Check, Linkedin
+  Phone, Globe, Copy, Check
 } from "lucide-react";
 import { usePortfolioContent } from "../content";
-import SocialLinks, { findSocialLink } from "./SocialLinks";
+import SocialLinks, { findSocialLink, LinkedInBrandMark } from "./SocialLinks";
 import { useCopyFeedback } from "../hooks/useCopyFeedback";
 
 export default function BioPage() {
   const { personalBio: PERSONAL_BIO, socialLinks: SOCIAL_LINKS } = usePortfolioContent();
   const { copied, copyText } = useCopyFeedback();
   const linkedin = findSocialLink(SOCIAL_LINKS, "LinkedIn");
+  const compactPortraitUrl = `${import.meta.env.BASE_URL}images/profile/general-image.png`;
   const resumeUrl = PERSONAL_BIO.resumeUrl?.startsWith("/")
     ? `${import.meta.env.BASE_URL}${PERSONAL_BIO.resumeUrl.slice(1)}`
     : PERSONAL_BIO.resumeUrl;
@@ -26,28 +27,30 @@ export default function BioPage() {
   };
 
   return (
-    <section className="min-h-[calc(100vh-4rem)] w-full max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-8 md:py-10 select-text flex items-start lg:items-center">
-      <div className="w-full rounded-xl sm:rounded-2xl border border-white/10 bg-black/45 p-4 sm:p-6 md:p-7 shadow-2xl shadow-black/30">
+    <section className="min-h-[calc(100dvh-4rem)] w-full max-w-4xl mx-auto px-2.5 py-3 sm:px-6 sm:py-8 md:py-10 select-text flex items-start lg:items-center">
+      <div className="w-full min-w-0 rounded-xl sm:rounded-2xl border border-white/10 bg-black/45 p-3.5 sm:p-6 md:p-7 shadow-2xl shadow-black/30">
         <div className="flex flex-col gap-5 sm:gap-6">
           <div className="flex flex-col items-center text-center gap-3 sm:gap-4 border-b border-white/5 pb-5 sm:pb-6">
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-white/25 via-[#fbbc04]/20 to-white/15 rounded-full blur opacity-60 group-hover:opacity-100 transition duration-700 animate-pulse" />
+              <div className="pointer-events-none absolute -inset-2 scale-90 rounded-full border border-[#fbbc04]/0 opacity-0 transition-all duration-500 ease-out group-hover:scale-100 group-hover:border-[#fbbc04]/80 group-hover:opacity-100 group-hover:shadow-[0_0_28px_rgba(251,188,4,0.28)]" />
+              <div className="pointer-events-none absolute -inset-1 rounded-full border border-white/10 transition-all duration-500 ease-out group-hover:border-white/35" />
               <img
-                src={PERSONAL_BIO.avatarUrl}
+                src={compactPortraitUrl}
                 alt={PERSONAL_BIO.name}
                 width="128"
                 height="128"
-                className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border border-white/10 object-cover grayscale brightness-95 group-hover:grayscale-0 transition-all duration-500"
+                fetchPriority="high"
+                className="relative h-24 w-24 rounded-full border border-white/10 object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025] sm:h-28 sm:w-28"
                 referrerPolicy="no-referrer"
               />
             </div>
 
             <div className="space-y-1">
-              <h1 className="font-mono text-xl text-white font-medium tracking-tight">
+              <h1 className="font-sidebar text-lg font-semibold tracking-[-0.02em] text-white min-[380px]:text-xl">
                 {PERSONAL_BIO.fullName}
                 <span className="text-[#fbbc04] font-mono text-xs font-light"> .info</span>
               </h1>
-              <p className="font-mono text-sm text-[#a3a6ab] tracking-wider uppercase">
+              <p className="font-sidebar text-xs font-medium uppercase leading-5 tracking-[0.12em] text-neutral-300 sm:text-sm">
                 {PERSONAL_BIO.title}
               </p>
             </div>
@@ -56,14 +59,14 @@ export default function BioPage() {
           <div className="space-y-5 w-full">
             <div className="space-y-2 text-left">
               <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02]">
-                <p className="font-mono text-sm text-neutral-300 leading-6 font-light">
-                  I am a B.Tech undergraduate at <strong className="text-[#fbbc04] font-medium">IIT Roorkee</strong> building full-stack products, REST APIs, and backend systems.
+                <p className="font-sidebar text-sm font-normal leading-[1.65] tracking-[0.005em] text-neutral-200">
+                  I am a B.Tech undergraduate from <strong className="text-[#fbbc04] font-medium">IIT Roorkee</strong> building full-stack products, REST APIs, and backend systems.
                 </p>
               </div>
             </div>
 
             <div className="space-y-2.5 text-left">
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-sm text-neutral-300 font-light">
+              <ul className="grid grid-cols-1 gap-3 font-sidebar text-sm font-normal tracking-[0.005em] text-neutral-200 sm:grid-cols-2">
                 <li className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.015] p-3">
                   <User size={16} className="text-[#fbbc04] shrink-0" />
                   <span>B.Tech Biosciences & Bioengineering</span>
@@ -78,10 +81,10 @@ export default function BioPage() {
                 </li>
                 <li
                   onClick={handleCopyEmail}
-                  className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.015] p-3 cursor-pointer hover:text-[#fbbc04] transition-colors duration-200 group"
+                  className="group flex min-w-0 items-center gap-3 rounded-lg border border-white/5 bg-white/[0.015] p-3 cursor-pointer hover:text-[#fbbc04] transition-colors duration-200"
                 >
                   <Mail size={16} className="text-neutral-500 group-hover:text-[#fbbc04] transition-colors shrink-0" />
-                  <span className="truncate">{PERSONAL_BIO.email}</span>
+                  <span className="min-w-0 truncate">{PERSONAL_BIO.email}</span>
                   <button className="text-neutral-500 hover:text-[#fbbc04] ml-auto cursor-pointer" title="Copy email">
                     {copied ? <Check size={11} className="text-[#fbbc04]" /> : <Copy size={11} />}
                   </button>
@@ -95,9 +98,11 @@ export default function BioPage() {
                   href={linkedin.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2.5 bg-white text-black font-mono font-medium text-[13px] rounded-lg flex items-center justify-center gap-2.5 hover:bg-[#fbbc04] active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-white/10 text-center group"
+                  className="group flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-white py-2.5 text-center font-sidebar text-sm font-semibold tracking-[0.01em] text-black shadow-sm shadow-white/10 transition-all duration-300 hover:bg-[#0a66c2] hover:text-white hover:shadow-[0_10px_28px_rgba(10,102,194,0.28)] active:scale-[0.98]"
                 >
-                  <Linkedin size={16} className="text-[#0a66c2] group-hover:text-black transition-colors" />
+                  <span className="text-[#0a66c2] transition-colors duration-300 group-hover:text-white">
+                    <LinkedInBrandMark size={18} />
+                  </span>
                   <span>Connect on LinkedIn</span>
                 </a>
               )}
@@ -106,7 +111,7 @@ export default function BioPage() {
                 <button
                   type="button"
                   onClick={handleCall}
-                  className="w-full py-2.5 bg-white/5 border border-white/10 text-white font-mono font-medium text-[13px] rounded-lg flex items-center justify-center gap-2.5 hover:bg-[#fbbc04]/10 hover:border-[#fbbc04]/35 hover:text-[#fbbc04] active:scale-[0.98] transition-all text-center"
+                  className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-white/10 bg-white/5 py-2.5 text-center font-sidebar text-sm font-semibold tracking-[0.01em] text-white transition-all hover:border-[#fbbc04]/35 hover:bg-[#fbbc04]/10 hover:text-[#fbbc04] active:scale-[0.98]"
                 >
                   <Phone size={16} className="text-neutral-500" />
                   <span>Schedule a Call</span>
@@ -117,7 +122,7 @@ export default function BioPage() {
                 <a
                   href={resumeUrl}
                   download="SIDHESHWAR SARANGAL RESUME 18.06.2026.pdf"
-                  className="w-full py-2.5 border border-white/10 hover:border-[#fbbc04]/35 text-neutral-300 font-mono font-medium text-[13px] rounded-lg flex items-center justify-center gap-2.5 text-center hover:bg-[#fbbc04]/10 hover:text-[#fbbc04] active:scale-[0.98] transition-all cursor-pointer"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg border border-white/10 py-2.5 text-center font-sidebar text-sm font-semibold tracking-[0.01em] text-neutral-200 transition-all hover:border-[#fbbc04]/35 hover:bg-[#fbbc04]/10 hover:text-[#fbbc04] active:scale-[0.98]"
                 >
                   <Download size={16} className="text-neutral-500" />
                   <span>Download Resume</span>
@@ -126,7 +131,7 @@ export default function BioPage() {
                 <button
                   type="button"
                   onClick={() => window.alert("Resume PDF is not available yet.")}
-                  className="w-full py-2.5 border border-white/10 hover:border-[#fbbc04]/35 text-neutral-300 font-mono font-medium text-[13px] rounded-lg flex items-center justify-center gap-2.5 text-center hover:bg-[#fbbc04]/10 hover:text-[#fbbc04] active:scale-[0.98] transition-all cursor-pointer"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg border border-white/10 py-2.5 text-center font-sidebar text-sm font-semibold tracking-[0.01em] text-neutral-200 transition-all hover:border-[#fbbc04]/35 hover:bg-[#fbbc04]/10 hover:text-[#fbbc04] active:scale-[0.98]"
                 >
                   <Download size={16} className="text-neutral-500" />
                   <span>Download Resume</span>
@@ -137,7 +142,7 @@ export default function BioPage() {
             <div className="pt-4 border-t border-white/5">
               <SocialLinks
                 links={SOCIAL_LINKS}
-                size={22}
+                size={20}
                 tileSize="large"
                 className="flex flex-wrap items-center justify-center gap-2"
               />

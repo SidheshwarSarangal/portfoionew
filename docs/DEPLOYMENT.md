@@ -20,6 +20,14 @@ VITE_SITE_URL=https://your-domain.com
 
 Add only the variables required by the selected content provider.
 
+Use Node.js 20 or newer and install the committed lockfile exactly:
+
+```bash
+nvm use
+npm ci
+npm run check
+```
+
 ## Platform matrix
 
 | Platform | Build command | Output | Routing/security config |
@@ -45,10 +53,13 @@ flowchart TD
 [ ] Set VITE_SITE_URL
 [ ] Set the selected content-provider variables
 [ ] Set VITE_GA_MEASUREMENT_ID only if analytics is enabled
+[ ] Set all six Google Forms variables when contact submission is enabled
 [ ] Run npm run lint
 [ ] Run npm run build
 [ ] Test /projects/:id directly
 [ ] Test /articles/:slug directly
+[ ] Test resume and project PDF downloads
+[ ] Submit a contact message and verify it in Google Forms
 [ ] Submit /sitemap.xml to Search Console
 ```
 
@@ -57,7 +68,7 @@ flowchart TD
 | Provider | Update requires rebuild? |
 |---|---:|
 | `src/data.ts` | Yes |
-| `public/portfolio-data.json` | Yes after repository edit |
+| `public/content/portfolio-data.json` | Yes after repository edit |
 | REST API | No, unless response is deployment-cached |
 | Sanity | No for runtime content |
 

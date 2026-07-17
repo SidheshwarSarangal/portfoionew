@@ -32,10 +32,11 @@ GA4 is disabled when the measurement ID is empty.
 | Sitemap and robots | `scripts/generate-seo.mjs` |
 | Static route output | Route-specific title, description, canonical, social metadata, and JSON-LD during the build lifecycle |
 | GA4 | `src/lib/analytics.ts` |
+| Default social image | `public/images/profile/portfolio-hero.png` |
 
 ```mermaid
 flowchart TD
-  Data[src/data.ts] --> Script[generate-seo.mjs]
+  Data[src/data.ts + src/projectData.ts] --> Script[generate-seo.mjs]
   Script --> Robots[robots.txt]
   Script --> Sitemap[sitemap.xml]
   Script --> Routes[project/article HTML entries]

@@ -4,15 +4,19 @@ import path from "node:path";
 const root = process.cwd();
 const siteUrl = (process.env.VITE_SITE_URL || "https://sidheshwarsarangal.github.io/portfoionew").replace(/\/$/, "");
 const source = await readFile(path.join(root, "src/data.ts"), "utf8");
+const projectSource = await readFile(path.join(root, "src/projectData.ts"), "utf8");
 const publicDirectory = path.join(root, "public");
 const distDirectory = path.join(root, "dist");
 
-function sourceSection(start, end) {
-  return source.slice(source.indexOf(start), source.indexOf(end));
+function sourceSection(start, end, input = source) {
+  const startIndex = input.indexOf(start);
+  if (startIndex === -1) return "";
+  const endIndex = end ? input.indexOf(end, startIndex) : input.length;
+  return input.slice(startIndex, endIndex === -1 ? input.length : endIndex);
 }
 
-function extractTopLevelObjects(start, end) {
-  const input = sourceSection(start, end);
+function extractTopLevelObjects(start, end, sourceInput = source) {
+  const input = sourceSection(start, end, sourceInput);
   const arrayStart = input.indexOf("[");
   if (arrayStart === -1) return [];
 
@@ -112,7 +116,7 @@ const socialUrls = extractTopLevelObjects("export const SOCIAL_LINKS", "export c
   .map((block) => readStringField(block, "url"))
   .filter((url) => /^https?:\/\//i.test(url));
 
-const projects = extractTopLevelObjects("export const PROJECTS", "export const ARTICLES").map((block) => ({
+const projects = extractTopLevelObjects("export const PDF_PROJECTS", undefined, projectSource).map((block) => ({
   id: readStringField(block, "id"),
   title: readStringField(block, "title"),
   description: readStringField(block, "description"),
@@ -128,7 +132,7 @@ const articles = extractTopLevelObjects("export const ARTICLES", "export const T
 })).filter((article) => article.slug && article.title);
 
 const homeDescription = "Software engineer from IIT Roorkee building backend systems, REST APIs, and full-stack applications with Python, Spring Boot, MERN, Docker, and Kubernetes.";
-const defaultImage = absoluteAssetUrl("portfolio-hero.png");
+const defaultImage = absoluteAssetUrl("images/profile/portfolio-hero.png");
 const personId = `${pageUrl("/")}#person`;
 const personSchema = {
   "@type": "Person",
@@ -163,7 +167,7 @@ const pages = [
   ...projects.map((project) => {
     const route = `/projects/${encodeURIComponent(project.id)}`;
     const canonical = pageUrl(route);
-    const image = absoluteAssetUrl(project.image || "portfolio-hero.png");
+    const image = absoluteAssetUrl(project.image || "images/profile/portfolio-hero.png");
     return {
       route,
       title: `${project.title} | ${person.name}`,

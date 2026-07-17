@@ -27,7 +27,7 @@ Restart `npm run dev` after changing `.env.local`.
 ```mermaid
 flowchart LR
   Data[src/data.ts] --> Fallback[Built-in content]
-  JSON[public/portfolio-data.json] --> Override[Optional overrides]
+  JSON[public/content/portfolio-data.json] --> Override[Optional overrides]
   Fallback --> Merge[Merge]
   Override --> Merge
   Merge --> UI[Portfolio]
@@ -39,11 +39,14 @@ VITE_CONTENT_PROVIDER=local
 
 | Task | File |
 |---|---|
-| Edit the complete example | `src/data.ts` |
-| Override selected fields at runtime | `public/portfolio-data.json` |
+| Edit the complete portfolio content | `src/data.ts` and `src/projectData.ts` |
+| Override selected fields at runtime | `public/content/portfolio-data.json` |
 | Add local images | `public/images/` |
+| Add downloadable documents | `public/documents/` |
 
-Use image paths such as `/images/project.webp`.
+Use image paths such as `/images/projects/photos/search-platform.webp`.
+
+Object fields can be partial overrides. Arrays are complete replacements: a three-item `socialPosts` array in `content/portfolio-data.json` replaces every built-in social post. Omit an array unless the override intentionally supplies the entire section.
 
 ---
 

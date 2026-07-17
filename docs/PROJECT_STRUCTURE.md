@@ -4,8 +4,18 @@
 
 ```text
 portfoionew/
+├── docs/                         maintenance and integration guides
 ├── public/
-│   ├── portfolio-data.json    local content overrides
+│   ├── documents/
+│   │   ├── projects/             project case-study PDFs
+│   │   └── resume/               downloadable resume
+│   ├── images/
+│   │   ├── profile/              portrait and profile references
+│   │   └── projects/
+│   │       ├── photos/           active project card images + sources
+│   │       └── illustrations/    retained generated artwork
+│   ├── content/
+│   │   └── portfolio-data.json   optional local content overrides
 │   ├── favicon.svg
 │   ├── robots.txt
 │   └── sitemap.xml
@@ -13,6 +23,7 @@ portfoionew/
 │   └── generate-seo.mjs       sitemap + direct route output
 ├── src/
 │   ├── components/            visible UI only
+│   ├── hooks/                 reusable React behavior
 │   ├── content/
 │   │   ├── index.tsx          context entry point
 │   │   ├── providers.ts       local + REST + Sanity
@@ -25,9 +36,12 @@ portfoionew/
 │   │   └── seo.ts             metadata + JSON-LD
 │   ├── App.tsx                composition + route state
 │   ├── data.ts                complete built-in content
+│   ├── projectData.ts         PDF-backed project case studies
 │   ├── index.css              global visual rules
 │   └── main.tsx               application bootstrap
 ├── .env.example
+├── .nvmrc                     supported Node major version
+├── package-lock.json          reproducible dependency graph
 ├── index.html
 ├── netlify.toml
 ├── vercel.json
@@ -53,7 +67,9 @@ flowchart TD
 | Need | Edit |
 |---|---|
 | Personal copy | `src/data.ts` |
-| Small deployment override | `public/portfolio-data.json` |
+| PDF-backed projects | `src/projectData.ts` |
+| Small deployment override | `public/content/portfolio-data.json` |
+| Documents and images | `public/documents/` and `public/images/` |
 | CMS/API | `.env.local` + `providers.ts` |
 | New visual feature | `src/components/` |
 
@@ -68,3 +84,5 @@ browser
 ```
 
 Root deployment files stay at the root because hosting platforms discover them there.
+
+`dist/` is generated output. Edit `src/` and `public/`, then run `npm run build`; never maintain production files directly inside `dist/`.

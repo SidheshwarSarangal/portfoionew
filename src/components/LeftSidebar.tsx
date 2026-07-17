@@ -1,10 +1,10 @@
 import type { CSSProperties } from "react";
 import { 
   User, MapPin, Mail, Download,
-  Phone, Globe, Copy, Check, Linkedin
+  Phone, Globe, Copy, Check
 } from "lucide-react";
 import { usePortfolioContent } from "../content";
-import SocialLinks, { findSocialLink } from "./SocialLinks";
+import SocialLinks, { findSocialLink, LinkedInBrandMark } from "./SocialLinks";
 import { useCopyFeedback } from "../hooks/useCopyFeedback";
 
 interface LeftSidebarProps {
@@ -15,7 +15,7 @@ interface LeftSidebarProps {
 export default function LeftSidebar({ primaryAccent, secondaryAccent }: LeftSidebarProps) {
   const { personalBio: PERSONAL_BIO, socialLinks: SOCIAL_LINKS } = usePortfolioContent();
   const { copied, copyText } = useCopyFeedback();
-  const sidebarPortraitUrl = `${import.meta.env.BASE_URL}general%20image.png`;
+  const sidebarPortraitUrl = `${import.meta.env.BASE_URL}images/profile/general-image.png`;
 
   const handleCopyEmail = () => {
     void copyText(PERSONAL_BIO.email);
@@ -114,9 +114,11 @@ export default function LeftSidebar({ primaryAccent, secondaryAccent }: LeftSide
             href={linkedin.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-2.5 bg-white text-black font-sidebar font-semibold text-sm tracking-[0.01em] rounded-lg flex items-center justify-center gap-2.5 hover:bg-[#fbbc04] active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-white/10 text-center group"
+            className="group flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-white py-2.5 text-center font-sidebar text-sm font-semibold tracking-[0.01em] text-black shadow-sm shadow-white/10 transition-all duration-300 hover:bg-[#0a66c2] hover:text-white hover:shadow-[0_10px_28px_rgba(10,102,194,0.28)] active:scale-[0.98]"
           >
-            <Linkedin size={16} className="text-[#0a66c2] group-hover:text-black transition-colors" />
+            <span className="text-[#0a66c2] transition-colors duration-300 group-hover:text-white">
+              <LinkedInBrandMark size={18} />
+            </span>
             <span>Connect on LinkedIn</span>
           </a>}
 
