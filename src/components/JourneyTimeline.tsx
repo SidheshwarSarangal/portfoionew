@@ -439,18 +439,18 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Open ${f.author}'s recommendation on LinkedIn`}
-                  className={`group/recommendation relative flex cursor-pointer flex-col justify-between rounded-2xl border border-white/[0.09] bg-white/[0.012] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_45px_rgba(0,0,0,0.12)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/25 hover:bg-white/[0.035] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.11),0_24px_60px_rgba(0,0,0,0.22)] sm:p-8 ${
+                  className={`group/recommendation relative flex cursor-pointer flex-col justify-between rounded-2xl border border-white/[0.09] bg-white/[0.012] p-5 pl-20 pr-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_45px_rgba(0,0,0,0.12)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/25 hover:bg-white/[0.035] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.11),0_24px_60px_rgba(0,0,0,0.22)] sm:p-8 ${
                     isEven 
-                      ? "pl-14 sm:pl-20 text-left" 
-                      : "pr-14 sm:pr-20 text-left"
+                      ? "sm:pl-20 sm:pr-8 text-left" 
+                      : "sm:pl-8 sm:pr-20 text-left"
                   }`}
                   id={`testimonial-row-${idx}`}
                 >
                   {/* Floating Avatar. Offset left or right depending on row layout */}
-                  <div className={`absolute w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border border-white/10 bg-neutral-900 shadow-2xl top-1/2 -translate-y-1/2 ${
+                  <div className={`absolute top-6 h-12 w-12 translate-y-0 overflow-hidden rounded-full border border-white/10 bg-neutral-900 shadow-2xl sm:top-1/2 sm:h-14 sm:w-14 sm:-translate-y-1/2 ${
                     isEven 
-                      ? "left-[#10px] sm:left-[-24px]" 
-                      : "right-[#10px] sm:right-[-24px]"
+                      ? "left-5 sm:left-[-24px]" 
+                      : "left-5 sm:left-auto sm:right-[-24px]"
                   }`}>
                     {f.avatarCrop ? (
                       <div

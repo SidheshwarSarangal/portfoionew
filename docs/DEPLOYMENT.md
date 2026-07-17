@@ -1,85 +1,102 @@
 # Deployment
 
-## Build flow
+## Build Flow
 
 ```mermaid
 flowchart LR
-  Env[Production environment] --> Build[npm run build]
-  Build --> Vite[Vite bundle]
-  Build --> SEO[SEO generation]
-  Vite --> Dist[dist/]
-  SEO --> Dist
+  Env[Environment variables] --> Check[npm run check]
+  Check --> SEO[generate-seo.mjs]
+  Check --> Vite[Vite bundle]
+  SEO --> Dist[dist/]
+  Vite --> Dist
   Dist --> Host[Vercel / Netlify / static host]
 ```
 
-## Required production value
+## Platform Matrix
 
-```env
-VITE_SITE_URL=https://your-domain.com
-```
-
-Add only the variables required by the selected content provider.
-
-Use Node.js 20 or newer and install the committed lockfile exactly:
-
-```bash
-nvm use
-npm ci
-npm run check
-```
-
-## Platform matrix
-
-| Platform | Build command | Output | Routing/security config |
+| Host | Build | Output | Config |
 |---|---|---|---|
 | Vercel | `npm run build` | `dist` | `vercel.json` |
 | Netlify | `npm run build` | `dist` | `netlify.toml` |
-| GitHub Pages | `npm run build` | `dist` | Generated routes + repository base path |
+| GitHub Pages | `npm run build` | `dist` | `VITE_SITE_URL` with repo path |
+
+## Vercel Path Logic
 
 ```mermaid
 flowchart TD
-  Host{Hosting platform}
-  Host --> V[Vercel]
-  Host --> N[Netlify]
-  Host --> G[GitHub Pages]
-  V --> H[Security headers included]
-  N --> H
-  G --> C[Use CDN/proxy for custom headers]
+  A{VITE_SITE_URL set?}
+  A -->|Yes| B[Use that URL]
+  A -->|No + Vercel| C[Use VERCEL_URL]
+  A -->|No + local fallback| D[Use GitHub Pages fallback]
+  B --> E[Derive Vite base path]
+  C --> E
+  D --> E
 ```
 
-## Deployment checklist
+This prevents root Vercel deploys from loading assets from `/portfoionew/assets/...`.
+
+## Minimum Env
+
+```env
+VITE_CONTENT_PROVIDER=local
+VITE_GOOGLE_FORM_ACTION_URL=https://docs.google.com/forms/d/e/.../formResponse
+VITE_GOOGLE_FORM_FIRST_NAME_ENTRY=entry.xxxxx
+VITE_GOOGLE_FORM_LAST_NAME_ENTRY=entry.xxxxx
+VITE_GOOGLE_FORM_EMAIL_ENTRY=entry.xxxxx
+VITE_GOOGLE_FORM_SUBJECT_ENTRY=entry.xxxxx
+VITE_GOOGLE_FORM_MESSAGE_ENTRY=entry.xxxxx
+```
+
+Optional:
+
+| Variable | Use when |
+|---|---|
+| `VITE_SITE_URL` | Final custom/canonical domain is known |
+| `VITE_GA_MEASUREMENT_ID` | GA4 is enabled |
+| `VITE_CONTENT_API_URL` | REST provider is selected |
+| Sanity vars | Sanity provider is selected |
+
+## Deploy Checklist
+
+```mermaid
+flowchart LR
+  Env[Set env] --> Build[npm run check]
+  Build --> Push[Push to GitHub]
+  Push --> Deploy[Vercel deploy]
+  Deploy --> Smoke[Smoke test]
+  Smoke --> Search[Submit sitemap]
+```
 
 ```text
-[ ] Set VITE_SITE_URL
-[ ] Set the selected content-provider variables
-[ ] Set VITE_GA_MEASUREMENT_ID only if analytics is enabled
-[ ] Set all six Google Forms variables when contact submission is enabled
-[ ] Run npm run lint
-[ ] Run npm run build
-[ ] Test /projects/:id directly
-[ ] Test /articles/:slug directly
-[ ] Test resume and project PDF downloads
-[ ] Submit a contact message and verify it in Google Forms
-[ ] Submit /sitemap.xml to Search Console
+[ ] Node.js 20+
+[ ] npm ci
+[ ] npm run check
+[ ] Test /projects/:id
+[ ] Test /articles/:slug
+[ ] Test PDFs and resume
+[ ] Test contact form -> Google Sheet
+[ ] Submit /sitemap.xml after final domain
 ```
 
-## Content update behavior
+## Content Update Matrix
 
-| Provider | Update requires rebuild? |
+| Changed source | Rebuild? |
 |---|---:|
 | `src/data.ts` | Yes |
-| `public/content/portfolio-data.json` | Yes after repository edit |
-| REST API | No, unless response is deployment-cached |
-| Sanity | No for runtime content |
+| `src/projectData.ts` | Yes |
+| `public/` assets | Yes |
+| REST API data | No |
+| Sanity content | No |
 
-Build-time sitemap routes come from `src/data.ts`. Remote-only projects and articles need a deployment-time sitemap integration for complete pre-rendering.
-
-## GitHub Pages base path
-
-For `https://username.github.io/repository-name/`, include the repository path in the production URL:
+## GitHub Pages Only
 
 ```env
 VITE_SITE_URL=https://username.github.io/repository-name
 ```
 
-The production Vite base is derived automatically from this URL. Local development continues to use `/`, while custom-domain and root deployments automatically keep the production base at `/`.
+```mermaid
+flowchart LR
+  URL[Production URL] --> Path[/repository-name]
+  Path --> Base[Vite base path]
+  Base --> Assets[/repository-name/assets/...]
+```

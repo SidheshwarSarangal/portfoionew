@@ -1,144 +1,159 @@
-# Sidheshwar Sarangal — Portfolio
+# Sidheshwar Sarangal - Portfolio
 
-A React 19, TypeScript, Vite, Tailwind CSS, and Motion portfolio for full-stack products, backend systems, project case studies, engineering experience, LinkedIn posts, and contact workflows.
+React 19 + TypeScript + Vite portfolio for projects, experience, posts, testimonials, resume downloads, and Google Forms contact capture.
 
 Repository: [SidheshwarSarangal/portfoionew](https://github.com/SidheshwarSarangal/portfoionew)
 
-## Requirements
+## Project Snapshot
 
-- Node.js 20 or newer
-- npm with lockfile support
-- Git
+```mermaid
+flowchart LR
+  Content[src/data.ts<br/>src/projectData.ts] --> UI[React sections]
+  Assets[public/images<br/>public/documents] --> UI
+  Env[.env / Vercel env] --> Providers[Content + contact providers]
+  UI --> Build[Vite production bundle]
+  Build --> Host[Vercel / Netlify / static host]
+  Providers --> Sheet[Google Form<br/>linked Sheet]
+```
 
-The repository includes `.nvmrc` and `package-lock.json` so contributors can reproduce the same dependency graph.
+| Area | Source |
+|---|---|
+| Portfolio copy | `src/data.ts` |
+| Project case studies | `src/projectData.ts` |
+| Images and PDFs | `public/` |
+| Contact submission | Google Forms env variables |
+| SEO output | `scripts/generate-seo.mjs` |
+| Hosting rules | `vercel.json`, `netlify.toml` |
 
-## Reproducible setup
+## Quick Start
+
+```mermaid
+flowchart LR
+  Clone[Clone repo] --> Node[nvm use]
+  Node --> Install[npm ci]
+  Install --> Env[Create .env]
+  Env --> Dev[npm run dev]
+  Dev --> Browser[localhost:3000]
+```
 
 ```bash
 git clone https://github.com/SidheshwarSarangal/portfoionew.git
 cd portfoionew
 nvm use
 npm ci
-cp .env.example .env.local
+cp .env.example .env
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
-Use `npm ci`, rather than `npm install`, for a clean checkout or CI build. Restart the development server whenever `.env.local` changes.
-
 ## Commands
 
-| Command | Purpose |
+| Command | Does |
 |---|---|
-| `npm run dev` | Generate SEO files and start Vite on port 3000 |
-| `npm run lint` | Run TypeScript validation without emitting files |
-| `npm run build` | Generate SEO files and create the production `dist/` bundle |
-| `npm run preview` | Preview the generated production bundle |
-| `npm run check` | Run TypeScript validation and a production build |
+| `npm run dev` | SEO prep + Vite dev server |
+| `npm run lint` | TypeScript validation |
+| `npm run build` | Production `dist/` bundle |
+| `npm run preview` | Preview built site |
+| `npm run check` | Lint + build |
 
-## Repository map
+## Repository Map
 
-```text
-portfoionew/
-├── docs/                         architecture and maintenance guides
-├── public/
-│   ├── documents/
-│   │   ├── projects/             ten project case-study PDFs
-│   │   └── resume/               downloadable resume
-│   ├── images/
-│   │   ├── profile/              hero, portrait, and recommendation reference
-│   │   └── projects/
-│   │       ├── photos/           locally stored project card imagery
-│   │       └── illustrations/    retained generated project artwork
-│   ├── content/
-│   │   └── portfolio-data.json   optional runtime content overrides
-│   ├── favicon.svg
-│   ├── robots.txt
-│   └── sitemap.xml
-├── scripts/                      build-time automation
-├── src/
-│   ├── components/               visual sections and interactions
-│   ├── content/                  provider, merge, validation, and content contract
-│   ├── hooks/                    reusable React hooks
-│   ├── lib/                      assets, analytics, routes, security, and SEO
-│   ├── App.tsx                   page composition and view routing
-│   ├── data.ts                   primary non-project portfolio content
-│   ├── projectData.ts            ten PDF-backed project case studies
-│   ├── index.css                 global design and responsive behavior
-│   └── main.tsx                  application entry point
-├── .env.example                  public configuration template
-├── .nvmrc                       supported Node major version
-├── package-lock.json             deterministic dependency lockfile
-├── netlify.toml                  Netlify configuration
-├── vercel.json                   Vercel configuration
-└── vite.config.ts                build and base-path configuration
+```mermaid
+flowchart TD
+  Root[portfoionew]
+  Root --> Docs[docs<br/>maintenance guides]
+  Root --> Public[public<br/>served assets]
+  Root --> Src[src<br/>app source]
+  Root --> Scripts[scripts<br/>build automation]
+  Root --> Config[hosting + Vite config]
+
+  Public --> Documents[documents<br/>resume + project PDFs]
+  Public --> Images[images<br/>profile + projects]
+  Public --> Json[content<br/>optional JSON override]
+
+  Src --> Components[components<br/>visible UI]
+  Src --> Content[content<br/>providers + fallback merge]
+  Src --> Hooks[hooks]
+  Src --> Lib[lib<br/>SEO, routes, analytics, security]
+  Src --> Data[data.ts]
+  Src --> Projects[projectData.ts]
 ```
 
-## Content sources
+## Edit Map
 
-The complete built-in portfolio is maintained in:
-
-- `src/data.ts` — profile, timeline, capabilities, posts, testimonials, and other page content.
-- `src/projectData.ts` — the ten PDF-backed project case studies.
-
-`public/content/portfolio-data.json` is an optional runtime override. Object fields merge, but arrays replace the corresponding built-in array completely. Do not place a partial `socialPosts`, `projects`, or other array there unless replacing the entire section intentionally.
-
-The application can alternatively load a public REST endpoint or Sanity dataset through the provider layer. See [Content providers](docs/CONTENT_PROVIDERS.md).
-
-## Public assets
-
-All source-controlled documents and images live under stable, descriptive paths in `public/`. The generated artwork has been retained under `public/images/projects/illustrations/`; the current project tiles use locally stored photographs under `public/images/projects/photos/`.
-
-See [Asset organization](docs/ASSETS.md) before adding, renaming, or replacing media.
-
-## Contact form
-
-The contact form is prepared to submit to Google Forms and presents submission as a compiler run. It clears values only after the request succeeds and preserves them on failure.
-
-Google Forms requires one form-specific action URL and five `entry.*` identifiers. See [Google Forms contact setup](docs/CONTACT_FORM.md).
-
-## Content and environment configuration
-
-Copy `.env.example` to `.env.local`. Only `VITE_*` values intended to be visible in the browser belong there. Never place API secrets, database passwords, private CMS tokens, or Google account credentials in frontend environment variables.
-
-## Production
-
-```bash
-npm ci
-npm run check
-npm run preview
+```mermaid
+flowchart LR
+  Need{Need to change?}
+  Need -->|Text / bio / posts| Data[src/data.ts]
+  Need -->|Project cards / PDFs| Projects[src/projectData.ts]
+  Need -->|Images / resume| Public[public/]
+  Need -->|Layout / sections| Components[src/components/]
+  Need -->|External content| Providers[src/content/]
+  Need -->|Deploy behavior| Hosting[vercel.json / netlify.toml / vite.config.ts]
 ```
 
-Deploy the generated `dist/` directory. `dist/` is generated output and is intentionally ignored by Git; `public/` and `src/` are the sources of truth.
+## Environment
 
-Hosting guidance is available in [Deployment](docs/DEPLOYMENT.md).
+Minimum local/Vercel values for the current setup:
+
+```env
+VITE_CONTENT_PROVIDER=local
+VITE_GOOGLE_FORM_ACTION_URL=https://docs.google.com/forms/d/e/.../formResponse
+VITE_GOOGLE_FORM_FIRST_NAME_ENTRY=entry.xxxxx
+VITE_GOOGLE_FORM_LAST_NAME_ENTRY=entry.xxxxx
+VITE_GOOGLE_FORM_EMAIL_ENTRY=entry.xxxxx
+VITE_GOOGLE_FORM_SUBJECT_ENTRY=entry.xxxxx
+VITE_GOOGLE_FORM_MESSAGE_ENTRY=entry.xxxxx
+```
+
+Optional:
+
+| Variable | Use |
+|---|---|
+| `VITE_SITE_URL` | Final canonical URL; Vercel can infer preview URLs |
+| `VITE_GA_MEASUREMENT_ID` | Enables GA4 |
+| REST/Sanity vars | Only when using those content providers |
+
+## Asset Rule
+
+```mermaid
+flowchart LR
+  Source[src + public] --> Build[npm run build]
+  Build --> Dist[dist]
+  Dist -. generated only .-> NoEdit[Do not edit directly]
+```
+
+Use `public/` for browser-served files. Keep paths root-relative, for example `/images/projects/photos/search-platform.webp`.
 
 ## Documentation
 
-| Guide | Purpose |
+| Guide | Best for |
 |---|---|
-| [Documentation map](docs/README.md) | Find the right maintenance guide |
-| [Project structure](docs/PROJECT_STRUCTURE.md) | Understand ownership and folder boundaries |
-| [Asset organization](docs/ASSETS.md) | Add and reference documents and images safely |
-| [Content architecture](docs/CONTENT_ARCHITECTURE.md) | Understand fallback, merge, and provider behavior |
-| [Content providers](docs/CONTENT_PROVIDERS.md) | Configure local JSON, REST, or Sanity |
-| [Google Forms contact setup](docs/CONTACT_FORM.md) | Connect and test contact submission |
-| [SEO and analytics](docs/SEO_AND_ANALYTICS.md) | Configure discovery and measurement |
-| [Security and performance](docs/SECURITY_AND_PERFORMANCE.md) | Maintain safe frontend defaults |
-| [Deployment](docs/DEPLOYMENT.md) | Build and publish the site |
+| [Docs map](docs/README.md) | Find the right guide |
+| [Project structure](docs/PROJECT_STRUCTURE.md) | Folder ownership |
+| [Assets](docs/ASSETS.md) | Images, PDFs, provenance |
+| [Content architecture](docs/CONTENT_ARCHITECTURE.md) | Provider and fallback flow |
+| [Content providers](docs/CONTENT_PROVIDERS.md) | Local, REST, Sanity |
+| [Contact form](docs/CONTACT_FORM.md) | Google Forms + Sheets |
+| [SEO and analytics](docs/SEO_AND_ANALYTICS.md) | Sitemap, metadata, GA4 |
+| [Security and performance](docs/SECURITY_AND_PERFORMANCE.md) | Headers, public/private values |
+| [Deployment](docs/DEPLOYMENT.md) | Publish checklist |
 
-## Contribution checklist
+## Release Check
+
+```mermaid
+flowchart LR
+  Lint[npm run lint] --> Build[npm run build]
+  Build --> Routes[Test direct routes]
+  Routes --> Assets[Test PDFs/images]
+  Assets --> Contact[Test contact sheet]
+  Contact --> Deploy[Deploy]
+```
 
 ```text
-[ ] Preserve existing user content and locally stored media
-[ ] Put new files in the documented source directory
-[ ] Update references and the relevant manifest/documentation
-[ ] Keep secrets out of VITE_* variables
-[ ] Run npm run lint
-[ ] Run npm run build for release-facing changes
-[ ] Test resume and project PDF downloads
+[ ] npm run lint
+[ ] npm run build
 [ ] Test project/article direct routes
-[ ] Test external links in a new tab
-[ ] Test the contact form against the Google Forms Responses tab
+[ ] Test resume and project PDF downloads
+[ ] Test external links open in a new tab
+[ ] Test Google Form response lands in the linked Sheet
 ```

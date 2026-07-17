@@ -1,163 +1,104 @@
 # Connect Content and Backends
 
-## Pick a provider
+## Provider Choice
 
 ```mermaid
 flowchart TD
-  A{Where is the content?}
-  A -->|This repository| B[Local]
-  A -->|Public JSON endpoint| C[REST]
-  A -->|Sanity dashboard| D[Sanity]
-  A -->|Private API| E[Serverless proxy → REST]
-  A -->|Another service| F[Custom provider]
+  A{Where should content live?}
+  A -->|Inside repo| Local[Local provider]
+  A -->|Public JSON endpoint| REST[REST provider]
+  A -->|Sanity dashboard| Sanity[Sanity provider]
+  A -->|Private database/API| Proxy[Serverless proxy -> REST]
+  A -->|Other CMS/service| Custom[Custom provider]
 ```
 
-Copy the environment template once:
-
-```bash
-cp .env.example .env.local
-```
-
-Restart `npm run dev` after changing `.env.local`.
-
----
-
-## Option A — local content
-
-```mermaid
-flowchart LR
-  Data[src/data.ts] --> Fallback[Built-in content]
-  JSON[public/content/portfolio-data.json] --> Override[Optional overrides]
-  Fallback --> Merge[Merge]
-  Override --> Merge
-  Merge --> UI[Portfolio]
-```
+## Environment Switch
 
 ```env
 VITE_CONTENT_PROVIDER=local
 ```
 
+| Provider | Extra env |
+|---|---|
+| `local` | None |
+| `rest` | `VITE_CONTENT_API_URL` |
+| `sanity` | `VITE_SANITY_PROJECT_ID`, `VITE_SANITY_DATASET`, `VITE_SANITY_API_VERSION` |
+| `custom` | Add only public browser-safe values |
+
+## Local Flow
+
+```mermaid
+flowchart LR
+  Data[src/data.ts] --> Merge[Fallback merge]
+  Projects[src/projectData.ts] --> Merge
+  JSON[public/content/portfolio-data.json] --> Merge
+  Merge --> UI[Portfolio UI]
+```
+
 | Task | File |
 |---|---|
-| Edit the complete portfolio content | `src/data.ts` and `src/projectData.ts` |
-| Override selected fields at runtime | `public/content/portfolio-data.json` |
-| Add local images | `public/images/` |
-| Add downloadable documents | `public/documents/` |
+| Main portfolio text | `src/data.ts` |
+| PDF-backed projects | `src/projectData.ts` |
+| Small override | `public/content/portfolio-data.json` |
+| Images | `public/images/` |
+| Documents | `public/documents/` |
 
-Use image paths such as `/images/projects/photos/search-platform.webp`.
+Array rule:
 
-Object fields can be partial overrides. Arrays are complete replacements: a three-item `socialPosts` array in `content/portfolio-data.json` replaces every built-in social post. Omit an array unless the override intentionally supplies the entire section.
+```mermaid
+flowchart LR
+  Object[Object field] --> Partial[Partial override allowed]
+  Array[Array field] --> Replace[Complete replacement]
+```
 
----
-
-## Option B — REST backend
+## REST Flow
 
 ```mermaid
 sequenceDiagram
-  participant Browser
-  participant API as Your API
-  participant Fallback as src/data.ts
-  Browser->>API: GET VITE_CONTENT_API_URL
-  alt 200 JSON
-    API-->>Browser: PortfolioContentOverrides
+  participant UI as Browser
+  participant API as Public API
+  participant Fallback as Built-in content
+  UI->>API: GET VITE_CONTENT_API_URL
+  alt valid JSON
+    API-->>UI: PortfolioContentOverrides
   else error
-    Browser->>Fallback: render built-in content
+    UI->>Fallback: render built-in content
   end
 ```
-
-### 1. Configure
 
 ```env
 VITE_CONTENT_PROVIDER=rest
 VITE_CONTENT_API_URL=https://api.example.com/portfolio
 ```
 
-### 2. Backend requirements
-
-| Requirement | Expected value |
+| Requirement | Value |
 |---|---|
 | Method | `GET` |
 | Response | `application/json` |
-| CORS | Allow the portfolio origin |
-| Authentication | None/private proxy only |
+| CORS | Allow portfolio origin |
+| Auth | None in browser |
 | Shape | `PortfolioContentOverrides` |
-| Protocol | HTTPS in production |
+| Production | HTTPS |
 
-### 3. Minimal response
-
-```json
-{
-  "personalBio": {
-    "fullName": "Ada Developer",
-    "title": "Software Engineer"
-  },
-  "projects": [
-    {
-      "id": "search-platform",
-      "title": "Search Platform",
-      "category": "Backend",
-      "description": "Search and indexing system.",
-      "roles": ["Backend Engineering"],
-      "year": "2026",
-      "technologies": ["Java", "OpenSearch"],
-      "accentColor": "amber",
-      "imageUrl": "https://cdn.example.com/search.webp",
-      "links": {
-        "github": "https://github.com/user/search-platform"
-      },
-      "details": {
-        "problem": "Users needed relevant results.",
-        "solution": "Built a ranked indexing pipeline.",
-        "outcomes": ["Implemented searchable document indexing"]
-      },
-      "featured": true
-    }
-  ]
-}
-```
-
-Missing properties use fallback data. An included empty array intentionally removes that section's entries.
-
-### 4. CORS example
-
-```http
-Access-Control-Allow-Origin: https://your-domain.com
-Content-Type: application/json
-```
-
-### Private APIs
+## Private API Pattern
 
 ```mermaid
 flowchart LR
   Browser --> Proxy[Serverless function]
   Proxy -->|private token| API[Private API/database]
-  API --> Proxy -->|public portfolio JSON| Browser
+  API --> Proxy
+  Proxy -->|public JSON| Browser
 ```
 
-Point `VITE_CONTENT_API_URL` to the proxy. Never expose the private token through `VITE_*`.
+Never expose private tokens through `VITE_*`.
 
----
-
-## Option C — Sanity
-
-No separate custom backend is required.
+## Sanity Flow
 
 ```mermaid
 flowchart LR
-  Studio[Sanity Studio] --> Lake[Sanity Content Lake]
-  Lake -->|public read CDN| Adapter[SanityProvider]
-  Adapter --> UI[Portfolio]
-```
-
-### Setup checklist
-
-```text
-[ ] Create a Sanity project
-[ ] Create a public dataset (usually production)
-[ ] Add the portfolio domain to Sanity CORS origins
-[ ] Define and publish one document with _type = portfolio
-[ ] Add the environment values below
-[ ] Restart or redeploy the portfolio
+  Studio[Sanity Studio] --> Lake[Content Lake]
+  Lake -->|public CDN read| Adapter[SanityProvider]
+  Adapter --> UI[Portfolio UI]
 ```
 
 ```env
@@ -167,8 +108,6 @@ VITE_SANITY_DATASET=production
 VITE_SANITY_API_VERSION=2025-02-19
 ```
 
-### Sanity document map
-
 ```mermaid
 classDiagram
   class portfolio {
@@ -177,91 +116,57 @@ classDiagram
     articles array
     timeline array
     socialLinks array
+    socialPosts array
     experienceSummary array
     capabilities array
     techSkills array
-    industryAwards array
-    teamAwards array
     testimonials array
   }
 ```
 
-The field shapes must match [`src/content/types.ts`](../src/content/types.ts) and [`src/types.ts`](../src/types.ts).
-
-| UI value | Sanity field options |
+| UI value | Sanity field |
 |---|---|
-| Profile image | `personalBio.avatarUrl` or `personalBio.avatar` image |
-| Project image | `project.imageUrl` or `project.image` image |
-| Testimonial image | `testimonial.avatarUrl` or `testimonial.avatar` image |
-| Article body | Markdown/plain string in `content` |
+| Profile image | `personalBio.avatarUrl` or `personalBio.avatar` |
+| Project image | `project.imageUrl` or `project.image` |
+| Testimonial image | `testimonial.avatarUrl` or `testimonial.avatar` |
+| Article body | `content` |
 
-The adapter reads the first published `portfolio` document. Drafts are not returned by the public CDN query.
-
-```text
-Safe in frontend: project ID, dataset name, API version
-Never in frontend: write token, management token, private read token
-```
-
----
-
-## Option D — custom provider
+## Custom Provider
 
 ```mermaid
 flowchart LR
-  Service[Firebase / Supabase / GraphQL / CMS] --> Map[Map service fields]
+  Service[Service response] --> Map[Map fields]
   Map --> Contract[PortfolioContentOverrides]
-  Contract --> UI[Existing UI]
+  Contract --> ExistingUI[Existing UI unchanged]
 ```
 
-Add the provider inside `src/content/providers.ts`:
+Touch points:
 
-```ts
-class CustomProvider implements ContentProvider {
-  readonly name = "custom";
+| Step | File |
+|---|---|
+| Add provider class | `src/content/providers.ts` |
+| Register factory case | `createContentProvider()` |
+| Add env typing | `src/vite-env.d.ts` |
+| Keep UI unchanged | `src/components/` |
 
-  async load(signal?: AbortSignal): Promise<PortfolioContentOverrides> {
-    const response = await fetch("https://example.com/content", { signal });
-    const remote = await response.json();
-
-    return {
-      personalBio: {
-        fullName: remote.profile.name,
-        title: remote.profile.role,
-      },
-      projects: remote.work,
-    };
-  }
-}
-```
-
-Register it in the factory:
-
-```ts
-case "custom":
-  return new CustomProvider();
-```
-
-Then extend `VITE_CONTENT_PROVIDER` in `src/vite-env.d.ts`.
-
-## Connection checklist
+## Connection Checklist
 
 ```mermaid
-flowchart TD
-  A[Select provider] --> B[Set .env.local]
-  B --> C[Return canonical JSON]
-  C --> D[Allow CORS]
-  D --> E[Test fallback]
-  E --> F[Build + deploy]
-  F --> G[Test direct project/article URLs]
+flowchart LR
+  Pick[Pick provider] --> Env[Set env]
+  Env --> Shape[Return canonical shape]
+  Shape --> CORS[Allow CORS]
+  CORS --> Fallback[Test fallback]
+  Fallback --> Build[npm run build]
 ```
 
 ## Troubleshooting
 
 | Symptom | Check |
 |---|---|
-| Built-in content appears | Browser console and provider variables |
-| REST request blocked | API CORS header |
-| Sanity returns no data | Published `_type: portfolio` document |
-| Images disappear | HTTP/HTTPS URL or valid Sanity image field |
-| Array section is empty | Remote response may contain `[]` |
-| Configuration change ignored | Restart Vite/redeploy |
+| Built-in content appears | Provider env + browser console |
+| REST blocked | CORS header |
+| Sanity empty | Published `_type: portfolio` document |
+| Images missing | URL/path validity |
+| Section empty | Remote array may be `[]` |
+| Env ignored | Restart Vite or redeploy |
