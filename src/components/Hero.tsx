@@ -51,13 +51,13 @@ export default function Hero({ playIntro = true }: HeroProps) {
     <section
       ref={heroRef}
       id="hero"
-      className="relative min-h-[calc(100svh-4rem)] w-full max-w-6xl mx-auto px-2 py-3 sm:px-6 sm:py-8 flex flex-col justify-center select-text overflow-hidden"
+      className="hero-section relative flex min-h-[calc(100svh-4rem)] w-full max-w-6xl mx-auto flex-col justify-center overflow-hidden px-2 py-3 select-text sm:px-6 sm:py-8"
     >
-      <div className="hero-stage relative isolate mt-1 h-[clamp(430px,68svh,520px)] sm:mt-3 sm:h-[680px] md:h-[790px] flex items-center justify-center [container-type:inline-size]">
+      <div className="hero-stage relative isolate mt-1 flex items-center justify-center [container-type:inline-size] sm:mt-3">
         <h1 className="sr-only">Software Engineer</h1>
 
         <motion.div
-          className="absolute inset-x-0 top-[15%] z-0 text-center overflow-visible select-none transform-gpu"
+          className="hero-software-layer absolute inset-x-0 z-0 overflow-visible text-center select-none transform-gpu"
           aria-hidden="true"
           initial={skipIntro ? false : { opacity: 0, x: -64 }}
           animate={{ opacity: 1, x: 0 }}
@@ -78,7 +78,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
         </motion.div>
 
         <motion.div
-          className="absolute left-1/2 top-[48%] z-0 h-[34%] w-[76%] -translate-x-1/2 rounded-full bg-[#4285f4]/8 blur-[70px]"
+          className="hero-blue-halo absolute left-1/2 z-0 -translate-x-1/2 rounded-full bg-[#4285f4]/8"
           aria-hidden="true"
           initial={skipIntro ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -94,7 +94,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
           transition={skipIntro ? { duration: 0 } : { duration: 1, delay: 1.25, ease: entranceEase }}
         >
           <div
-            className="-translate-y-6 sm:-translate-y-12 w-[min(84vw,320px)] sm:w-[430px] md:w-[480px] aspect-[2/3] overflow-hidden"
+            className="hero-portrait-frame relative aspect-[2/3] overflow-hidden"
             style={{ borderRadius: "0 0 50% 50% / 0 0 30% 30%" }}
           >
             <img
@@ -106,11 +106,12 @@ export default function Hero({ playIntro = true }: HeroProps) {
               fetchPriority="high"
               decoding="async"
             />
+            <span className="hero-portrait-bottom-blend pointer-events-none absolute inset-x-0 bottom-0" aria-hidden="true" />
           </div>
         </motion.div>
 
         <motion.div
-          className="absolute inset-x-0 top-[65%] z-20 flex items-center justify-center select-none transform-gpu"
+          className="hero-engineer-layer absolute inset-x-0 z-20 flex items-center justify-center select-none transform-gpu"
           aria-hidden="true"
           initial={skipIntro ? false : { opacity: 0, x: 64 }}
           animate={{ opacity: 1, x: 0 }}
@@ -119,7 +120,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
         >
           <svg
             viewBox="0 0 600 220"
-            className="w-[min(108%,820px)] overflow-visible drop-shadow-[0_8px_18px_rgba(0,0,0,0.8)]"
+            className="hero-engineer-svg overflow-visible drop-shadow-[0_8px_18px_rgba(0,0,0,0.8)]"
           >
             <defs>
               <path id="hero-engineer-curve" d="M 10 30 Q 300 215 590 30" />
@@ -138,7 +139,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
           </svg>
         </motion.div>
 
-        <div className="absolute left-[7%] top-[58%] z-20 hidden lg:block w-[205px] -translate-y-1/2" aria-live="polite">
+        <div className="hero-left-highlight absolute z-20 hidden -translate-y-1/2 min-[1320px]:block" aria-live="polite">
           <motion.div
             initial={skipIntro ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -153,7 +154,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
           </motion.div>
         </div>
 
-        <div className="absolute right-[7%] top-[60%] z-20 hidden lg:block w-[200px] -translate-y-1/2 text-right" aria-live="polite">
+        <div className="hero-right-highlight absolute z-20 hidden -translate-y-1/2 text-right min-[1320px]:block" aria-live="polite">
           <motion.div
             initial={skipIntro ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -170,7 +171,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
       </div>
 
       <motion.div
-        className="relative z-20 -mt-5 sm:-mt-8 md:-mt-12 grid min-h-[112px] sm:min-h-[88px] grid-cols-1 sm:grid-cols-2 content-start gap-2 sm:gap-6 px-3 py-3 sm:px-4 sm:py-4 text-center sm:text-left lg:hidden"
+        className="hero-mobile-highlights relative z-20 grid grid-cols-1 content-start gap-2 px-3 py-3 text-center sm:grid-cols-2 sm:gap-6 sm:px-4 sm:py-4 sm:text-left min-[1320px]:hidden"
         aria-live="polite"
         initial={skipIntro ? false : { opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
