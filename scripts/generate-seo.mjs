@@ -2,7 +2,10 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
-const siteUrl = (process.env.VITE_SITE_URL || "https://sidheshwarsarangal.github.io/portfoionew").replace(/\/$/, "");
+const siteUrl = (
+  process.env.VITE_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://sidheshwarsarangal.github.io/portfoionew")
+).replace(/\/$/, "");
 const source = await readFile(path.join(root, "src/data.ts"), "utf8");
 const projectSource = await readFile(path.join(root, "src/projectData.ts"), "utf8");
 const publicDirectory = path.join(root, "public");

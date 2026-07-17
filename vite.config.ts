@@ -4,9 +4,15 @@ import { defineConfig, loadEnv } from "vite";
 
 const defaultProductionUrl = "https://sidheshwarsarangal.github.io/portfoionew";
 
+function resolveProductionUrl(envSiteUrl?: string) {
+  if (envSiteUrl) return envSiteUrl;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return defaultProductionUrl;
+}
+
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
-  const productionUrl = new URL(env.VITE_SITE_URL || defaultProductionUrl);
+  const productionUrl = new URL(resolveProductionUrl(env.VITE_SITE_URL));
   const productionPath = productionUrl.pathname.replace(/\/$/, "");
   const base = command === "build" ? `${productionPath || ""}/` : "/";
 
