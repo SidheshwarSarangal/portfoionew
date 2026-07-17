@@ -1,5 +1,5 @@
-import { motion } from "motion/react";
-import { useState } from "react";
+import { motion, useInView } from "motion/react";
+import { memo, useRef, useState } from "react";
 import type { RefObject } from "react";
 import {
   Boxes,
@@ -84,6 +84,64 @@ const TOOL_SYMBOLS: Array<{
   { name: "Embedded Kafka", glyph: RadioTower, color: "#e5e7eb" },
 ];
 
+const TechnologyGallery = memo(function TechnologyGallery() {
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const isNearViewport = useInView(galleryRef, { margin: "400px 0px" });
+
+  return (
+    <div className="mt-auto min-w-0 pt-8 sm:pt-10" id="chapter-tech-stack">
+      <div
+        ref={galleryRef}
+        className={`tech-gallery relative overflow-hidden rounded-3xl border border-white/[0.1] bg-white/[0.018] py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_55px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:py-10 ${isNearViewport ? "" : "tech-gallery-offscreen"}`}
+      >
+        <div className="tech-gallery-track flex w-max items-center">
+          {[0, 1].map((copy) => (
+            <div key={copy} className="flex shrink-0 items-center gap-5 pr-5 sm:gap-6 sm:pr-6" aria-hidden={copy === 1}>
+              {TOOL_SYMBOLS.map((tool) => (
+                <div
+                  key={`${copy}-${tool.name}`}
+                  role="img"
+                  aria-label={copy === 0 ? tool.name : undefined}
+                  tabIndex={copy === 0 ? 0 : -1}
+                  className="group relative grid h-28 w-28 shrink-0 place-items-center outline-none sm:h-40 sm:w-40"
+                >
+                  <span className="pointer-events-none absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2 scale-90 whitespace-nowrap rounded-full border border-white/20 bg-neutral-950/85 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-white opacity-0 shadow-[0_8px_28px_rgba(0,0,0,0.48)] backdrop-blur-xl transition-all duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
+                    {tool.name}
+                  </span>
+                  <span className="relative grid h-full w-full place-items-center overflow-hidden rounded-2xl border border-white/[0.11] bg-black/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] transition-colors duration-300 group-hover:border-white/25 group-focus-visible:border-white/25">
+                    <span
+                      className="pointer-events-none absolute inset-0 opacity-20 blur-xl transition-opacity duration-300 group-hover:opacity-40 group-focus-visible:opacity-40"
+                      style={{ background: `radial-gradient(circle at center, ${tool.color} 0%, transparent 68%)` }}
+                    />
+                    {tool.icon ? (
+                      <img
+                        src={tool.icon}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        width="96"
+                        height="96"
+                        className="relative h-16 w-16 object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.38)] transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 sm:h-24 sm:w-24"
+                      />
+                    ) : tool.glyph ? (
+                      <tool.glyph
+                        aria-hidden="true"
+                        strokeWidth={1.55}
+                        className="relative h-16 w-16 drop-shadow-[0_10px_22px_rgba(0,0,0,0.38)] transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 sm:h-24 sm:w-24"
+                        style={{ color: tool.color }}
+                      />
+                    ) : null}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+});
+
 export default function JourneyTimeline({ section = "all" }: JourneyTimelineProps) {
   const {
     timeline: TIMELINE,
@@ -104,21 +162,17 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
     >
       {showAbout && (
         <div className="relative" id="chapter-about">
-          <motion.div
+          <div
             className="mb-7 overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-5 sm:mb-8 sm:rounded-2xl sm:px-8 sm:py-8 [container-type:inline-size]"
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
             <span className="block whitespace-nowrap font-display text-[clamp(3.2rem,14cqw,8.6rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
               SINCE 2022
             </span>
-          </motion.div>
+          </div>
 
           <div className="about-track relative grid gap-10 sm:gap-12">
             <div className="min-w-0 space-y-12 sm:space-y-20">
-              <motion.div
-                className="space-y-6"
-                transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-              >
+              <div className="space-y-6">
                 <h2 className="font-display text-[2.55rem] font-extrabold leading-[0.98] tracking-tight text-white min-[380px]:text-5xl lg:text-6xl">
                   Inside My Creative Core
                 </h2>
@@ -144,26 +198,32 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
                   </p>
                   <p className="pt-1 italic text-neutral-100">Warmly,<br /><span className="font-semibold not-italic text-amber-300">Sidheshwar</span></p>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             <div className="min-w-0">
-                <motion.div
+                <div
                   className="about-portrait-sticky flex flex-col items-center gap-4 sm:items-end"
-                  transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <div className="relative aspect-[3/4] w-full max-w-[320px] overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-2xl">
                     <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
-                    <img src={aboutPortraitUrl} alt="Sidheshwar Sarangal" className="h-full w-full object-cover object-[55%_center] transition-transform duration-700 hover:scale-[1.02]" />
+                    <img
+                      src={aboutPortraitUrl}
+                      alt="Sidheshwar Sarangal"
+                      width="1254"
+                      height="1254"
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover object-[55%_center] transition-transform duration-700 hover:scale-[1.02]"
+                    />
                   </div>
-              </motion.div>
+                </div>
             </div>
           </div>
 
-          <motion.div
+          <div
             className="mt-14 w-full space-y-7 scroll-mt-24 sm:mt-20"
             id="chapter-what-i-do"
-            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
           >
             <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Capabilities</h2>
             <div className="grid grid-cols-[minmax(105px,0.72fr)_minmax(0,1.55fr)] gap-5 sm:grid-cols-[minmax(210px,0.78fr)_minmax(0,1.7fr)] sm:gap-10 lg:gap-14">
@@ -230,54 +290,10 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
                   </motion.div>
                 )}
 
-                <div className="mt-auto min-w-0 pt-8 sm:pt-10" id="chapter-tech-stack">
-                  <div className="tech-gallery relative overflow-hidden rounded-3xl border border-white/[0.1] bg-white/[0.018] py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_55px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:py-10">
-                    <div className="tech-gallery-track flex w-max items-center">
-                      {[0, 1].map((copy) => (
-                        <div key={copy} className="flex shrink-0 items-center gap-5 pr-5 sm:gap-6 sm:pr-6" aria-hidden={copy === 1}>
-                          {TOOL_SYMBOLS.map((tool) => (
-                            <div
-                              key={`${copy}-${tool.name}`}
-                              role="img"
-                              aria-label={copy === 0 ? tool.name : undefined}
-                              tabIndex={copy === 0 ? 0 : -1}
-                              className="group relative grid h-28 w-28 shrink-0 place-items-center outline-none sm:h-40 sm:w-40"
-                            >
-                              <span className="pointer-events-none absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2 scale-90 whitespace-nowrap rounded-full border border-white/20 bg-neutral-950/85 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-white opacity-0 shadow-[0_8px_28px_rgba(0,0,0,0.48)] backdrop-blur-xl transition-all duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
-                                {tool.name}
-                              </span>
-                              <span className="relative grid h-full w-full place-items-center overflow-hidden rounded-2xl border border-white/[0.11] bg-black/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] transition-colors duration-300 group-hover:border-white/25 group-focus-visible:border-white/25">
-                                <span
-                                  className="pointer-events-none absolute inset-0 opacity-20 blur-xl transition-opacity duration-300 group-hover:opacity-40 group-focus-visible:opacity-40"
-                                  style={{ background: `radial-gradient(circle at center, ${tool.color} 0%, transparent 68%)` }}
-                                />
-                                {tool.icon ? (
-                                  <img
-                                    src={tool.icon}
-                                    alt=""
-                                    loading="lazy"
-                                    decoding="async"
-                                    className="relative h-16 w-16 object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.38)] transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 sm:h-24 sm:w-24"
-                                  />
-                                ) : tool.glyph ? (
-                                  <tool.glyph
-                                    aria-hidden="true"
-                                    strokeWidth={1.55}
-                                    className="relative h-16 w-16 drop-shadow-[0_10px_22px_rgba(0,0,0,0.38)] transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 sm:h-24 sm:w-24"
-                                    style={{ color: tool.color }}
-                                  />
-                                ) : null}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <TechnologyGallery />
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
 
@@ -286,14 +302,13 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
       {/* SECTION 3.5: METICULOUS EDUCATION ARCHIVES (Practice Chronology List) */}
       <div className="space-y-5 scroll-mt-24" id="chapter-history">
         {/* Massive Backdrop text: EXPERIENCE left reveal */}
-        <motion.div
+        <div
           className="mb-7 overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-5 sm:mb-8 sm:rounded-2xl sm:px-8 sm:py-8 [container-type:inline-size]"
-          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         >
           <span className="block whitespace-nowrap font-display text-[clamp(3.2rem,14cqw,8.6rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
             EXPERIENCE
           </span>
-        </motion.div>
+        </div>
 
         {/* Massive Backdrop text: EXPERIENCE (Continuous Arrow Marquee) */}
         <div className="hidden">
@@ -307,12 +322,11 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
           </div>
         </div>
         <div className="relative ml-2 space-y-5 border-l border-white/5 pl-4 sm:ml-3 sm:space-y-6 sm:pl-6" id="histories-timeline-track">
-          {TIMELINE.map((event, idx) => (
-            <motion.div
+          {TIMELINE.map((event) => (
+            <div
               key={event.id}
               className="group relative min-w-0 rounded-xl border border-transparent px-2 py-3 transition-colors hover:border-white/[0.06] hover:bg-white/[0.025] sm:px-3"
               id={`history-node-${event.id}`}
-              transition={{ duration: 0.7, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="absolute -left-[25px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-white/10 bg-[#070809] text-neutral-500 transition-colors group-hover:border-amber-500/30 sm:-left-[31px]">
                 <span className="w-1.5 h-1.5 rounded-full bg-neutral-600 group-hover:bg-amber-400 transition-colors" />
@@ -339,16 +353,15 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
                   {event.description}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
 
       {/* SECTION 3.6: ACHIEVEMENTS & AWARDS */}
-      <motion.div
+      <div
         className="space-y-6 border-t border-white/5 pt-9 scroll-mt-24 sm:pt-12"
         id="chapter-awards"
-        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="mb-7 overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-5 sm:mb-8 sm:rounded-2xl sm:px-8 sm:py-8 [container-type:inline-size]">
           <span className="block whitespace-nowrap font-display text-[clamp(2.5rem,11.5cqw,7.2rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
@@ -385,19 +398,18 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* SECTION 3.7: CLIENT WORDS */}
       <div className="space-y-6 relative py-4 scroll-mt-24" id="chapter-testimonials">
         {/* Huge backdrop of words left reveal */}
-        <motion.div
+        <div
           className="mb-7 overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-5 sm:mb-8 sm:rounded-2xl sm:px-8 sm:py-8 [container-type:inline-size]"
-          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         >
           <span className="block whitespace-nowrap font-display text-[clamp(2.6rem,12cqw,7.5rem)] font-black uppercase leading-[0.82] tracking-[-0.055em] text-neutral-300">
             WORDS MATTER
           </span>
-        </motion.div>
+        </div>
 
         {/* Huge backdrop of words (Continuous Arrow Marquee) */}
         <div className="hidden">
@@ -411,20 +423,17 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
           </div>
         </div>
         <div className="relative space-y-10">
-          <motion.div
-            className="text-center"
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <div className="text-center">
             <h3 className="font-display text-3xl text-white font-extrabold tracking-tight select-none min-[380px]:text-4xl sm:text-6xl">
               Feedback That <span className="text-neutral-500">Fuels Me</span>
             </h3>
-          </motion.div>
+          </div>
 
           <div className="relative mx-auto max-w-2xl space-y-6 px-2 sm:px-6" id="testimonials-list">
             {feedback.map((f, idx) => {
               const isEven = idx % 2 === 0;
               return (
-                <motion.a
+                <a
                   key={idx}
                   href={LINKEDIN_RECOMMENDATIONS_URL}
                   target="_blank"
@@ -436,7 +445,6 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
                       : "pr-14 sm:pr-20 text-left"
                   }`}
                   id={`testimonial-row-${idx}`}
-                  transition={{ duration: 0.72, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 >
                   {/* Floating Avatar. Offset left or right depending on row layout */}
                   <div className={`absolute w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border border-white/10 bg-neutral-900 shadow-2xl top-1/2 -translate-y-1/2 ${
@@ -485,7 +493,7 @@ export default function JourneyTimeline({ section = "all" }: JourneyTimelineProp
                       Click here →
                     </span>
                   </div>
-                </motion.a>
+                </a>
               );
             })}
           </div>

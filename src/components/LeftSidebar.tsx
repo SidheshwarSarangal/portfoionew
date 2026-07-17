@@ -54,7 +54,8 @@ export default function LeftSidebar({ primaryAccent, secondaryAccent }: LeftSide
               alt={PERSONAL_BIO.name} 
               width="128"
               height="128"
-              fetchPriority="high"
+              fetchPriority="low"
+              decoding="async"
               className="relative w-24 h-24 xl:w-28 xl:h-28 rounded-full border border-white/10 object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
               referrerPolicy="no-referrer"
             />

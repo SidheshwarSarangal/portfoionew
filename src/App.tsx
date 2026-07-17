@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, UIEvent } from "react";
+import type { CSSProperties } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { Project, Article } from "./types";
 import Header from "./components/Header";
@@ -20,6 +20,7 @@ import { usePortfolioContent } from "./content";
 import { articlePath, homePath, projectPath, readContentRoute } from "./lib/routes";
 import { trackEvent } from "./lib/analytics";
 import { useSeoMetadata } from "./lib/seo";
+import { useMediaQuery } from "./hooks/useMediaQuery";
 
 const ProjectDetailModal = lazy(() => import("./components/ProjectDetailModal"));
 const ArticleModal = lazy(() => import("./components/ArticleModal"));
@@ -41,6 +42,8 @@ const sectionRailAccents: Record<string, { primary: string; secondary: string }>
 export default function App() {
   const { projects, articles, personalBio, socialLinks } = usePortfolioContent();
   const reduceMotion = useReducedMotion();
+  const showDesktopProfile = useMediaQuery("(min-width: 1200px)");
+  const showWideSidebar = useMediaQuery("(min-width: 1536px)");
   const [activeSection, setActiveSection] = useState("hero");
   const [activeView, setActiveView] = useState<PortfolioView>("info");
   const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
@@ -48,7 +51,6 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const infoSlideScrollerRef = useRef<HTMLDivElement>(null);
-  const activeSectionTimerRef = useRef<number | null>(null);
   const keyboardScrollFrameRef = useRef<number | null>(null);
   const keyboardScrollTargetRef = useRef<number | null>(null);
   const keyboardScrollDirectionRef = useRef(0);
@@ -142,53 +144,102 @@ export default function App() {
     setActiveView(view);
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
+  const toggleRightDrawer = useCallback(() => setRightDrawerOpen((open) => !open), []);
 
   const handleDrawerSectionClick = useCallback((sectionId: string) => {
     setRightDrawerOpen(false);
     handleScrollToSection(sectionId);
   }, [handleScrollToSection]);
 
-  const handleInfoSlideScroll = useCallback((event: UIEvent<HTMLDivElement>) => {
-    if (!directSectionChangeRef.current) {
+  useEffect(() => {
+    if (activeView !== "info") return;
+
+    const scroller = infoSlideScrollerRef.current;
+    if (!scroller) return;
+
+    const sections = INFO_SECTION_IDS
+      .map((id) => ({ id, element: document.getElementById(id) }))
+      .filter((item): item is { id: (typeof INFO_SECTION_IDS)[number]; element: HTMLElement } => Boolean(item.element));
+    if (!sections.length) return;
+
+    const supportsScrollEnd = "onscrollend" in scroller;
+    const markScrollStart = () => {
+      if (directSectionChangeRef.current) return;
       document.documentElement.classList.add("portfolio-is-scrolling");
-      if (scrollIdleTimerRef.current !== null) {
-        window.clearTimeout(scrollIdleTimerRef.current);
-      }
+      if (supportsScrollEnd) return;
+
+      if (scrollIdleTimerRef.current !== null) window.clearTimeout(scrollIdleTimerRef.current);
       scrollIdleTimerRef.current = window.setTimeout(() => {
         document.documentElement.classList.remove("portfolio-is-scrolling");
         scrollIdleTimerRef.current = null;
       }, 320);
-    }
+    };
+    const markScrollEnd = () => {
+      document.documentElement.classList.remove("portfolio-is-scrolling");
+      if (scrollIdleTimerRef.current !== null) {
+        window.clearTimeout(scrollIdleTimerRef.current);
+        scrollIdleTimerRef.current = null;
+      }
+    };
 
-    const scroller = event.currentTarget;
-    if (directSectionChangeRef.current || activeSectionTimerRef.current !== null) return;
-    activeSectionTimerRef.current = window.setTimeout(() => {
-      activeSectionTimerRef.current = null;
+    scroller.addEventListener("scroll", markScrollStart, { passive: true });
+    if (supportsScrollEnd) scroller.addEventListener("scrollend", markScrollEnd);
+
+    const observer = new IntersectionObserver((entries) => {
       if (directSectionChangeRef.current) return;
 
-      const scrollerRect = scroller.getBoundingClientRect();
-      const readingLine = scrollerRect.top + scrollerRect.height * 0.36;
-      const visibleSection = INFO_SECTION_IDS
-        .map((id) => ({ id, element: document.getElementById(id) }))
-        .filter((item): item is { id: (typeof INFO_SECTION_IDS)[number]; element: HTMLElement } => Boolean(item.element))
-        .find(({ element }) => {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= readingLine && rect.bottom >= readingLine;
-        });
-
-      if (visibleSection) {
-        setActiveSection((current) => current === visibleSection.id ? current : visibleSection.id);
+      const visibleEntry = entries.find((entry) => entry.isIntersecting);
+      const sectionId = visibleEntry?.target.id;
+      if (sectionId) {
+        setActiveSection((current) => current === sectionId ? current : sectionId);
       }
-    }, 96);
-  }, []);
+    }, {
+      root: scroller,
+      // A thin observation band at the same 36% reading position used previously.
+      rootMargin: "-35.5% 0px -63.5% 0px",
+      threshold: 0,
+    });
+
+    sections.forEach(({ element }) => observer.observe(element));
+    return () => {
+      observer.disconnect();
+      scroller.removeEventListener("scroll", markScrollStart);
+      if (supportsScrollEnd) scroller.removeEventListener("scrollend", markScrollEnd);
+      markScrollEnd();
+    };
+  }, [activeView]);
 
   const showProjectsView = useCallback(() => handleViewChange("projects"), [handleViewChange]);
   const showSocialView = useCallback(() => handleViewChange("social"), [handleViewChange]);
+  const infoViewContent = useMemo(() => (
+    <>
+      <ScrollScene containerRef={infoSlideScrollerRef}>
+        <Hero />
+      </ScrollScene>
+      <SectionTransition from="Intro" to="Projects" containerRef={infoSlideScrollerRef} />
+      <ScrollScene containerRef={infoSlideScrollerRef}>
+        <ProjectsGrid onProjectClick={openProject} onViewAll={showProjectsView} />
+      </ScrollScene>
+      <SectionTransition from="Projects" to="About" containerRef={infoSlideScrollerRef} />
+      <ScrollScene containerRef={infoSlideScrollerRef}>
+        <JourneyTimeline section="about" containerRef={infoSlideScrollerRef} />
+      </ScrollScene>
+      <SectionTransition from="About" to="Experience" containerRef={infoSlideScrollerRef} />
+      <ScrollScene containerRef={infoSlideScrollerRef}>
+        <JourneyTimeline section="experience" />
+      </ScrollScene>
+      <SectionTransition from="Experience" to="Writing" containerRef={infoSlideScrollerRef} />
+      <ScrollScene containerRef={infoSlideScrollerRef}>
+        <WritingList onArticleClick={openArticle} onViewAll={showSocialView} />
+      </ScrollScene>
+      <SectionTransition from="Writing" to="Contact" containerRef={infoSlideScrollerRef} />
+      <ScrollScene containerRef={infoSlideScrollerRef}>
+        <ContactSection />
+      </ScrollScene>
+    </>
+  ), [openArticle, openProject, showProjectsView, showSocialView]);
 
   useEffect(() => () => {
-    if (activeSectionTimerRef.current !== null) {
-      window.clearTimeout(activeSectionTimerRef.current);
-    }
     if (scrollIdleTimerRef.current !== null) {
       window.clearTimeout(scrollIdleTimerRef.current);
     }
@@ -289,37 +340,25 @@ export default function App() {
 
   // Bio is a compact-layout tab. Once that tab is hidden, keep Info in the center pane.
   useEffect(() => {
-    const desktopLayout = window.matchMedia("(min-width: 1200px)");
-    const defaultToInfo = () => {
-      if (desktopLayout.matches) {
-        setActiveView((currentView) => currentView === "bio" ? "info" : currentView);
-      }
-    };
-
-    defaultToInfo();
-    desktopLayout.addEventListener("change", defaultToInfo);
-    return () => desktopLayout.removeEventListener("change", defaultToInfo);
-  }, []);
+    if (showDesktopProfile) {
+      setActiveView((currentView) => currentView === "bio" ? "info" : currentView);
+    }
+  }, [showDesktopProfile]);
 
   useEffect(() => {
     if (!rightDrawerOpen) return;
 
-    const desktopSidebar = window.matchMedia("(min-width: 1536px)");
-    const closeOnDesktop = () => {
-      if (desktopSidebar.matches) setRightDrawerOpen(false);
-    };
+    if (showWideSidebar) {
+      setRightDrawerOpen(false);
+      return;
+    }
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setRightDrawerOpen(false);
     };
 
-    desktopSidebar.addEventListener("change", closeOnDesktop);
     window.addEventListener("keydown", closeOnEscape);
-
-    return () => {
-      desktopSidebar.removeEventListener("change", closeOnDesktop);
-      window.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [rightDrawerOpen]);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [rightDrawerOpen, showWideSidebar]);
 
   return (
     <div
@@ -338,14 +377,16 @@ export default function App() {
         activeView={activeView}
         onViewChange={handleViewChange}
         isSidebarOpen={rightDrawerOpen}
-        onSidebarToggle={() => setRightDrawerOpen((open) => !open)}
+        onSidebarToggle={toggleRightDrawer}
       />
 
       {/* 2. THE MAIN SYNCED SIDEBARS */}
-      <LeftSidebar primaryAccent={railAccent.primary} secondaryAccent={railAccent.secondary} />
-      {activeView === "info" ? (
+      {showDesktopProfile && (
+        <LeftSidebar primaryAccent={railAccent.primary} secondaryAccent={railAccent.secondary} />
+      )}
+      {showWideSidebar && activeView === "info" ? (
         <RightSidebar activeSection={activeSection} onSymbolClick={handleScrollToSection} />
-      ) : activeView === "projects" || activeView === "social" ? (
+      ) : showWideSidebar && (activeView === "projects" || activeView === "social") ? (
         <ViewDescriptionSidebar view={activeView} />
       ) : null}
 
@@ -401,38 +442,15 @@ export default function App() {
                 key="info-view"
                 ref={infoSlideScrollerRef}
                 className={`section-slide-scroller absolute inset-0 z-10 overflow-y-auto overscroll-y-contain ${isDirectSectionChange ? "pointer-events-none" : ""}`}
-                onScroll={handleInfoSlideScroll}
                 initial={reduceMotion ? false : { opacity: 0 }}
                 animate={{ opacity: isDirectSectionChange ? 0 : 1 }}
                 exit={reduceMotion ? undefined : { opacity: 0 }}
-                transition={{
+              transition={{
                   duration: reduceMotion ? 0 : isDirectSectionChange ? 0.19 : 0.32,
                   ease: isDirectSectionChange ? "easeOut" : [0.22, 1, 0.36, 1],
                 }}
               >
-                <ScrollScene containerRef={infoSlideScrollerRef}>
-                  <Hero />
-                </ScrollScene>
-                <SectionTransition from="Intro" to="Projects" containerRef={infoSlideScrollerRef} />
-                <ScrollScene containerRef={infoSlideScrollerRef}>
-                  <ProjectsGrid onProjectClick={openProject} onViewAll={showProjectsView} />
-                </ScrollScene>
-                <SectionTransition from="Projects" to="About" containerRef={infoSlideScrollerRef} />
-                <ScrollScene containerRef={infoSlideScrollerRef}>
-                  <JourneyTimeline section="about" containerRef={infoSlideScrollerRef} />
-                </ScrollScene>
-                <SectionTransition from="About" to="Experience" containerRef={infoSlideScrollerRef} />
-                <ScrollScene containerRef={infoSlideScrollerRef}>
-                  <JourneyTimeline section="experience" />
-                </ScrollScene>
-                <SectionTransition from="Experience" to="Writing" containerRef={infoSlideScrollerRef} />
-                <ScrollScene containerRef={infoSlideScrollerRef}>
-                  <WritingList onArticleClick={openArticle} onViewAll={showSocialView} />
-                </ScrollScene>
-                <SectionTransition from="Writing" to="Contact" containerRef={infoSlideScrollerRef} />
-                <ScrollScene containerRef={infoSlideScrollerRef}>
-                  <ContactSection />
-                </ScrollScene>
+                {infoViewContent}
               </motion.div>
             ) : activeView === "bio" ? (
               <motion.div

@@ -70,10 +70,9 @@ export default function RightSidebar({ activeSection, onSymbolClick, variant = "
           <AnimatePresence>
             {activeIndex !== -1 && (
               <motion.div
-                className="absolute left-[2px] w-[2px] bg-[#fbbc04] rounded-full"
+                className="absolute left-[2px] top-0 h-4 w-[2px] rounded-full bg-[#fbbc04] will-change-transform"
                 animate={{
-                  top: activeTop,
-                  height: 16,
+                  y: activeTop,
                 }}
                 transition={{ type: "spring", stiffness: 380, damping: 29 }}
               />

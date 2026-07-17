@@ -2,7 +2,7 @@ import type { Project } from "../types";
 import { usePortfolioContent } from "../content";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { projectPath } from "../lib/routes";
-import { motion } from "motion/react";
+import { memo } from "react";
 import { resolveAssetUrl } from "../lib/assets";
 
 interface ProjectsGridProps {
@@ -10,7 +10,7 @@ interface ProjectsGridProps {
   onViewAll?: () => void;
 }
 
-export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGridProps) {
+function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGridProps) {
   const { projects } = usePortfolioContent();
 
   return (
@@ -20,14 +20,14 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
           const hoverImageUrl = resolveAssetUrl(project.hoverImageUrl);
           const imageUrl = resolveAssetUrl(project.imageUrl);
           return (
-            <motion.a
+            <a
               key={project.id}
               href={projectPath(project.id)}
               onClick={(event) => {
                 event.preventDefault();
                 onProjectClick(project);
               }}
-              className="group flex min-w-0 cursor-pointer flex-col gap-3 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70"
+              className="project-grid-item group flex min-w-0 cursor-pointer flex-col gap-3 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70"
               id={`project-card-${project.id}`}
             >
               <div className="flex min-h-[2.75rem] items-end justify-between gap-3 px-1">
@@ -44,6 +44,7 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
                     alt={`${project.title} technology workspace`}
                     loading="lazy"
                     decoding="async"
+                    fetchPriority={!onViewAll && index < 2 ? "high" : "auto"}
                     width="1200"
                     height="1200"
                     className="project-card-base-image absolute inset-0 h-full w-full object-cover group-hover:opacity-0 group-focus:opacity-0"
@@ -55,13 +56,14 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
                     alt={`${project.title} use case illustration`}
                     loading="lazy"
                     decoding="async"
+                    fetchPriority="low"
                     width="700"
                     height="700"
                     className="project-card-hover-image absolute inset-0 h-full w-full object-cover opacity-0 group-hover:opacity-100 group-focus:opacity-100"
                     referrerPolicy="no-referrer"
                   />
                 ) : null}
-                <div className="pointer-events-none absolute inset-0 opacity-0 backdrop-blur-[4px] [mask-image:linear-gradient(to_top,black_0%,black_42%,rgba(0,0,0,0.72)_62%,transparent_88%)] transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100 group-focus:opacity-100" aria-hidden="true" />
+                <div className="project-card-blur-overlay pointer-events-none absolute inset-0 backdrop-blur-[4px] [mask-image:linear-gradient(to_top,black_0%,black_42%,rgba(0,0,0,0.72)_62%,transparent_88%)]" aria-hidden="true" />
                 <div className="absolute inset-x-0 bottom-0 flex min-h-[64%] translate-y-3 flex-col justify-end bg-gradient-to-t from-black/90 via-black/52 to-transparent p-5 opacity-0 transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100 sm:p-6">
                   <div>
                     <div className="flex items-start justify-between gap-4">
@@ -97,13 +99,13 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
                 </div>
                 <p className="line-clamp-2 font-sans text-sm leading-6 text-neutral-400">{project.description}</p>
               </div>
-            </motion.a>
+            </a>
           );
         })}
       </div>
 
       {onViewAll && (
-        <motion.div
+        <div
           className="mt-11 sm:mt-16 rounded-2xl border border-white/10 bg-white/[0.025] p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 backdrop-blur-sm"
         >
           <div>
@@ -118,8 +120,10 @@ export default function ProjectsGrid({ onProjectClick, onViewAll }: ProjectsGrid
             <span>See more projects</span>
             <ArrowRight size={13} className="transition-transform group-hover:translate-x-1" />
           </button>
-        </motion.div>
+        </div>
       )}
     </section>
   );
 }
+
+export default memo(ProjectsGrid);

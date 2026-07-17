@@ -6,7 +6,7 @@ class LocalProvider implements ContentProvider {
 
   async load(signal?: AbortSignal): Promise<PortfolioContentOverrides> {
     const url = new URL("content/portfolio-data.json", document.baseURI);
-    const response = await fetch(url, { cache: "no-cache", signal });
+    const response = await fetch(url, { cache: "default", signal });
     if (!response.ok) throw new Error(`Local content request failed: ${response.status}`);
     return response.json() as Promise<PortfolioContentOverrides>;
   }

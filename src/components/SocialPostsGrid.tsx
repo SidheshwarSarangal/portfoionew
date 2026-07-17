@@ -18,7 +18,7 @@ export default function SocialPostsGrid() {
           return (
             <article
               key={post.id}
-              className="min-w-0"
+              className="social-grid-item min-w-0"
             >
               <a
                 href={post.url}

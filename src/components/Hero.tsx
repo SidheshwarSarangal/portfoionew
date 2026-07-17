@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 
 const leftHighlights = ["Full-stack Developer", "Problem Solver", "Python Developer", "IIT Roorkee Graduate"];
 const rightHighlights = ["Backend Systems", "Quick Learner", "MERN Developer"];
@@ -13,11 +13,17 @@ export default function Hero({ playIntro = true }: HeroProps) {
   const portraitUrl = `${import.meta.env.BASE_URL}images/profile/portfolio-hero.png`;
   const [highlightIndex, setHighlightIndex] = useState(0);
   const [highlightsVisible, setHighlightsVisible] = useState(true);
+  const heroRef = useRef<HTMLElement>(null);
+  const heroInView = useInView(heroRef, { initial: true, margin: "200px 0px" });
   const reduceMotion = useReducedMotion();
   const skipIntro = reduceMotion || !playIntro;
 
   useEffect(() => {
     if (reduceMotion) return;
+    if (!heroInView) {
+      setHighlightsVisible(true);
+      return;
+    }
 
     let displayTimer: number | undefined;
     let swapTimer: number | undefined;
@@ -39,10 +45,11 @@ export default function Hero({ playIntro = true }: HeroProps) {
       if (displayTimer !== undefined) window.clearTimeout(displayTimer);
       if (swapTimer !== undefined) window.clearTimeout(swapTimer);
     };
-  }, [reduceMotion]);
+  }, [heroInView, reduceMotion]);
 
   return (
     <section
+      ref={heroRef}
       id="hero"
       className="relative min-h-[calc(100svh-4rem)] w-full max-w-6xl mx-auto px-2 py-3 sm:px-6 sm:py-8 flex flex-col justify-center select-text overflow-hidden"
     >
@@ -56,7 +63,6 @@ export default function Hero({ playIntro = true }: HeroProps) {
           animate={{ opacity: 1, x: 0 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: 300, transition: { duration: 0.72, ease: entranceEase } }}
           transition={skipIntro ? { duration: 0 } : { duration: 1.05, delay: 0.1, ease: entranceEase }}
-          style={{ willChange: "transform, opacity" }}
         >
           <span className="relative inline-block">
             <span className="hero-software-title block font-black leading-[0.86] tracking-[0.045em] text-white whitespace-nowrap">
@@ -86,7 +92,6 @@ export default function Hero({ playIntro = true }: HeroProps) {
           animate={{ opacity: 1, scale: 1 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: -260, scale: 0.96, transition: { duration: 0.72, ease: entranceEase } }}
           transition={skipIntro ? { duration: 0 } : { duration: 1, delay: 1.25, ease: entranceEase }}
-          style={{ willChange: "transform, opacity" }}
         >
           <div
             className="-translate-y-6 sm:-translate-y-12 w-[min(84vw,320px)] sm:w-[430px] md:w-[480px] aspect-[2/3] overflow-hidden"
@@ -95,8 +100,11 @@ export default function Hero({ playIntro = true }: HeroProps) {
             <img
               src={portraitUrl}
               alt="Sidheshwar Sarangal"
+              width="1024"
+              height="1536"
               className="h-full w-full object-contain"
               fetchPriority="high"
+              decoding="async"
             />
           </div>
         </motion.div>
@@ -108,7 +116,6 @@ export default function Hero({ playIntro = true }: HeroProps) {
           animate={{ opacity: 1, x: 0 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: -225, transition: { duration: 0.72, ease: entranceEase } }}
           transition={skipIntro ? { duration: 0 } : { duration: 1.05, delay: 0.65, ease: entranceEase }}
-          style={{ willChange: "transform, opacity" }}
         >
           <svg
             viewBox="0 0 600 220"

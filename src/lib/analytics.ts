@@ -30,7 +30,22 @@ export function initializeAnalytics() {
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
   script.dataset.gaId = measurementId;
-  document.head.appendChild(script);
+
+  const loadAnalytics = () => {
+    if (!document.querySelector(`script[data-ga-id="${measurementId}"]`)) {
+      document.head.appendChild(script);
+    }
+  };
+  const scheduleAnalytics = () => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(loadAnalytics, { timeout: 2500 });
+    } else {
+      globalThis.setTimeout(loadAnalytics, 0);
+    }
+  };
+
+  if (document.readyState === "complete") scheduleAnalytics();
+  else window.addEventListener("load", scheduleAnalytics, { once: true });
 
   document.addEventListener("click", (event) => {
     const link = (event.target as HTMLElement).closest<HTMLAnchorElement>("a[href]");

@@ -1,6 +1,8 @@
 import { motion } from "motion/react";
 import { FolderKanban, FileText, MessageSquareText, PanelRightOpen, X, User } from "lucide-react";
 import { usePortfolioContent } from "../content";
+import { memo } from "react";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 export type PortfolioView = "bio" | "info" | "projects" | "social";
 
@@ -11,8 +13,9 @@ interface HeaderProps {
   onSidebarToggle: () => void;
 }
 
-export default function Header({ activeView, onViewChange, isSidebarOpen, onSidebarToggle }: HeaderProps) {
+function Header({ activeView, onViewChange, isSidebarOpen, onSidebarToggle }: HeaderProps) {
   const { projects: PROJECTS, socialPosts: SOCIAL_POSTS } = usePortfolioContent();
+  const desktopNavigation = useMediaQuery("(min-width: 1200px)");
 
   const desktopTabs = [
     { label: "info", id: "info" as const, icon: <FileText size={18} className="text-current" /> },
@@ -61,15 +64,17 @@ export default function Header({ activeView, onViewChange, isSidebarOpen, onSide
     <header className="portfolio-topbar fixed top-0 left-0 right-0 2xl:right-[300px] h-16 bg-black/45 backdrop-blur-xl border-b border-x border-white/10 z-[60] flex items-center justify-start select-none shadow-sm shadow-black/25 overflow-hidden">
       <div className="topbar-wave-gradient pointer-events-none absolute inset-0" aria-hidden="true" />
 
-      <div className="desktop-nav-1200 relative z-10 h-full items-center justify-start">
-        <nav className="flex items-center justify-start h-full">
-          {desktopTabs.map((tab) => renderTab(tab))}
-        </nav>
-      </div>
-
-      <div className="compact-nav-1200 relative z-10 grid grid-cols-4 w-full h-full pr-14">
-        {compactTabs.map((tab) => renderTab(tab, true))}
-      </div>
+      {desktopNavigation ? (
+        <div className="desktop-nav-1200 relative z-10 h-full items-center justify-start">
+          <nav className="flex items-center justify-start h-full">
+            {desktopTabs.map((tab) => renderTab(tab))}
+          </nav>
+        </div>
+      ) : (
+        <div className="compact-nav-1200 relative z-10 grid grid-cols-4 w-full h-full pr-14">
+          {compactTabs.map((tab) => renderTab(tab, true))}
+        </div>
+      )}
 
       {activeView !== "bio" && (
         <button
@@ -85,3 +90,5 @@ export default function Header({ activeView, onViewChange, isSidebarOpen, onSide
     </header>
   );
 }
+
+export default memo(Header);

@@ -11,6 +11,7 @@ import {
   Utensils,
 } from "lucide-react";
 import type { SocialLink } from "../types";
+import { memo } from "react";
 
 const SOCIAL_ICONS: Record<string, LucideIcon> = {
   discord: MessageCircle,
@@ -121,7 +122,7 @@ interface SocialLinksProps {
   showTooltip?: boolean;
 }
 
-export default function SocialLinks({
+function SocialLinks({
   links,
   size = 15,
   tileSize = "normal",
@@ -172,3 +173,5 @@ export default function SocialLinks({
     </div>
   );
 }
+
+export default memo(SocialLinks);
