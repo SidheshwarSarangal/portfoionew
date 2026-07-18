@@ -51,7 +51,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
     <section
       ref={heroRef}
       id="hero"
-      className="hero-section relative flex min-h-[calc(100svh-4rem)] w-full max-w-6xl mx-auto flex-col justify-center overflow-hidden px-2 py-3 select-text sm:px-6 sm:py-8"
+      className="hero-section relative mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-[90rem] flex-col justify-center overflow-hidden px-3 py-4 select-text sm:px-6 sm:py-8 lg:px-8"
     >
       <div className="hero-stage relative isolate mt-1 flex items-center justify-center [container-type:inline-size] sm:mt-3">
         <h1 className="sr-only">Software Engineer</h1>
@@ -139,7 +139,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
           </svg>
         </motion.div>
 
-        <div className="hero-left-highlight absolute z-20 hidden -translate-y-1/2 min-[1320px]:block" aria-live="polite">
+        <div className="hero-left-highlight absolute z-20 hidden -translate-y-1/2 min-[1320px]:flex" aria-live="polite">
           <motion.div
             initial={skipIntro ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -147,14 +147,14 @@ export default function Hero({ playIntro = true }: HeroProps) {
             transition={skipIntro ? { duration: 0 } : { duration: 0.75, delay: 1.95, ease: entranceEase }}
           >
             <span
-              className={`block font-serif text-[clamp(1.7rem,2.5vw,2.5rem)] italic leading-[1.05] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "-translate-x-4 opacity-0 blur-sm"}`}
+              className={`block font-serif italic leading-[1.08] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "-translate-x-4 opacity-0 blur-sm"}`}
             >
               {leftHighlights[highlightIndex % leftHighlights.length]}
             </span>
           </motion.div>
         </div>
 
-        <div className="hero-right-highlight absolute z-20 hidden -translate-y-1/2 text-right min-[1320px]:block" aria-live="polite">
+        <div className="hero-right-highlight absolute z-20 hidden -translate-y-1/2 text-right min-[1320px]:flex" aria-live="polite">
           <motion.div
             initial={skipIntro ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -162,7 +162,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
             transition={skipIntro ? { duration: 0 } : { duration: 0.75, delay: 2.1, ease: entranceEase }}
           >
             <span
-              className={`block font-serif text-[clamp(1.7rem,2.5vw,2.5rem)] italic leading-[1.05] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "translate-x-4 opacity-0 blur-sm"}`}
+              className={`block font-serif italic leading-[1.08] tracking-[-0.035em] text-[#d7dadd] transition-all duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${highlightsVisible ? "translate-x-0 opacity-100 blur-0" : "translate-x-4 opacity-0 blur-sm"}`}
             >
               {rightHighlights[highlightIndex % rightHighlights.length]}
             </span>
@@ -171,7 +171,7 @@ export default function Hero({ playIntro = true }: HeroProps) {
       </div>
 
       <motion.div
-        className="hero-mobile-highlights relative z-20 grid grid-cols-1 content-start gap-2 px-3 py-3 text-center sm:grid-cols-2 sm:gap-6 sm:px-4 sm:py-4 sm:text-left min-[1320px]:hidden"
+        className="hero-mobile-highlights relative z-20 grid grid-cols-1 items-start gap-2 px-3 py-3 text-center sm:grid-cols-2 sm:gap-8 sm:px-4 sm:py-4 sm:text-left min-[1320px]:hidden"
         aria-live="polite"
         initial={skipIntro ? false : { opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}

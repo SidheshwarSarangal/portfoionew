@@ -205,20 +205,36 @@ body,
 }
 
 .hero-left-highlight {
-  left: max(0.5rem, calc(50% - 44cqw));
+  left: clamp(1.5rem, 3.5cqw, 4rem);
   top: 62.5%;
-  width: clamp(190px, 18cqw, 260px);
+  width: clamp(190px, 17cqw, 245px);
+  min-height: 6rem;
+  align-items: center;
+  font-size: clamp(1.55rem, 2.15cqw, 2.15rem);
+  overflow-wrap: anywhere;
 }
 
 .hero-right-highlight {
-  right: max(0.5rem, calc(50% - 44cqw));
+  right: clamp(1.5rem, 3.5cqw, 4rem);
   top: 62.5%;
-  width: clamp(190px, 18cqw, 260px);
+  width: clamp(190px, 17cqw, 245px);
+  min-height: 6rem;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: clamp(1.55rem, 2.15cqw, 2.15rem);
+  overflow-wrap: anywhere;
 }
 
 .hero-mobile-highlights {
-  min-height: 112px;
-  margin-top: -1.25rem;
+  min-height: 128px;
+  margin-top: clamp(0.25rem, 1.5svh, 1rem);
+}
+
+.hero-mobile-highlights > span {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75em;
+  overflow-wrap: anywhere;
 }
 
 @keyframes hero-software-glow-in {
@@ -269,8 +285,8 @@ body,
   }
 
   .hero-mobile-highlights {
-    min-height: 88px;
-    margin-top: -2.1rem;
+    min-height: 92px;
+    margin-top: 0.5rem;
   }
 
   .hero-software-title {
@@ -288,8 +304,9 @@ body,
 
   .hero-mobile-highlights {
     max-width: 760px;
-    min-height: 74px;
-    margin: -2.4rem auto 0;
+    width: 100%;
+    min-height: 88px;
+    margin: 0.5rem auto 0;
   }
 }
 
@@ -311,14 +328,20 @@ body,
 @media (min-width: 1320px) {
   .hero-section {
     --hero-portrait-width: min(43cqw, 650px);
-    --hero-engineer-width: min(103%, 850px);
+    --hero-engineer-top: 66.5%;
+    --hero-engineer-width: min(96%, 810px);
+  }
+
+  .hero-left-highlight,
+  .hero-right-highlight {
+    top: 53.5%;
   }
 }
 
 @media (min-width: 1500px) {
   .hero-section {
     --hero-portrait-width: min(40cqw, 690px);
-    --hero-engineer-width: min(105%, 880px);
+    --hero-engineer-width: min(94%, 830px);
   }
 }
 
@@ -362,6 +385,8 @@ body,
 @media (orientation: landscape) and (min-width: 1320px) and (min-aspect-ratio: 16 / 9) {
   .hero-section {
     --hero-portrait-width: min(45cqw, 735px);
+    --hero-engineer-top: 66.5%;
+    --hero-engineer-width: min(94%, 830px);
   }
 }
 
